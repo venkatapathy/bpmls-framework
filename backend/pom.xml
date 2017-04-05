@@ -28,6 +28,7 @@
 	
 
 	<dependencies>
+	
 	<dependency>
       <groupId>org.camunda.bpm.extension.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-bom</artifactId>

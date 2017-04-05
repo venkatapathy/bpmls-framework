@@ -1,5 +1,9 @@
 package com.bpmls;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.task.Task;
@@ -23,6 +27,19 @@ public class LearningProcessEngine {
 	private TaskService taskService;
 	
 	private String processInstanceId=null;
+	
+	private static String LEARNINGSCENARIO="learningscenario1";
+	/**
+	 * This starts a learning scenario based on the id sent. 
+	 * @return json object with status true or false and id which is the processinstance id, if 
+	 * the starting is success
+	 * @throws Exception
+	 */
+//	@RequestMapping(value="/startlearningscenario/{id}", method=RequestMethod.GET)
+//	public String startLearningScenario() throws Exception{
+//		//when the learningscenario id comes check if it exists 
+//		
+//	}
 	/**
 	 * This gets the current task of a given learning scenarios. Currently hardcoded to get the current
 	 * task of learningscenario1 for a given process instance with a particular key
@@ -39,13 +56,33 @@ public class LearningProcessEngine {
 			//TODO: 
 			//Here the process instance should start with inital values from
 			//the learningscenario.config
-			processInstanceId = runtimeService.startProcessInstanceByKey("Process_1").getProcessInstanceId();
+			processInstanceId = runtimeService.startProcessInstanceByKey("ithelpdeskprocess").getProcessInstanceId();
 		}
 		
 		//get the current task
 		Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
-		System.out.println(task.getName());
+		System.out.println("./src/main/resources/learningscenarios/"+LEARNINGSCENARIO+"/"+task.getTaskDefinitionKey()+".html");
 		
+		File f = new File("./src/main/resources/learningscenarios/"+LEARNINGSCENARIO+"/"+task.getTaskDefinitionKey()+".html");
+		if(f.exists() && !f.isDirectory()) { 
+		    // send the whole html file
+			BufferedReader br = new BufferedReader(new FileReader(f));
+		    try {
+		        StringBuilder sb = new StringBuilder();
+		        String line = br.readLine();
+
+		        while (line != null) {
+		            sb.append(line);
+		            sb.append("\n");
+		            line = br.readLine();
+		        }
+		        return sb.toString();
+		    } finally {
+		        br.close();
+		    }
+		}
+		
+		return "no task: no task";
 		//shortcut, check if the file with taskname.scenarioname exist! if so send it back as 
 		//check if the current task has a UI in the learningscenario config, else complete the task and move ahead
 		
