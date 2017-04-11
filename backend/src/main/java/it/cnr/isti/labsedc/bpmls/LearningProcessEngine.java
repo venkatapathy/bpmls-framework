@@ -74,6 +74,7 @@ public class LearningProcessEngine {
 				taskService.complete(task.getId());
 			}else{
 				isProcessRunning=false;
+				System.out.println("process run successfully");
 			}
 			
 			
