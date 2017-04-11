@@ -1,4 +1,4 @@
-package com.bpmls;
+package it.cnr.isti.labsedc.bpmls;
 
 import java.io.IOException;
 
