@@ -1,4 +1,4 @@
-package com.bpmls;
+package it.cnr.isti.labsedc.bpmls;
 
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication;
 import org.springframework.boot.SpringApplication;
@@ -10,5 +10,8 @@ public class Angular2learningappApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Angular2learningappApplication.class, args);
+		
+		//
+		
 	}
 }

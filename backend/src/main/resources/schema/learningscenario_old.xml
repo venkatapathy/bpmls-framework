@@ -1,4 +1,4 @@
-<LearningScenario id="learningscenario1" name="Learning Scenario1" processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<LearningScenario id="learningscenario1" name="Learning Scenario1" processid="ithelpdeskprocess">
 <Trace>
 <vertex id="opencase" activityid=""></vertex>
 <vertex id="analyzecase" activityid=""></vertex>
@@ -13,13 +13,17 @@
 </TargetVertexes>
 
 <InitialValuation>
-<DataObject id="" camundaid="FormField_issolutionworking">yes</DataObject>
-<DataObject id="" camundaid="FormField_caseresolution">Change the DNS</DataObject>
+<DataObject id="" camundaid="FormField_issolutionworking">
+true
+</DataObject>
+<DataObject id="" camundaidid="FormField_caseresolution">
+Change the DNS
+</DataObject>
 </InitialValuation>
 
 <ValuationOracle>
 <ValuationFunction id="opencase">
-<DataObject id="" camundaid="FormField_casepriority">
+<DataObject id="" camundaidid="FormField_casepriority">
 Medium
 </DataObject>
 <DataObject id="" camundaidid="FormField_casedescription">
