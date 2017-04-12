@@ -107,7 +107,8 @@ public class LearningProcessEngine {
 	 */
 	@RequestMapping(value="/startlearningscenario")
 	public String startLearningScenario() throws Exception{
-		File f = new File("./src/main/resources/schema/learningscenario.xml");
+		getClass().getResourceAsStream("/resources/schema/learningscenario.xml");
+		//File f = new File("./src/main/resources/schema/learningscenario.xml");
 		JAXBContext jaxbContext = JAXBContext.newInstance(LearningScenario.class);
 		
 
