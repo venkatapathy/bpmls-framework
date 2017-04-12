@@ -12,8 +12,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
+import org.camunda.bpm.engine.form.FormField;
 import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +37,9 @@ public class LearningProcessEngine {
 
 	@Autowired
 	private TaskService taskService;
+	
+	@Autowired
+	private FormService formService;
 	
 	private String processInstanceId=null;
 	
@@ -71,6 +76,17 @@ public class LearningProcessEngine {
 			if(task!=null){
 				System.out.println("Current task is: "+task.getName());
 				System.out.println("completing the current task and moving on");
+				
+				System.out.println("Generated form is");
+				
+				List<FormField> taskformsfields=formService.getTaskFormData(task.getId()).getFormFields();
+				
+				for(int temp=0; temp < taskformsfields.size();temp++){
+					System.out.println(taskformsfields.get(temp).getLabel());
+				}
+				
+				
+				//expected 
 				taskService.complete(task.getId());
 			}else{
 				isProcessRunning=false;

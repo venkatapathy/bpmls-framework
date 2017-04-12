@@ -1,6 +1,6 @@
 <LearningScenario id="learningscenario1" name="Learning Scenario1" processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
 <Trace>
-<vertex id="opencase" activityid=""></vertex>
+<vertex id="opencase" activityid="opencase"></vertex>
 <vertex id="analyzecase" activityid=""></vertex>
 <vertex id="caseresolution" activityid=""></vertex>
 <vertex id="notifyuser" activityid=""></vertex>
