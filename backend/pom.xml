@@ -86,12 +86,7 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-  <dependency>
-            <groupId>com.bpmls</groupId>
-            <artifactId>frontend</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
+  
         
 	</dependencies>
 
