@@ -3,10 +3,16 @@ package it.cnr.isti.labsedc.bpmls;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -18,9 +24,16 @@ import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.form.FormField;
 import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+
 
 import it.cnr.isti.labsedc.bpmls.senarios.LearningScenario;
 
@@ -45,6 +58,8 @@ public class LearningProcessEngine {
 	
 	private static String LEARNINGSCENARIO="learningscenario1";
 	
+	
+	private Resource learningScenarioXml;
 	/**
 	 * Given a learning scenario, it start the scenario runs each task and finishes it
 	 */
@@ -107,13 +122,14 @@ public class LearningProcessEngine {
 	 */
 	@RequestMapping(value="/startlearningscenario")
 	public String startLearningScenario() throws Exception{
-		getClass().getResourceAsStream("/resources/schema/learningscenario.xml");
+		
+		learningScenarioXml=new UrlResource("classpath:schema/learningscenario.xml");
 		//File f = new File("./src/main/resources/schema/learningscenario.xml");
 		JAXBContext jaxbContext = JAXBContext.newInstance(LearningScenario.class);
 		
-
+		
 		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-		LearningScenario learningScenario = (LearningScenario) jaxbUnmarshaller.unmarshal(f);
+		LearningScenario learningScenario = (LearningScenario) jaxbUnmarshaller.unmarshal(learningScenarioXml.getInputStream());
 		testLearningScenario(learningScenario);
 		return "success";
 		//when the learningscenario id comes check if it exists 
