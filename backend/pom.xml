@@ -70,11 +70,7 @@
   <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
   
 </dependency>
-<dependency>
-  <groupId>org.camunda.bpm.extension.springboot</groupId>
-  <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
-  
-</dependency>
+
    <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
@@ -96,6 +92,7 @@
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
+        
 	</dependencies>
 
 	<build>
@@ -104,6 +101,14 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			 <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <!-- Use the latest released version:
+        https://repo1.maven.org/maven2/com/github/eirslett/frontend-maven-plugin/ -->
+        <version>1.4</version>
+        
+    </plugin>
 		</plugins>
 	</build>
  <repositories>
