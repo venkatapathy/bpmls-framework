@@ -1,4 +1,4 @@
-<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://labsedc.isti.cnr.it/">
   <xs:element name="LearningScenario">
     <xs:complexType>
       <xs:sequence>

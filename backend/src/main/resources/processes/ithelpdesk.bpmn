@@ -32,6 +32,7 @@
             <camunda:value id="Value_0jf2jsi" name="high" />
           </camunda:formField>
           <camunda:formField id="FormField_casedescription" label="casedescription" type="string" />
+          <camunda:formField id="FormField_1ajd94c" label="nameofuser" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0z4nasv</bpmn:incoming>
