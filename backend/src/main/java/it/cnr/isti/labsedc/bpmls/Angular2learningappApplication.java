@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,7 @@ public class Angular2learningappApplication{
 	
 	@Autowired
     JdbcTemplate jdbcTemplate;
+	
 	
 	public static void main(String[] args) {
 		
@@ -36,6 +38,6 @@ public class Angular2learningappApplication{
         jdbcTemplate.execute("CREATE TABLE learningscenarioinstance(" +
                 "lsinstid SERIAL, learningscenarioid VARCHAR(255), processinstaneid VARCHAR(255))");
 
-    
+       
 	}
 }

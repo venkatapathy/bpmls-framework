@@ -24,7 +24,7 @@ public class LearningScenarioInstance {
     public long getLearningScenarioInstanceid(){
     	return this.learningScenarioInstanceid;
     }
-    
+    	
     public void setLearningScenarioId(String learningScenarioId){
     	this.learningScenarioId=learningScenarioId;
     }
