@@ -36,6 +36,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -208,12 +209,13 @@ public class LearningProcessEngine {
 	 * include ways to get the currenttask based on a input parameter called
 	 * learning scenario
 	 */
-	@RequestMapping(value = "/getcurrenttask", method = RequestMethod.GET)
+	@CrossOrigin(origins = "http://localhost:4200")
+	@RequestMapping(value = "/getcurrentlearningtask", method = RequestMethod.GET)
 	public String getCurrentLearningTask(@RequestParam(value = "pinstid") String pinstid) throws Exception {
 		
 
 		//get the current task
-		Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
+		Task task = taskService.createTaskQuery().processInstanceId(pinstid).singleResult();
 		
 		
 		
@@ -231,6 +233,8 @@ public class LearningProcessEngine {
 	 */
 	@RequestMapping(value = "/completelearningtask", method = RequestMethod.GET)
 	public String completeLearningTask(@RequestParam(value = "lsid") String lsid) throws Exception{
+		Task task = taskService.createTaskQuery().processInstanceId(lsid).singleResult();
+		taskService.complete(task.getId());
 		return "all is well";
 	}
 }
