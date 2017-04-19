@@ -155,7 +155,10 @@ public class HtmlFormEngine implements FormEngine {
     } else {
       HtmlElementWriter formElement = new HtmlElementWriter(FORM_ELEMENT)
           .attribute(NAME_ATTRIBUTE, GENERATED_FORM_NAME)
-          .attribute(ROLE_ATTRIBUTE, FORM_ROLE);
+          .attribute(ROLE_ATTRIBUTE, FORM_ROLE)
+          //for angular 2 client
+          .attribute("#learningForm", "ngForm")
+          .attribute("(click)", "completeLearning()");
 
       HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(formElement);
 
@@ -164,10 +167,15 @@ public class HtmlFormEngine implements FormEngine {
         renderFormField(formField, documentBuilder);
       }
 
-      
+      //submitbutton
+      HtmlElementWriter divElement = new HtmlElementWriter("button")
+    	        .attribute("type", "button")
+    	        .attribute("(click)", "completeLearning()")
+    	        .textContent("Complete Learning");
       // end document element
+      
+      documentBuilder.startElement(divElement).endElement();
       documentBuilder.endElement();
-
       return documentBuilder.getHtmlString();
 
     }
