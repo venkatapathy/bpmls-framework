@@ -35,7 +35,7 @@ export class SimulatorService {
         
 
         return this.http.post('http://localhost:8080/completelearningtask', responseJson) // ...using post request
-                         .map((res:Response) => {return res.json()}); // ...and calling .json() on the response to return data
+                         .map((res:Response) => { console.log(res);return res.json()}); // ...and calling .json() on the response to return data
                           //...errors if any
     
     }
