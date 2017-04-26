@@ -18,7 +18,7 @@
 </InitialValuation>
 
 <ValuationOracle>
-<ValuationFunction id="opencase">
+<ValuationFunction id="opencase" activityid="opencase">
 <DataObject id="" camundaid="FormField_casepriority">
 Medium
 </DataObject>
@@ -26,12 +26,12 @@ Medium
 My Internet is not working
 </DataObject>
 </ValuationFunction>
-<ValuationFunction id="caseresolution">
+<ValuationFunction id="caseresolution" activityid="caseresolution">
 <DataObject id="" camundaidid="FormField_caseresolution">
 Change the DNS
 </DataObject>
 </ValuationFunction>
-<ValuationFunction id="checkresolution">
+<ValuationFunction id="checkresolution" activityid="checkresolution">
 <DataObject id="" camundaidid="FormField_issolutionworking">
 true
 </DataObject>

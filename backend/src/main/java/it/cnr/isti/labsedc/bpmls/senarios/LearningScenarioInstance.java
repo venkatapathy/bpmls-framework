@@ -4,6 +4,8 @@ public class LearningScenarioInstance {
 	private long learningScenarioInstanceid;
     private String learningScenarioId, processInstanceId;
 
+    public LearningScenarioInstance(){}
+    
     public LearningScenarioInstance(long learningScenarioInstanceid, String learningScenarioId, String processInstanceId) {
         this.learningScenarioInstanceid = learningScenarioInstanceid;
         this.learningScenarioId = learningScenarioId;

@@ -6,7 +6,7 @@ import { HttpModule } from '@angular/http';
 import { AppComponent } from './app.component';
 import {SimulatorComponent} from './simulator/simulator.component'
 import {SimulatorService} from './simulator/simulator.service'
-
+import {AdHocComponentFactoryCreator} from './simulator/adhoc-component-factory.service'
 @NgModule({
   declarations: [
     AppComponent, SimulatorComponent
@@ -17,7 +17,7 @@ import {SimulatorService} from './simulator/simulator.service'
     FormsModule
     
   ],
-  providers: [SimulatorService],
+  providers: [SimulatorService,AdHocComponentFactoryCreator],
   bootstrap: [AppComponent]
 })
 

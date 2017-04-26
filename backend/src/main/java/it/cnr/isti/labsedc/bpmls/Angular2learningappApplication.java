@@ -36,7 +36,7 @@ public class Angular2learningappApplication{
 
         jdbcTemplate.execute("DROP TABLE learningscenarioinstance IF EXISTS");
         jdbcTemplate.execute("CREATE TABLE learningscenarioinstance(" +
-                "lsinstid SERIAL, learningscenarioid VARCHAR(255), processinstaneid VARCHAR(255))");
+                "lsinstid SERIAL, learningscenarioid VARCHAR(255), processinstanceid VARCHAR(255))");
 
        
 	}
