@@ -7,9 +7,10 @@ import { AppComponent } from './app.component';
 import {SimulatorComponent} from './simulator/simulator.component'
 import {SimulatorService} from './simulator/simulator.service'
 import {AdHocComponentFactoryCreator} from './simulator/adhoc-component-factory.service'
+import {AlertsNMsgsComponent} from './alertsnmsgs/alertsnmsgs.component'
 @NgModule({
   declarations: [
-    AppComponent, SimulatorComponent
+    AppComponent, SimulatorComponent,AlertsNMsgsComponent
   ],
   imports: [
     BrowserModule,
@@ -17,6 +18,7 @@ import {AdHocComponentFactoryCreator} from './simulator/adhoc-component-factory.
     FormsModule
     
   ],
+  
   providers: [SimulatorService,AdHocComponentFactoryCreator],
   bootstrap: [AppComponent]
 })

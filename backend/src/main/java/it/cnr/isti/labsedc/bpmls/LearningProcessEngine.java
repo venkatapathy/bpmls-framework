@@ -339,6 +339,7 @@ public class LearningProcessEngine {
 		}
 		if(taskCompletedFlag){
 			String msg="{\"status\": \"completed\"}";
+			taskService.complete(task.getId());
 			return msg;
 		}else{
 			String msg="{\"status\":\"error\", \"errorMsg\":\""+errorMsg.toString()+"\"}";

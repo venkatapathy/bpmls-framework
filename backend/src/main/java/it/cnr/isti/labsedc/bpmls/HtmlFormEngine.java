@@ -150,7 +150,21 @@ public class HtmlFormEngine implements FormEngine {
     if(formData == null
         || (formData.getFormFields() == null || formData.getFormFields().isEmpty())
        ) {
-      return null;
+    	//when no fields are there just return forms with a complete learning button
+    	 HtmlElementWriter formElement = new HtmlElementWriter(FORM_ELEMENT)
+    	          .attribute(NAME_ATTRIBUTE, GENERATED_FORM_NAME)
+    	          .attribute(ROLE_ATTRIBUTE, FORM_ROLE)
+    	          //for angular 2 client
+    	          .attribute("#learningForm", "ngForm")
+    	          .attribute("(ngSubmit)", "completeLearning(learningForm)");
+    	 HtmlElementWriter divElement = new HtmlElementWriter("button")
+     	        .attribute("type", "submit")
+     	        .textContent("Complete Learning");
+       // end document element
+    	 HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(formElement);
+       documentBuilder.startElement(divElement).endElement();
+       documentBuilder.endElement();
+      return documentBuilder.getHtmlString();
 
     } else {
       HtmlElementWriter formElement = new HtmlElementWriter(FORM_ELEMENT)
@@ -175,7 +189,11 @@ public class HtmlFormEngine implements FormEngine {
       
       documentBuilder.startElement(divElement).endElement();
       documentBuilder.endElement();
-      return documentBuilder.getHtmlString();
+      
+      //custom here we send the prompter
+      StringBuilder sb=new StringBuilder(documentBuilder.getHtmlString());
+      sb.append(IntroJSPromptBuilder.getPromptFile());
+      return sb.toString();
 
     }
   }
