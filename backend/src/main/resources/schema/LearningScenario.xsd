@@ -1,11 +1,11 @@
-<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://labsedc.isti.cnr.it/">
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.isti.cnr.it/research/unit.php?unit=SEDC" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="LearningScenario">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="Trace">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="vertex" maxOccurs="unbounded" minOccurs="1">
+              <xs:element name="vertex" maxOccurs="unbounded" minOccurs="0">
                 <xs:complexType>
                   <xs:simpleContent>
                     <xs:extension base="xs:string">
@@ -21,7 +21,7 @@
         <xs:element name="TargetVertexes">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="vertex" maxOccurs="unbounded" minOccurs="1">
+              <xs:element name="vertex" maxOccurs="unbounded" minOccurs="0">
                 <xs:complexType>
                   <xs:simpleContent>
                     <xs:extension base="xs:string">
@@ -62,12 +62,14 @@
                           <xs:extension base="xs:string">
                             <xs:attribute type="xs:string" name="id" use="optional"/>
                             <xs:attribute type="xs:string" name="camundaid" use="optional"/>
+                            <xs:attribute type="xs:string" name="camundaidid" use="optional"/>
                           </xs:extension>
                         </xs:simpleContent>
                       </xs:complexType>
                     </xs:element>
                   </xs:sequence>
                   <xs:attribute type="xs:string" name="id" use="optional"/>
+                  <xs:attribute type="xs:string" name="activityid" use="optional"/>
                 </xs:complexType>
               </xs:element>
             </xs:sequence>

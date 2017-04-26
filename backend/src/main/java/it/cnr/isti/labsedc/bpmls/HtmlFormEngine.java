@@ -158,7 +158,7 @@ public class HtmlFormEngine implements FormEngine {
           .attribute(ROLE_ATTRIBUTE, FORM_ROLE)
           //for angular 2 client
           .attribute("#learningForm", "ngForm")
-          .attribute("(click)", "completeLearning()");
+          .attribute("(ngSubmit)", "completeLearning(learningForm)");
 
       HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(formElement);
 
@@ -169,8 +169,7 @@ public class HtmlFormEngine implements FormEngine {
 
       //submitbutton
       HtmlElementWriter divElement = new HtmlElementWriter("button")
-    	        .attribute("type", "button")
-    	        .attribute("(click)", "completeLearning()")
+    	        .attribute("type", "submit")
     	        .textContent("Complete Learning");
       // end document element
       
@@ -466,7 +465,9 @@ public class HtmlFormEngine implements FormEngine {
 
     formControl
         .attribute(CLASS_ATTRIBUTE, FORM_CONTROL_CLASS)
-        .attribute(NAME_ATTRIBUTE, formFieldId);
+        
+        .attribute(NAME_ATTRIBUTE, formFieldId)
+        .attribute("ngModel", null);
 
 //    if (!formField.isBusinessKey()) {
 //      formControl
