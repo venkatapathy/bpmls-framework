@@ -278,7 +278,7 @@ public class LearningProcessEngine {
 		//get the correct taskid
 		while(vFuncsIt.hasNext()){
 			LearningScenario.ValuationOracle.ValuationFunction vFunc=vFuncsIt.next();
-			if(vFunc.getActivityid()==taskid){
+			if(vFunc.getActivityid().equals(taskid)){
 				return vFunc.getDataObject();
 			}
 		}
@@ -297,7 +297,10 @@ public class LearningProcessEngine {
 	@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping(value = "/completelearningtask")
 	public String completeLearningTask(@RequestBody String responseJSON) throws Exception {
+		StringBuilder errorMsg = new StringBuilder();
 
+		boolean taskCompletedFlag=true;
+		Integer errorCount=0;
 		// get the values map
 		ObjectMapper mapper = new ObjectMapper();
 		Map<String, Object> map = mapper.readValue(responseJSON, Map.class);
@@ -306,16 +309,50 @@ public class LearningProcessEngine {
 
 		// get the mapping of ValuationOracle for that particular task
 		//get the learninginstance
-		LearningScenarioInstance lsinst= this.getSingleLSInstance("SELECT * from learningscenarioinstance WHERE lsinstid=?", new Object[] { (String) map.get("lsinstid") });
+		LearningScenarioInstance lsinst= this.getSingleLSInstance("SELECT * from learningscenarioinstance WHERE lsinstid=?", new Object[] { Integer.toString((Integer)map.get("lsinstid")) });
+		
+		//get the task
+		Task task =
+		taskService.createTaskQuery().processInstanceId(lsinst.getProcessInstanceId()).singleResult();
+			 
 		
 		LearningScenario learningScenario=getLearningScenariofromXml(lsinst.getLearningScenarioId());
+		List<LearningScenario.ValuationOracle.ValuationFunction.DataObject> taskDOs=getOracleDataObject(learningScenario, task.getTaskDefinitionKey());
 		
-		System.out.println(formMap.toString());
+		//for each DO check its corresponding formMap value
+		Iterator<LearningScenario.ValuationOracle.ValuationFunction.DataObject> taskDOsIT= taskDOs.iterator();
+		
+		while(taskDOsIT.hasNext()){
+			LearningScenario.ValuationOracle.ValuationFunction.DataObject taskDO=taskDOsIT.next();
+			//check if the taskDO value is present and same as expected else put a error message
+			//if not set the taskCompletedFlag to false and append an error message
+			//strip the unnecessary spaces and convert to lower cases
+			String formVal=formMap.get(taskDO.getCamundaid()).toString().replace("\n", "").replace("\r", "").toLowerCase();
+			String lsOracleVal=taskDO.getValue().replace("\n", "").replace("\r", "").toLowerCase();
+			if(!(formVal).equals(lsOracleVal)){
+				errorCount+=1;
+				errorMsg.append(errorCount.toString()+"."+"expected value for "+taskDO.getCamundaid()+" is "+taskDO.getValue());
+				
+				taskCompletedFlag=false;
+				
+			}
+		}
+		if(taskCompletedFlag){
+			String msg="{\"status\": \"completed\"}";
+			return msg;
+		}else{
+			String msg="{\"status\":\"error\", \"errorMsg\":\""+errorMsg.toString()+"\"}";
+			//remove new lines
+			msg=msg.replace("\n", "").replace("\r", "");
+			System.out.println(msg);
+			return msg;
+		}
+		//System.out.println(formMap.toString());
 
 		// check if the input values are according to
 		// Task task =
 		// taskService.createTaskQuery().processInstanceId(lsid).singleResult();
 		// taskService.complete(task.getId());
-		return responseJSON;
+		
 	}
 }
