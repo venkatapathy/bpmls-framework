@@ -22,9 +22,13 @@
 <DataObject id="" camundaid="FormField_casepriority">
 Value_15h73hf
 </DataObject>
-<DataObject id="" camundaid="FormField_casedescription">
-My Internet is not working
+
+</ValuationFunction>
+<ValuationFunction id="Task_10opm4b" activityid="Task_10opm4b">
+<DataObject id="" camundaid="FormField_1kl39d2">
+Internet
 </DataObject>
+
 </ValuationFunction>
 <ValuationFunction id="caseresolution" activityid="caseresolution">
 <DataObject id="" camundaid="FormField_caseresolution">

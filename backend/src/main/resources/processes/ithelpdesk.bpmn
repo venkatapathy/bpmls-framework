@@ -118,7 +118,9 @@
     </bpmn:userTask>
     <bpmn:userTask id="Task_10opm4b" name="Analyze Case">
       <bpmn:extensionElements>
-        <camunda:formData />
+        <camunda:formData>
+          <camunda:formField id="FormField_1kl39d2" label="sample" type="string" />
+        </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_16r1378</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0icyup8</bpmn:incoming>
