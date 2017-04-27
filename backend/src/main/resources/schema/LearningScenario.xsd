@@ -57,7 +57,7 @@
               <xs:element name="ValuationFunction" maxOccurs="unbounded" minOccurs="0">
                 <xs:complexType>
                   <xs:sequence>
-                    <xs:element name="DataObject">
+                    <xs:element name="DataObject" maxOccurs="unbounded" minOccurs="0">
                       <xs:complexType>
                         <xs:simpleContent>
                           <xs:extension base="xs:string">
