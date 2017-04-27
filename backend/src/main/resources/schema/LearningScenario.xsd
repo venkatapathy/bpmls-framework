@@ -43,6 +43,7 @@
                     <xs:extension base="xs:string">
                       <xs:attribute type="xs:string" name="id" use="optional"/>
                       <xs:attribute type="xs:string" name="camundaid" use="optional"/>
+                      <xs:attribute type="xs:string" name="label" use="optional"/>
                     </xs:extension>
                   </xs:simpleContent>
                 </xs:complexType>
@@ -56,12 +57,13 @@
               <xs:element name="ValuationFunction" maxOccurs="unbounded" minOccurs="0">
                 <xs:complexType>
                   <xs:sequence>
-                    <xs:element name="DataObject" maxOccurs="unbounded" minOccurs="0">
+                    <xs:element name="DataObject">
                       <xs:complexType>
                         <xs:simpleContent>
                           <xs:extension base="xs:string">
                             <xs:attribute type="xs:string" name="id" use="optional"/>
                             <xs:attribute type="xs:string" name="camundaid" use="optional"/>
+                            <xs:attribute type="xs:string" name="label" use="optional"/>
                           </xs:extension>
                         </xs:simpleContent>
                       </xs:complexType>

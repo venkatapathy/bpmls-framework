@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 @SpringBootApplication
 @EnableProcessApplication
-public class Angular2learningappApplication{
+public class BpmlsApp{
 	
 	@Autowired
     JdbcTemplate jdbcTemplate;
@@ -22,7 +22,7 @@ public class Angular2learningappApplication{
 	
 	public static void main(String[] args) {
 		
-		SpringApplication.run(Angular2learningappApplication.class, args);
+		SpringApplication.run(BpmlsApp.class, args);
 		
 		//
 		
