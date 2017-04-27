@@ -1,0 +1,13 @@
+<LearningPath competencyid="" id="Learning Path1" name="Learning Path1" processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<LearningActivities>
+<LearningActivity id="" activityid="" competencyid=""/>
+<LearningActivity id="" activityid="" competencyid=""/>
+</LearningActivities>
+<LearningScenarios>
+<LearningScenario lsid=""/>
+</LearningScenarios>
+<Competencies>
+<Competency id="" name="" url=""/>
+<Competency id="" name="" url=""/>
+</Competencies>
+</LearningPath>
