@@ -51,8 +51,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import it.cnr.isti.labsedc.bpmls.senarios.LearningScenario;
-import it.cnr.isti.labsedc.bpmls.senarios.LearningScenarioInstance;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenarioInstance;
 
 /**
  * Main Class of BPMLS framework. It executes learning path, its corresponding

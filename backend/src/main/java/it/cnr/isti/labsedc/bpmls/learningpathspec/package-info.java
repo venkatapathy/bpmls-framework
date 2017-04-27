@@ -6,4 +6,4 @@
 //
 
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://www.isti.cnr.it/research/unit.php?unit=SEDC", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package it.cnr.isti.labsedc.bpmls.senarios;
+package it.cnr.isti.labsedc.bpmls.learningpathspec;

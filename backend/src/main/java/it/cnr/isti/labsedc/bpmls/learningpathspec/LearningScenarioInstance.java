@@ -1,4 +1,4 @@
-package it.cnr.isti.labsedc.bpmls.senarios;
+package it.cnr.isti.labsedc.bpmls.learningpathspec;
 
 public class LearningScenarioInstance {
 	private long learningScenarioInstanceid;

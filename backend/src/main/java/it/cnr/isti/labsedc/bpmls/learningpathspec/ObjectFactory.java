@@ -6,7 +6,7 @@
 //
 
 
-package it.cnr.isti.labsedc.bpmls.senarios;
+package it.cnr.isti.labsedc.bpmls.learningpathspec;
 
 import javax.xml.bind.annotation.XmlRegistry;
 

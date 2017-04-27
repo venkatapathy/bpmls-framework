@@ -11,8 +11,9 @@ import org.camunda.bpm.model.bpmn.Bpmn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import it.cnr.isti.labsedc.bpmls.senarios.LearningScenario;
-import it.cnr.isti.labsedc.bpmls.senarios.LearningScenarioInstance;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction.DataObject;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenarioInstance;
 
 public class LearningProcessEngine {
 	@Autowired
@@ -52,7 +53,15 @@ public class LearningProcessEngine {
 		return retrivedLearningSenario;	
 	}
 	
+	public LearningScenarioInstance getLearningScenarioInstance(String learningScenarioInstanceId){
+		return null;
+	}
+	
 	public Task getCurrentLearningTask(LearningScenarioInstance learningScenarioInstance){
 		return null;
+	}
+	
+	public void completeLearningTask(LearningScenarioInstance learningScenarioInstance,List<DataObject> userSubmittedDOs){
+		
 	}
 }
