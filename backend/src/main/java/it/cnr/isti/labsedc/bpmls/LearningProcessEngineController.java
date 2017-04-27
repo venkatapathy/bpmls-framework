@@ -62,7 +62,7 @@ import it.cnr.isti.labsedc.bpmls.senarios.LearningScenarioInstance;
  *
  */
 @RestController
-public class LearningProcessEngine {
+public class LearningProcessEngineController {
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 

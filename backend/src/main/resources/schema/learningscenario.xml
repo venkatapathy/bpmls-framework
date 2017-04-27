@@ -13,30 +13,30 @@
 </TargetVertexes>
 
 <InitialValuation>
-<DataObject id="" camundaid="FormField_issolutionworking">yes</DataObject>
-<DataObject id="" camundaid="FormField_caseresolution">Change the DNS</DataObject>
+<DataObject id="" camundaid="FormField_issolutionworking" label="FormField_issolutionworking">yes</DataObject>
+<DataObject id="" camundaid="FormField_caseresolution" label="FormField_caseresolution">Change the DNS</DataObject>
 </InitialValuation>
 
 <ValuationOracle>
 <ValuationFunction id="opencase" activityid="opencase">
-<DataObject id="" camundaid="FormField_casepriority">
+<DataObject id="" camundaid="FormField_casepriority" label="FormField_casepriority">
 Value_15h73hf
 </DataObject>
 
 </ValuationFunction>
-<ValuationFunction id="Task_10opm4b" activityid="Task_10opm4b">
-<DataObject id="" camundaid="FormField_1kl39d2">
+<ValuationFunction id="Task_10opm4b" activityid="Task_10opm4b" >
+<DataObject id="" camundaid="FormField_1kl39d2" label="FormField_1kl39d2">
 Internet
 </DataObject>
 
 </ValuationFunction>
 <ValuationFunction id="caseresolution" activityid="caseresolution">
-<DataObject id="" camundaid="FormField_caseresolution">
+<DataObject id="" camundaid="FormField_caseresolution" label="FormField_caseresolution">
 Change the DNS
 </DataObject>
 </ValuationFunction>
 <ValuationFunction id="checkresolution" activityid="checkresolution">
-<DataObject id="" camundaid="FormField_issolutionworking">
+<DataObject id="" camundaid="FormField_issolutionworking" label="FormField_issolutionworking">
 true
 </DataObject>
 </ValuationFunction>

@@ -1,3 +1,7 @@
+#angular 2 files
+frontend/src/main/frontend/node
+frontend/src/main/frontend/node_modules
+
 target/
 !.mvn/wrapper/maven-wrapper.jar
 
