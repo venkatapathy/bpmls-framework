@@ -6,7 +6,7 @@
 	<groupId>it.cnr.isti.labsedc.bpmls</groupId>
 	<artifactId>backend</artifactId>
 
-	<name>BPMLS backend</name>
+	<name>BPMLS Backend</name>
 	<description>BPMLS Backend Engine</description>
 
 	<parent>
@@ -15,12 +15,16 @@
 	<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	
-	 <dependencyManagement>
+	<properties>
+		<camunda.version>2.0.0</camunda.version>
+	</properties>
+
+	<dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>org.camunda.bpm.extension.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-bom</artifactId>
-      <version>2.0.0</version>
+      <version>${camunda.version}</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -33,7 +37,7 @@
 	<dependency>
       <groupId>org.camunda.bpm.extension.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-bom</artifactId>
-      <version>2.0.0</version>
+      <version>${camunda.version}</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
