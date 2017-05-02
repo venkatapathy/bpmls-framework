@@ -3,21 +3,18 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
+	<groupId>it.cnr.isti.labsedc.bpmls</groupId>
 	<artifactId>frontend</artifactId>
 
-	<name>frontend</name>
-	<description>BPMLS frontend</description>
+	<name>BPMLS Frontend</name>
+	<description>BPMLS Frontend and GUI</description>
 
 	<parent>
-	<groupId>com.bpmls</groupId>
-	<artifactId>parent</artifactId>
+	<groupId>it.cnr.isti.labsedc.bpmls</groupId>
+	<artifactId>bpmls-framework</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	
-	
-	
-
-
 	<build>
 		<plugins>
 			 <plugin>

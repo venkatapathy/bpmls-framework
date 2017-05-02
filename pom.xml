@@ -3,13 +3,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.bpmls</groupId>
-	<artifactId>parent</artifactId>
+	<groupId>it.cnr.isti.labsedc.bpmls</groupId>
+    
+	<artifactId>bpmls-framework</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>bpmls-framework</name>
-	<description>A BPMLS Execution framework</description>
+	<name>BPMLS Framework</name>
+	<description>An Execution Framework for Business Process Mangement-based Learning System</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
