@@ -21,43 +21,43 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 public class CamundaProcessEngineConfiguration {
 
-  @Bean
-  public DataSource dataSource() {
-     // Use a JNDI data source or read the properties from
-     // env or a properties file.
-     // Note: The following shows only a simple data source
-     // for In-Memory H2 database.
+	@Bean
+	public DataSource dataSource() {
+		// Use a JNDI data source or read the properties from
+		// env or a properties file.
+		// Note: The following shows only a simple data source
+		// for In-Memory H2 database.
 
-    SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-    dataSource.setDriverClass(org.h2.Driver.class);
-    dataSource.setUrl("jdbc:h2:mem:camunda;DB_CLOSE_DELAY=-1");
-    dataSource.setUsername("sa");
-    dataSource.setPassword("");
-    return dataSource;
-  }
+		SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+		dataSource.setDriverClass(org.h2.Driver.class);
+		dataSource.setUrl("jdbc:h2:mem:camunda;DB_CLOSE_DELAY=-1");
+		dataSource.setUsername("sa");
+		dataSource.setPassword("");
+		return dataSource;
+	}
 
-  @Bean
-  public PlatformTransactionManager transactionManager() {
-    return new DataSourceTransactionManager(dataSource());
-  }
+	@Bean
+	public PlatformTransactionManager transactionManager() {
+		return new DataSourceTransactionManager(dataSource());
+	}
 
-  @Bean
-  public SpringProcessEngineConfiguration processEngineConfiguration() {
-    SpringProcessEngineConfiguration config = new SpringProcessEngineConfiguration();
+	@Bean
+	public SpringProcessEngineConfiguration processEngineConfiguration() {
+		SpringProcessEngineConfiguration config = new SpringProcessEngineConfiguration();
 
-    config.setAuthorizationEnabled(true);
-    config.setDataSource(dataSource());
-    config.setTransactionManager(transactionManager());
+		config.setAuthorizationEnabled(true);
+		config.setDataSource(dataSource());
+		config.setTransactionManager(transactionManager());
 
-    config.setDatabaseSchemaUpdate("true");
-    config.setHistory("audit");
-    config.setJobExecutorActivate(true);
+		config.setDatabaseSchemaUpdate("true");
+		config.setHistory("audit");
+		config.setJobExecutorActivate(true);
 
-    return config;
-  }
+		return config;
+	}
 
- 
+	
 
-  // more engine services and additional beans ...
+	// more engine services and additional beans ...
 
 }
