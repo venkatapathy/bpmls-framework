@@ -1,44 +1,44 @@
-<LearningScenario id="learningscenario1" name="Learning Scenario1" processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<LearningScenario id="learningscenario1" name="Learning Scenario1" bpmn_processlabel="" bpmn_processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
 <Trace>
-<vertex id="opencase" activityid="opencase"></vertex>
-<vertex id="analyzecase" activityid=""></vertex>
-<vertex id="caseresolution" activityid=""></vertex>
-<vertex id="notifyuser" activityid=""></vertex>
-<vertex id="checkresolution" activityid=""></vertex>
-<vertex id="closecase" activityid=""></vertex>  
+<vertex id="opencase" bpmn_activityid="opencase" bpmn_activitylabel=""></vertex>
+<vertex id="analyzecase" bpmn_activityid="" bpmn_activitylabel=""></vertex>
+<vertex id="caseresolution" bpmn_activityid="" bpmn_activitylabel=""></vertex>
+<vertex id="notifyuser" bpmn_activityid="" bpmn_activitylabel=""></vertex>
+<vertex id="checkresolution" bpmn_activityid="" bpmn_activitylabel=""></vertex>
+<vertex id="closecase" bpmn_activityid="" bpmn_activitylabel=""></vertex>  
 </Trace>
 <TargetVertexes>
-<vertex id="opencase" activityid=""></vertex>
-<vertex id="checkresolution" activityid=""></vertex>
+<vertex id="opencase" bpmn_activityid="" bpmn_activitylabel=""></vertex>
+<vertex id="checkresolution" bpmn_activityid="" bpmn_activitylabel=""></vertex>
 </TargetVertexes>
 
 <InitialValuation>
-<DataObject id="" camundaid="FormField_issolutionworking" label="FormField_issolutionworking">yes</DataObject>
-<DataObject id="" camundaid="FormField_caseresolution" label="FormField_caseresolution">Change the DNS</DataObject>
+<DataObject id="" bpmn_camundaid="FormField_issolutionworking" bpmn_dolabel="FormField_issolutionworking">yes</DataObject>
+<DataObject id="" bpmn_camundaid="FormField_caseresolution" bpmn_dolabel="FormField_caseresolution">Change the DNS</DataObject>
 </InitialValuation>
 
 <ValuationOracle>
-<ValuationFunction id="opencase" activityid="opencase">
-<DataObject id="" camundaid="FormField_casepriority" label="FormField_casepriority">
+<ValuationFunction id="opencase" bpmn_activityid="opencase" bpmn_activitylabel="">
+<DataObject id="" bpmn_camundaid="FormField_casepriority" bpmn_dolabel="FormField_casepriority">
 Value_15h73hf
 </DataObject>
-<DataObject id="" camundaid="FormField_casepriority" label="FormField_casepriority">
+<DataObject id="" bpmn_camundaid="FormField_casepriority" bpmn_dolabel="FormField_casepriority">
 Value_15h73hf
 </DataObject>
 </ValuationFunction>
-<ValuationFunction id="Task_10opm4b" activityid="Task_10opm4b" >
-<DataObject id="" camundaid="FormField_1kl39d2" label="FormField_1kl39d2">
+<ValuationFunction id="Task_10opm4b" bpmn_activityid="Task_10opm4b" bpmn_activitylabel="">
+<DataObject id="" bpmn_camundaid="FormField_1kl39d2" bpmn_dolabel="FormField_1kl39d2">
 Internet
 </DataObject>
 
 </ValuationFunction>
-<ValuationFunction id="caseresolution" activityid="caseresolution">
-<DataObject id="" camundaid="FormField_caseresolution" label="FormField_caseresolution">
+<ValuationFunction id="caseresolution" bpmn_activityid="caseresolution" bpmn_activitylabel="">
+<DataObject id="" bpmn_camundaid="FormField_caseresolution" bpmn_dolabel="FormField_caseresolution">
 Change the DNS
 </DataObject>
 </ValuationFunction>
-<ValuationFunction id="checkresolution" activityid="checkresolution">
-<DataObject id="" camundaid="FormField_issolutionworking" label="FormField_issolutionworking">
+<ValuationFunction id="checkresolution" bpmn_activityid="checkresolution" bpmn_activitylabel="">
+<DataObject id="" bpmn_camundaid="FormField_issolutionworking" bpmn_dolabel="FormField_issolutionworking">
 true
 </DataObject>
 </ValuationFunction>

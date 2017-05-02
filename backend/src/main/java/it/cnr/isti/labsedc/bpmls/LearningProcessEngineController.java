@@ -62,7 +62,7 @@ import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenarioInstance;
  *
  */
 @RestController
-public class LearningProcessEngineController {
+public class LearningProcessEngineController implements LearningProcessEngineControllerI{
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 
@@ -79,7 +79,8 @@ public class LearningProcessEngineController {
 
 	private static String LEARNINGSCENARIO = "learningscenario1";
 
-	
+	@Autowired
+	private LearningProcessEngine learningProcessEngine;
 
 	/**
 	 * Given a learning scenario, it start the scenario runs each task and
@@ -93,7 +94,7 @@ public class LearningProcessEngineController {
 				.getDataObject().iterator();
 		while (i.hasNext()) {
 			LearningScenario.InitialValuation.DataObject dataObject = i.next();
-			variables.put(dataObject.getCamundaid(), dataObject.getValue());
+			variables.put(dataObject.getBpmnCamundaid(), dataObject.getValue());
 		}
 
 		// start the learning scenario which is the bpmn process
@@ -103,7 +104,7 @@ public class LearningProcessEngineController {
 			System.out.println(key + " " + variables.get(key));
 		}
 
-		String processinstanceId = runtimeService.startProcessInstanceByKey(learningScenario.getProcessid(), variables)
+		String processinstanceId = runtimeService.startProcessInstanceByKey(learningScenario.getBpmnProcessid(), variables)
 				.getId();
 		System.out.println("Starting successful");
 
@@ -164,6 +165,7 @@ public class LearningProcessEngineController {
 	 */
 	@RequestMapping(value = "/startlearningscenario", method = RequestMethod.GET)
 	public String startLearningScenario(@RequestParam(value = "lsid") String lsid) throws Exception {
+		
 		// temp setting
 		lsid = "learningscenario.xml";
 
@@ -178,7 +180,7 @@ public class LearningProcessEngineController {
 				.getDataObject().iterator();
 		while (i.hasNext()) {
 			LearningScenario.InitialValuation.DataObject dataObject = i.next();
-			variables.put(dataObject.getCamundaid(), dataObject.getValue());
+			variables.put(dataObject.getBpmnCamundaid(), dataObject.getValue());
 		}
 
 		// start the learning scenario which is the bpmn process
@@ -188,7 +190,7 @@ public class LearningProcessEngineController {
 			System.out.println(key + " " + variables.get(key));
 		}
 
-		String processinstanceId = runtimeService.startProcessInstanceByKey(learningScenario.getProcessid(), variables)
+		String processinstanceId = runtimeService.startProcessInstanceByKey(learningScenario.getBpmnProcessid(), variables)
 				.getId();
 		System.out.println("Starting successful");
 
@@ -215,7 +217,7 @@ public class LearningProcessEngineController {
 		System.out.println("Rows affected" + rowsaffected);
 		long primaryKey = holder.getKey().longValue();
 		String jsonreturn = "{" + "status:success," + "lsinstid:" + holder.getKey().toString() + "," + "lsid:"
-				+ lsid_final + "," + "pinstid:" + processinstanceId + "," + "pid:" + learningScenario.getProcessid()
+				+ lsid_final + "," + "pinstid:" + processinstanceId + "," + "pid:" + learningScenario.getBpmnProcessid()
 				+ "}";
 		// testLearningScenario(learningScenario);
 		return jsonreturn;
@@ -278,7 +280,7 @@ public class LearningProcessEngineController {
 		//get the correct taskid
 		while(vFuncsIt.hasNext()){
 			LearningScenario.ValuationOracle.ValuationFunction vFunc=vFuncsIt.next();
-			if(vFunc.getActivityid().equals(taskid)){
+			if(vFunc.getBpmnActivityid().equals(taskid)){
 				return vFunc.getDataObject();
 			}
 		}
@@ -327,11 +329,11 @@ public class LearningProcessEngineController {
 			//check if the taskDO value is present and same as expected else put a error message
 			//if not set the taskCompletedFlag to false and append an error message
 			//strip the unnecessary spaces and convert to lower cases
-			String formVal=formMap.get(taskDO.getCamundaid()).toString().replace("\n", "").replace("\r", "").toLowerCase();
+			String formVal=formMap.get(taskDO.getBpmnCamundaid()).toString().replace("\n", "").replace("\r", "").toLowerCase();
 			String lsOracleVal=taskDO.getValue().replace("\n", "").replace("\r", "").toLowerCase();
 			if(!(formVal).equals(lsOracleVal)){
 				errorCount+=1;
-				errorMsg.append(errorCount.toString()+"."+"expected value for "+taskDO.getCamundaid()+" is "+taskDO.getValue());
+				errorMsg.append(errorCount.toString()+"."+"expected value for "+taskDO.getBpmnCamundaid()+" is "+taskDO.getValue());
 				
 				taskCompletedFlag=false;
 				

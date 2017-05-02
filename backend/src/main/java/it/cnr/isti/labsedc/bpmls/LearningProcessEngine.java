@@ -2,66 +2,28 @@ package it.cnr.isti.labsedc.bpmls;
 
 import java.util.List;
 
-import org.camunda.bpm.engine.FormService;
-import org.camunda.bpm.engine.ProcessEngine;
-import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.task.Task;
-import org.camunda.bpm.model.bpmn.Bpmn;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
-import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction.DataObject;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenarioInstance;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction.DataObject;
 
-public class LearningProcessEngine {
-	@Autowired
-	JdbcTemplate jdbcTemplate;
+public interface LearningProcessEngine {
+	public List<LearningScenario> getDeployedLearningScenarios();
 
-	@Autowired
-	private RuntimeService runtimeService;
+	public LearningScenarioInstance startLearningScenario(LearningScenario learningScenario);
 
-	@Autowired
-	private TaskService taskService;
+	public LearningScenario getLearningScenario(String learningScenarioId);
 
-	@Autowired
-	private FormService formService;
-	
-	@Autowired
-	private ProcessEngine processEngine;
-	
-	private List<LearningScenario> deployedLearningScenarios;
-	
-	private List<LearningScenarioInstance> runningLearningScenarios;
+	public LearningScenarioInstance getLearningScenarioInstance(String learningScenarioInstanceId);
 
-	public void deployLearningScenario(LearningScenario learningScenario, Bpmn deployedBPMNRef){
-		
-	}
-	
-	public List<LearningScenario> getDeployedLearningScenarios(){
-		return deployedLearningScenarios;
-	}
-	
-	public LearningScenarioInstance startLearningScenario(LearningScenario learningScenario){
-		LearningScenarioInstance startedLPInst=null;
-		return startedLPInst;
-	}
+	public Task getCurrentLearningTask(LearningScenarioInstance learningScenarioInstance);
 
-	public LearningScenario getLearningScenario(String learningScenarioId){
-		LearningScenario retrivedLearningSenario=null;
-		return retrivedLearningSenario;	
-	}
+	public void completeLearningTask(LearningScenarioInstance learningScenarioInstance,
+			List<DataObject> userSubmittedDOs);
 	
-	public LearningScenarioInstance getLearningScenarioInstance(String learningScenarioInstanceId){
-		return null;
-	}
+	//public List<LearningPath> getDeployedLearningPaths();
 	
-	public Task getCurrentLearningTask(LearningScenarioInstance learningScenarioInstance){
-		return null;
-	}
-	
-	public void completeLearningTask(LearningScenarioInstance learningScenarioInstance,List<DataObject> userSubmittedDOs){
-		
-	}
+	//public 
 }
