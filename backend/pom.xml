@@ -3,23 +3,28 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
+	<groupId>it.cnr.isti.labsedc.bpmls</groupId>
 	<artifactId>backend</artifactId>
 
-	<name>backend</name>
-	<description>BPMLS backend</description>
+	<name>BPMLS Backend</name>
+	<description>BPMLS Backend Engine</description>
 
 	<parent>
-	<groupId>com.bpmls</groupId>
-	<artifactId>parent</artifactId>
+	<groupId>it.cnr.isti.labsedc.bpmls</groupId>
+	<artifactId>bpmls-framework</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	
-	 <dependencyManagement>
+	<properties>
+		<camunda.version>2.0.0</camunda.version>
+	</properties>
+
+	<dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>org.camunda.bpm.extension.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-bom</artifactId>
-      <version>2.0.0</version>
+      <version>${camunda.version}</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -32,7 +37,7 @@
 	<dependency>
       <groupId>org.camunda.bpm.extension.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-bom</artifactId>
-      <version>2.0.0</version>
+      <version>${camunda.version}</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
