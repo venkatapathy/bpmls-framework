@@ -114,28 +114,14 @@ public class LearningProcessEngineImpl implements LearningProcessEngine {
 
 	}
 
-	/**
-	 * Returns a {@link LearningPathInstance} given its lsInstId
-	 * @param lpInstId
-	 * @return {@link LearningPathInstance}
-	 */
-	private LearningPathInstance getLearningPathInstance(String lpInstId){
-		
-		List<LearningPathInstance> rows = new ArrayList<LearningPathInstance>();
-		rows = jdbcTemplate.query("SELECT count(*) from learningpathinstance WHERE lpinstid=?", new Object[] { lpInstId },
-					new BeanPropertyRowMapper<LearningPathInstance>(LearningPathInstance.class));
-		// get the first row, since there should be only one
-
-		//assumed there is only one LearningPathInstance
-		return rows.iterator().next();
-	}
+	
 	
 	public void startaLearningPath(LearningPath learningPath) throws LearningPathException{
 		//when you start a learning path
 		
 		//1. make sure that the learning path is not already started
 		//PreparedStatementCreator
-		Integer rowCount= jdbcTemplate.query("SELECT count(*) from learningpathinstance WHERE learningpathid='?'",new Object[] { learningPath.getId() },new ResultSetExtractor<Integer>(){  
+		Integer rowCount= jdbcTemplate.query("SELECT count(*) from learningpathinstance WHERE learningpathid=?",new Object[] { learningPath.getId() },new ResultSetExtractor<Integer>(){  
 		    @Override  
 		     public Integer extractData(ResultSet rs) throws SQLException,  
 		            DataAccessException {  
@@ -145,12 +131,12 @@ public class LearningProcessEngineImpl implements LearningProcessEngine {
 		        	return rs.getInt(1);  
 		        
 		        }     
-		        return -1;
+		        return 0;
 		    }
 		          
 		    } );
 		
-		if(rowCount!=-1) throw new LearningPathException("Learning path has already been started! Cannot start again!!");
+		if(rowCount.intValue()!=0) throw new LearningPathException("Learning path has already been started! Cannot start again!!");
 		
 		
 		//2. create an entry in the learning path instance table
@@ -169,9 +155,39 @@ public class LearningProcessEngineImpl implements LearningProcessEngine {
 
 		
 		//3. add to running learningpaths list
-		runningLearningPaths.add(getLearningPathInstance(holder.getKey().toString()));
+		
+		//if first time init the list
+		if(runningLearningPaths==null) runningLearningPaths= new ArrayList<LearningPathInstance>();
+		
+		runningLearningPaths.add(getRunningLearningPath(holder.getKey().toString()));
 		
 		logger.info("started LearningPath with instance id:");
 		
+	}
+	
+	
+	
+	public List<LearningPathInstance> getRunningLearningPaths(){
+		return runningLearningPaths;
+	}
+	
+	public List<LearningPath> getDeployedLearningPaths(){
+		return deployedLearningPaths;
+	}
+	
+	
+	/**
+	 * Returns a {@link LearningPathInstance} given its lsInstId
+	 * @param lpInstId
+	 * @return {@link LearningPathInstance}
+	 */
+	public LearningPathInstance getRunningLearningPath(String lpInstId){
+		List<LearningPathInstance> rows = new ArrayList<LearningPathInstance>();
+		rows = jdbcTemplate.query("SELECT * from learningpathinstance WHERE lpinstid=?", new Object[] { lpInstId },
+					new BeanPropertyRowMapper<LearningPathInstance>(LearningPathInstance.class));
+		// get the first row, since there should be only one
+
+		//assumed there is only one LearningPathInstance
+		return rows.iterator().next();
 	}
 }
