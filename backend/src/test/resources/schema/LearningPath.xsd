@@ -1,0 +1,85 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.isti.cnr.it/research/unit.php?unit=SEDC" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="LearningPath">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Prerequesties">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="PreLearningPath" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:string">
+                      <xs:attribute type="xs:string" name="pre_lpid" use="optional"/>
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Competencies">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Competency" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:string">
+                      <xs:attribute type="xs:string" name="id" use="optional"/>
+                      <xs:attribute type="xs:string" name="name" use="optional"/>
+                      <xs:attribute type="xs:string" name="url" use="optional"/>
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="LearningActivities">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="LearningActivity" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:string">
+                      <xs:attribute type="xs:string" name="id" use="optional"/>
+                      <xs:attribute type="xs:string" name="bpmn_activityid" use="optional"/>
+                      <xs:attribute type="xs:string" name="competencyid" use="optional"/>
+                      <xs:attribute type="xs:string" name="bpmn_activitylabel" use="optional"/>
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="LearningGoals">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="LearningGoal" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="LearningScenario">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:string">
+                            <xs:attribute type="xs:string" name="lsid" use="optional"/>
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element type="xs:string" name="KPIs"/>
+                  </xs:sequence>
+                  <xs:attribute type="xs:string" name="id" use="optional"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="competencyid"/>
+      <xs:attribute type="xs:string" name="id"/>
+      <xs:attribute type="xs:string" name="name"/>
+      <xs:attribute type="xs:string" name="processid"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

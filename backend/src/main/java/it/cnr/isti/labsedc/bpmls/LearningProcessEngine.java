@@ -5,12 +5,14 @@ import java.util.List;
 import org.camunda.bpm.engine.task.Task;
 
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPathException;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPathInstance;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenarioInstance;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction.DataObject;
 
 public interface LearningProcessEngine {
-	public List<LearningScenario> getDeployedLearningScenarios();
+	/*public List<LearningScenario> getDeployedLearningScenarios();
 
 	public LearningScenarioInstance startLearningScenario(LearningScenario learningScenario);
 
@@ -22,8 +24,14 @@ public interface LearningProcessEngine {
 
 	public void completeLearningTask(LearningScenarioInstance learningScenarioInstance,
 			List<DataObject> userSubmittedDOs);
+			
+	*/
 	
-	//public List<LearningPath> getDeployedLearningPaths();
-	
-	//public 
+	/**
+	 * This will start a given learning path. Throws a LearningPathException
+	 * if the learningpath is already started
+	 * @param learningPath
+	 */
+	public void startaLearningPath(LearningPath learningPath) throws LearningPathException;
+	 
 }
