@@ -1,4 +1,4 @@
-package it.cnr.isti.labsedc.bpmls.test;
+package it.cnr.isti.labsedc.bpmls.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
