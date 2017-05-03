@@ -33,5 +33,10 @@ public interface LearningProcessEngine {
 	 * @param learningPath
 	 */
 	public void startaLearningPath(LearningPath learningPath) throws LearningPathException;
-	 
+	
+	public List<LearningPathInstance> getRunningLearningPaths();
+	
+	public List<LearningPath> getDeployedLearningPaths();
+	
+	public LearningPathInstance getRunningLearningPath(String lpInstId);
 }
