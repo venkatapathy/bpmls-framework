@@ -1,4 +1,4 @@
-package com.bpmls;
+package it.cnr.isti.labsedc.bpmls.tests;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
