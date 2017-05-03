@@ -1,0 +1,1 @@
+<a class="btn btn-large btn-success" href="javascript:void(0);" (click)="startIntro();">Show me how</a>

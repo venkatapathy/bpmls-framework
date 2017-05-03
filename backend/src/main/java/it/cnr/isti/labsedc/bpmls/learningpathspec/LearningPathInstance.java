@@ -5,8 +5,8 @@ import java.util.List;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath.LearningActivities.LearningActivity;
 
 public class LearningPathInstance {
-	private long learningPathInstanceid;
-	private String learningPathId;
+	private long lpinstid;
+	private String learningpathid;
 	private List<LearningScenarioInstance> completedLSIntances;
 	private LearningScenarioInstance currentLSI;
 	private List<LearningActivity> completedLearningActivities;

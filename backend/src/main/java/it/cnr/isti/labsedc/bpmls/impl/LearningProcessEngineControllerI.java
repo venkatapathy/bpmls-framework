@@ -1,4 +1,4 @@
-package it.cnr.isti.labsedc.bpmls;
+package it.cnr.isti.labsedc.bpmls.impl;
 
 import org.springframework.web.bind.annotation.RequestParam;
 

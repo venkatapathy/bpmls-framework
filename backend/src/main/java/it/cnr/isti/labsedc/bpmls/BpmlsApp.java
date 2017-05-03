@@ -34,10 +34,16 @@ public class BpmlsApp{
     public void init(){
 		System.out.println("Creating learningscenarioinstance table");
 
+		//table necessary for learning scenario instance
         jdbcTemplate.execute("DROP TABLE learningscenarioinstance IF EXISTS");
         jdbcTemplate.execute("CREATE TABLE learningscenarioinstance(" +
                 "lsinstid SERIAL, learningscenarioid VARCHAR(255), processinstanceid VARCHAR(255))");
 
        
+        //table necessar for learning path instance
+        jdbcTemplate.execute("DROP TABLE learningpathinstance IF EXISTS");
+        jdbcTemplate.execute("CREATE TABLE learningpathinstance(" +
+                "lpinstid SERIAL, learningpathid VARCHAR(255), currentlsinst INTEGER(255))");
+
 	}
 }

@@ -58,7 +58,9 @@ export class SimulatorComponent implements AfterViewInit{
             let prompt=JSON.parse("{\"steps\": [{ \"intro\": \"welcome to case \"}]}");
              let component = this.createDynamicComponent(response,prompt,this);
              let componentFactory = this.adHocComponentFactoryCreator.getFactory(component);
+             this.parent.clear();
              let componentRef=this.parent.createComponent(componentFactory);
+             
              componentRef.changeDetectorRef.detectChanges();
         });
     }
