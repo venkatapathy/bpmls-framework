@@ -11,6 +11,11 @@ import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenarioInstance;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction.DataObject;
 
+/**
+ * 
+ * @author venkat
+ *
+ */
 public interface LearningProcessEngine {
 	/*public List<LearningScenario> getDeployedLearningScenarios();
 
@@ -34,9 +39,22 @@ public interface LearningProcessEngine {
 	 */
 	public void startaLearningPath(LearningPath learningPath) throws LearningPathException;
 	
+	/**gets the current learning path as Learningpath instances
+	 * 
+	 * @return {@link List} of {@link LearningPathInstance}
+	 */
 	public List<LearningPathInstance> getRunningLearningPaths();
 	
+	/**gets the current learning path as Learningpath class
+	 * 
+	 * @return {@link List} of {@link LearningPath}
+	 */
 	public List<LearningPath> getDeployedLearningPaths();
 	
+	/**
+	 * Returns a learning path instance given its instance id
+	 * @param lpInstId the id of the Learningpath instance as String
+	 * @return the {@link LearningPathInstance} if found. null otherwise
+	 */
 	public LearningPathInstance getRunningLearningPath(String lpInstId);
 }
