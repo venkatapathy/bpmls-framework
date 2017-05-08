@@ -36,8 +36,8 @@ import it.cnr.isti.labsedc.bpmls.HtmlFormEngine;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRepositoryService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRuntimeService;
 import it.cnr.isti.labsedc.bpmls.LearningProcessEngine;
+import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
-import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPathInstance;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction.DataObject;
@@ -50,15 +50,7 @@ public class LearningProcessEngineImpl implements LearningProcessEngine {
 
 	private final Logger logger = LoggerFactory.getLogger(LearningProcessEngineImpl.class);
 
-	@Autowired
-	private RuntimeService runtimeService;
-
-	@Autowired
-	private TaskService taskService;
-
-	@Autowired
-	private FormService formService;
-
+	
 	@Autowired
 	private ProcessEngine processEngine;
 
