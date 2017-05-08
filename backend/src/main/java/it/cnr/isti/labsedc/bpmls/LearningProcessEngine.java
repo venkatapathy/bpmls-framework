@@ -32,29 +32,27 @@ public interface LearningProcessEngine {
 			
 	*/
 	
-	/**
-	 * This will start a given learning path. Throws a LearningPathException
-	 * if the learningpath is already started
-	 * @param learningPath
-	 */
-	public void startaLearningPath(LearningPath learningPath) throws LearningPathException;
+	public LearningEngineRepositoryService getLearningEngineRepositoryService();
 	
-	/**gets the current learning path as Learningpath instances
-	 * 
-	 * @return {@link List} of {@link LearningPathInstance}
-	 */
-	public List<LearningPathInstance> getRunningLearningPaths();
+	public LearningEngineRuntimeService getLearningEngineRuntimeService();
 	
-	/**gets the current learning path as Learningpath class
-	 * 
-	 * @return {@link List} of {@link LearningPath}
-	 */
-	public List<LearningPath> getDeployedLearningPaths();
 	
-	/**
-	 * Returns a learning path instance given its instance id
-	 * @param lpInstId the id of the Learningpath instance as String
-	 * @return the {@link LearningPathInstance} if found. null otherwise
-	 */
-	public LearningPathInstance getRunningLearningPath(String lpInstId);
+	
+	
+	
+//	/**
+//	 * This will get the current learning task of the current learning scenario
+//	 * 
+//	 * @param {@link LearningPathInstance} LpIntance for which the task is seeked
+//	 * @return {@link Task} Human task that is currently waiting for the given LPInstance. null if there are no task 
+//	 * 
+//	 */
+//	public Task getCurrentLearningTask(LearningPathInstance lpInstance);
+//	
+//	
+//	
+//	//public Task getCurrentLearningTask(String lpInstId);
+//	
+//	
+//	public void startNextLearningScenario(LearningPathInstance lpInstance) throws LearningPathException;
 }

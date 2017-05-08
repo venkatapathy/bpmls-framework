@@ -1,4 +1,4 @@
-<LearningPath competencyid="" id="Learning Path1" name="Learning Path1" processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<LearningPath competencyid="" id="LearningPath1" name="Learning Path1" processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
 
 <Prerequesties>
 <PreLearningPath refid=""/>
@@ -17,12 +17,12 @@
 
 <LearningGoals>
 <LearningGoal id="">
-<LearningScenario lsid=""/>
+<LearningScenario lsid="learningscenario1"/>
 <KPIs>
 </KPIs>
 </LearningGoal>
 <LearningGoal id="">
-<LearningScenario lsid=""/>
+<LearningScenario lsid="learningscenario2"/>
 <KPIs>
 </KPIs>
 </LearningGoal>

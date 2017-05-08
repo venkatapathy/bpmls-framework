@@ -18,7 +18,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
 
-@Configuration
+//removed @configuration cause there is soem problem
 public class CamundaProcessEngineConfiguration {
 
 	@Bean
