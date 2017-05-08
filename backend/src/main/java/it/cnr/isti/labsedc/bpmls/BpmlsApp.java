@@ -16,8 +16,7 @@ import org.slf4j.LoggerFactory;
 @EnableProcessApplication
 public class BpmlsApp{
 	
-	@Autowired
-    JdbcTemplate jdbcTemplate;
+	
 	
 	
 	public static void main(String[] args) {
@@ -32,18 +31,9 @@ public class BpmlsApp{
 	
 	@PostConstruct
     public void init(){
-		System.out.println("Creating learningscenarioinstance table");
+		System.out.println("Entering the Application");
 
-		//table necessary for learning scenario instance
-        jdbcTemplate.execute("DROP TABLE learningscenarioinstance IF EXISTS");
-        jdbcTemplate.execute("CREATE TABLE learningscenarioinstance(" +
-                "lsinstid SERIAL, learningscenarioid VARCHAR(255), processinstanceid VARCHAR(255))");
-
-       
-        //table necessar for learning path instance
-        jdbcTemplate.execute("DROP TABLE learningpathinstance IF EXISTS");
-        jdbcTemplate.execute("CREATE TABLE learningpathinstance(" +
-                "lpinstid SERIAL, learningpathid VARCHAR(255), currentlsinst INTEGER(255))");
+		
 
 	}
 }

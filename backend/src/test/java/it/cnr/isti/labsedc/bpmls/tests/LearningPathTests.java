@@ -16,7 +16,8 @@ import it.cnr.isti.labsedc.bpmls.BpmlsApp;
 import it.cnr.isti.labsedc.bpmls.LearningProcessEngine;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPathException;
-import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPathInstance;
+import it.cnr.isti.labsedc.bpmls.persistance.LearningPathInstance;
+import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioInstance;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BpmlsApp.class)
@@ -26,31 +27,53 @@ public class LearningPathTests {
 	private LearningProcessEngine learningProcessEngine;
 
 	@Test
-	public void testStartingLearningPath() throws LearningPathException{
-		//there should be only one deployed learning process
-		List<LearningPath> deployedLps=learningProcessEngine.getDeployedLearningPaths();
+	public void learningPathtest() throws LearningPathException {
+		// there should be only one deployed learning process
+		List<LearningPath> deployedLps = learningProcessEngine.getLearningEngineRepositoryService()
+				.getDeployedLearningPaths();
 		Assert.assertEquals(1, deployedLps.size());
-		
-		//start a learningpath
-		learningProcessEngine.startaLearningPath(deployedLps.get(0));
-		
-		List<LearningPathInstance> lpInsts=learningProcessEngine.getRunningLearningPaths();
-		Assert.assertEquals(1, lpInsts.size());
-		
-		LearningPathInstance retLPInst=learningProcessEngine.getRunningLearningPath(lpInsts.get(0).getLpinstid());
-		Assert.assertTrue(lpInsts.get(0).getLpinstid().equals(retLPInst.getLpinstid()));
+
+		// start a learningpath
+		learningProcessEngine.getLearningEngineRuntimeService().startaLearningPathById(deployedLps.get(0).getId());
+
+		// check if only one running learning path is there
+		Assert.assertEquals(1,
+				learningProcessEngine.getLearningEngineRuntimeService().getRunningLearningPaths().size());
+
+		// check if the id is the same
+		Assert.assertEquals(deployedLps.get(0).getId(),
+				learningProcessEngine.getLearningEngineRuntimeService().getRunningLearningPaths().get(0).getLpId());
+
 	}
-	
-	@Test(expected=LearningPathException.class)
-	public void testStartingLpTwice() throws LearningPathException{
-		//there should be only one deployed learning process
-				List<LearningPath> deployedLps=learningProcessEngine.getDeployedLearningPaths();
-				
-				
-				//start a learningpath
-				learningProcessEngine.startaLearningPath(deployedLps.get(0));
-				
-				learningProcessEngine.startaLearningPath(deployedLps.get(0));
+
+	@Test(expected = LearningPathException.class)
+	public void startAnotherLearningProcessInstance() throws LearningPathException{
+		// there should be only one deployed learning process
+		List<LearningPath> deployedLps = learningProcessEngine.getLearningEngineRepositoryService()
+				.getDeployedLearningPaths();
+
+		// start a learningpath- will throw an exception
+		learningProcessEngine.getLearningEngineRuntimeService().startaLearningPathById(deployedLps.get(0).getId());
+	}
+
+	@Test
+	public void learningScenarioTest() throws LearningPathException {
+		// get the running learningpath
+		List<LearningPath> deployedLps = learningProcessEngine.getLearningEngineRepositoryService()
+				.getDeployedLearningPaths();
+		LearningPathInstance lpInst = learningProcessEngine.getLearningEngineRuntimeService()
+				.getRunningLearningPathBylpId(deployedLps.get(0).getId());
+
+		LearningScenarioInstance nextLsInst= learningProcessEngine.getLearningEngineRuntimeService()
+				.getNextLearningScenarioByLpInstId(Integer.toString(lpInst.getLpInstId()));
+		
+		//Should be the first learningscenario
+		Assert.assertEquals("learningscenario1", nextLsInst.getLsId());
+		
+		//since no learningscenario started should be null
+		LearningScenarioInstance currentLsInst= learningProcessEngine.getLearningEngineRuntimeService()
+				.getRunningLearningScenario(Integer.toString(lpInst.getLpInstId()));
+		Assert.assertNull(currentLsInst);
 	}
 
 }

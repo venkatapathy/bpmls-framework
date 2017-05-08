@@ -32,6 +32,9 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
+import it.cnr.isti.labsedc.bpmls.HtmlFormEngine;
+import it.cnr.isti.labsedc.bpmls.LearningEngineRepositoryService;
+import it.cnr.isti.labsedc.bpmls.LearningEngineRuntimeService;
 import it.cnr.isti.labsedc.bpmls.LearningProcessEngine;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPathException;
@@ -59,135 +62,111 @@ public class LearningProcessEngineImpl implements LearningProcessEngine {
 	@Autowired
 	private ProcessEngine processEngine;
 
-	private List<LearningScenario> deployedLearningScenarios;
+	@Autowired
+	private LearningEngineRepositoryService learningEngineRepositoryService;
 
-	private List<LearningPath> deployedLearningPaths;
-
-	private List<LearningScenarioInstance> runningLearningScenarios;
-
-	private List<LearningPathInstance> runningLearningPaths;
+	@Autowired
+	private LearningEngineRuntimeService learningEngineRuntimeService;
 
 	LearningProcessEngineImpl() {
 		logger.info("Empty Constructor of LearningProcessEngine");
 	}
 
-	/**
-	 * When you start the application as spring boot, deploy the learning
-	 * scenarios
-	 */
-	@EventListener
-	public void initLPE(final ProcessApplicationStartedEvent unused) throws Exception {
-		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+	public LearningEngineRepositoryService getLearningEngineRepositoryService(){
+		return this.learningEngineRepositoryService;
+	
+	}	
 
-		// Ant-style path matching
-		Resource[] resources = resolver.getResources("/schema/**");
-
-		// Deploy LearningPath, Learning Scenarios independently using
-		// DeploymentManager
-		DeploymentManager learningDM = new DeploymentManager();
-
-		// deploy learning paths
-		deployedLearningPaths = learningDM.deployLearningPaths(resources);
-
-		if (deployedLearningPaths == null) {
-			logger.info("No Learning Paths to deploy");
-		} else {
-			logger.info("Deployed following Learning Paths from the resources classpath:");
-
-			for (LearningPath lp : deployedLearningPaths) {
-				logger.info("Deployed Learning Path: " + lp.getName());
-			}
-		}
-
-		// deploy learning scenarios
-		deployedLearningScenarios = learningDM.deployLearningScenarios(resources);
-
-		if (deployedLearningScenarios == null) {
-			logger.info("No Learning Sceanrios to deploy");
-		} else {
-			logger.info("Deployed following Learning Scenarios from the resources classpath:");
-
-			for (LearningScenario ls : deployedLearningScenarios) {
-				logger.info("Deployed Learning Scenarios: " + ls.getName());
-			}
-		}
-
+	public LearningEngineRuntimeService getLearningEngineRuntimeService(){
+		return this.learningEngineRuntimeService;
 	}
 
-	
-	
-	public void startaLearningPath(LearningPath learningPath) throws LearningPathException{
-		//when you start a learning path
-		
-		//1. make sure that the learning path is not already started
-		//PreparedStatementCreator
-		Integer rowCount= jdbcTemplate.query("SELECT count(*) from learningpathinstance WHERE learningpathid=?",new Object[] { learningPath.getId() },new ResultSetExtractor<Integer>(){  
-		    @Override  
-		     public Integer extractData(ResultSet rs) throws SQLException,  
-		            DataAccessException {  
-		       
-		        while(rs.next()){  
-		        
-		        	return rs.getInt(1);  
-		        
-		        }     
-		        return 0;
-		    }
-		          
-		    } );
-		
-		if(rowCount.intValue()!=0) throw new LearningPathException("Learning path has already been started! Cannot start again!!");
-		
-		
-		//2. create an entry in the learning path instance table
-		GeneratedKeyHolder holder = new GeneratedKeyHolder();
-		int rowsaffected = jdbcTemplate.update(new PreparedStatementCreator() {
-			@Override
-			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-				PreparedStatement statement = con.prepareStatement(
-						"INSERT INTO learningpathinstance(learningpathid, currentlsinst) VALUES (?, ?) ",
-						Statement.RETURN_GENERATED_KEYS);
-				statement.setString(1, learningPath.getId());
-				statement.setInt(2, -1);
-				return statement;
-			}
-		}, holder);
-
-		
-		//3. add to running learningpaths list
-		
-		//if first time init the list
-		if(runningLearningPaths==null) runningLearningPaths= new ArrayList<LearningPathInstance>();
-		
-		runningLearningPaths.add(getRunningLearningPath(holder.getKey().toString()));
-		
-		logger.info("started LearningPath with instance id:");
-		
+	// public List<LearningPathInstance> getRunningLearningPaths(){
+	// return runningLearningPaths;
+	// }
+	//
+	// public List<LearningPath> getDeployedLearningPaths(){
+	// return deployedLearningPaths;
+	// }
+	//
+	//
+	// /**
+	// * Returns a {@link LearningPathInstance} given its lsInstId
+	// * @param lpInstId
+	// * @return {@link LearningPathInstance}
+	// */
+	// public LearningPathInstance getRunningLearningPath(String lpInstId){
+	// List<LearningPathInstance> rows = new ArrayList<LearningPathInstance>();
+	// rows = jdbcTemplate.query("SELECT * from learningpathinstance WHERE
+	// lpinstid=?", new Object[] { lpInstId },
+	// new
+	// BeanPropertyRowMapper<LearningPathInstance>(LearningPathInstance.class));
+	// // get the first row, since there should be only one
+	//
+	// //assumed there is only one LearningPathInstance
+	// return rows.iterator().next();
+	// }
+	//
+	// private LearningScenarioInstance
+	// getRunningLearningScenario(LearningPathInstance lp){
+	// //first get the currentlsinstid, if null then no lsinst
+	// if(lp.getCurrentlsInstid()==null){
+	// return null;
+	// }
+	//
+	// //else get it from db
+	// List<LearningScenarioInstance> rows = new
+	// ArrayList<LearningScenarioInstance>();
+	// rows = jdbcTemplate.query("SELECT * from learningscenarioinstance WHERE
+	// lsinstid=?", new Object[]{lp.getCurrentlsInstid()},
+	// new
+	// BeanPropertyRowMapper<LearningScenarioInstance>(LearningScenarioInstance.class));
+	// // get the first row, since there should be only one
+	//
+	// return rows.iterator().next();
+	// }
+	//
+	// /**
+	// * This will start the current learning task of the current learning
+	// scenario
+	// *
+	// * @param {@link LearningPathInstance} LpIntance for which the task is
+	// seeked
+	// * @return {@link Task} Human task that is currently waiting for the given
+	// LPInstance. null if there is no task
+	// *
+	// */
+	// public Task getCurrentLearningTask(LearningPathInstance lpInstance){
+	// //first check if there is any LearningScenario that is running, if none
+	// return null
+	// if(lpInstance.getCurrentlsInstid()==null){
+	// return null;
+	// }
+	// //get the process instance corresponding to the current learning scenario
+	// LearningScenarioInstance lsinst=getRunningLearningScenario(lpInstance);
+	//
+	// //return the corresponding task
+	// Task task =
+	// taskService.createTaskQuery().processInstanceId(lsinst.getProcessInstanceId()).singleResult();
+	//
+	// return task;
+	// }
+	//
+	// public void startNextLearningScenario(LearningPathInstance lpInstance)
+	// throws LearningPathException{
+	// check if a Learning Scenario is already running. If so throw exception
+	// because
+	// there can be only one learningscenarioinstance running for a lpinstance
+	// at a time
+//	if(lpInstance.getCurrentlsInstid()!=null)
+//
+//	{
+//		throw new LearningPathException(
+//				"A Learning Scenario already running with instance id: " + lpInstance.getCurrentlsInstid());
+//	}
+//
+//	// check whats the nextlearningscenario in the line
+//	lpInstance.getLearningpathid()
+//	// start the nextintheline learning scenario
+//}
 	}
-	
-	
-	
-	public List<LearningPathInstance> getRunningLearningPaths(){
-		return runningLearningPaths;
-	}
-	
-	public List<LearningPath> getDeployedLearningPaths(){
-		return deployedLearningPaths;
-	}
-	
-	
-	/**
-	 * Returns a {@link LearningPathInstance} given its lsInstId
-	 * @param lpInstId
-	 * @return {@link LearningPathInstance}
-	 */
-	public LearningPathInstance getRunningLearningPath(String lpInstId){
-		List<LearningPathInstance> rows = new ArrayList<LearningPathInstance>();
-		rows = jdbcTemplate.query("SELECT * from learningpathinstance WHERE lpinstid=?", new Object[] { lpInstId },
-					new BeanPropertyRowMapper<LearningPathInstance>(LearningPathInstance.class));
-		// get the first row, since there should be only one
-
-		//assumed there is only one LearningPathInstance
-		return rows.iterator().next();
-	}
-}

@@ -1,4 +1,4 @@
-<LearningScenario id="learningscenario1" name="Learning Scenario1" bpmn_processlabel="" bpmn_processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<LearningScenario id="learningscenario2" name="Learning Scenario2" bpmn_processlabel="" bpmn_processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
 <Trace>
 <vertex id="opencase" bpmn_activityid="opencase" bpmn_activitylabel=""></vertex>
 <vertex id="analyzecase" bpmn_activityid="" bpmn_activitylabel=""></vertex>
