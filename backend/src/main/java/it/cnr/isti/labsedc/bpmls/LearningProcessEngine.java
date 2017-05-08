@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.camunda.bpm.engine.task.Task;
 
+import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
-import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPathInstance;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenarioInstance;
@@ -51,8 +51,6 @@ public interface LearningProcessEngine {
 //	
 //	
 //	
-//	//public Task getCurrentLearningTask(String lpInstId);
-//	
-//	
-//	public void startNextLearningScenario(LearningPathInstance lpInstance) throws LearningPathException;
+	//public Task getCurrentLearningTask(String lpInstId);
+	
 }

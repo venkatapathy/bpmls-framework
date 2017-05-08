@@ -1,4 +1,4 @@
-package it.cnr.isti.labsedc.bpmls.learningpathspec;
+package it.cnr.isti.labsedc.bpmls.Exceptions;
 
 public class LearningPathException extends Exception {
 	// Parameterless Constructor

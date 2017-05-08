@@ -34,12 +34,15 @@ public class LearningScenarioInstance {
 	@JoinColumn(name="lpInstId")
 	private LearningPathInstance lpInstance;
 	
+	private String processInstanceId;
+	
 	private int orderinLP;
 	
 	private String status;
 	
 	private String result;
 
+	
 	public int getLsInstId() {
 		return lsInstId;
 	}
@@ -86,6 +89,14 @@ public class LearningScenarioInstance {
 
 	public void setResult(String result) {
 		this.result = result;
+	}
+
+	public String getProcessInstanceId() {
+		return processInstanceId;
+	}
+
+	public void setProcessInstanceId(String processInstanceId) {
+		this.processInstanceId = processInstanceId;
 	}
 	
 	

@@ -13,8 +13,8 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 import it.cnr.isti.labsedc.bpmls.LearningEngineRepositoryService;
+import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
-import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
 
 @Component

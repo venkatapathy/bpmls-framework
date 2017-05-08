@@ -11,6 +11,9 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.camunda.bpm.engine.FormService;
+import org.camunda.bpm.engine.RuntimeService;
+import org.camunda.bpm.engine.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +27,11 @@ import org.springframework.stereotype.Component;
 
 import it.cnr.isti.labsedc.bpmls.LearningEngineRepositoryService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRuntimeService;
+import it.cnr.isti.labsedc.bpmls.OracleService;
+import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath.LearningGoals;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath.LearningGoals.LearningGoal;
-import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
 
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathInstance;
@@ -49,6 +53,18 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	@Autowired
 	LearningEngineRepositoryService lpRepositoryService;
 
+	@Autowired
+	private RuntimeService runtimeService;
+
+	@Autowired
+	private TaskService taskService;
+
+	@Autowired
+	private FormService formService;
+
+	@Autowired
+	private OracleService oracleService;
+	
 	LearningEngineRuntimeServiceImpl() {
 		logger.info("Empty Constructor of LearningEngineRuntimeService");
 	}
@@ -110,7 +126,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 
 		// set LpInstance for all lps instance
 
-		System.out.print("to stop");
+		//System.out.print("to stop");
 		// //3. add to running learningpaths list
 		//
 		// //if first time init the list
@@ -149,7 +165,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 			return null;
 	}
 
-	public LearningScenarioInstance getRunningLearningScenario(String lpInstId) {
+	public LearningScenarioInstance getRunningLearningScenarioByIpInstId(String lpInstId) {
 		List<LearningScenarioInstance> curLs = lsRepository.findBylpInstanceAndStatusOrderByOrderinLP(
 				lpRepository.findByLpInstId(Integer.parseInt(lpInstId)), "running");
 
@@ -159,5 +175,41 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		// else return null
 		else
 			return null;
+	}
+	
+	@Transactional
+	public void startNextLearningScenario(String lpInstId) throws LearningPathException{
+		LearningScenarioInstance lsInst=getRunningLearningScenarioByIpInstId(lpInstId);
+		
+		//if there is a LS already running, throw exception
+		if(lsInst!=null){
+			throw new LearningPathException("A Learning Scenario for the LS ID: "+lsInst.getLsId()+" is already running");
+		}
+		
+		lsInst=getNextLearningScenarioByLpInstId(lpInstId);
+		//no next LS available throw exception
+		if(lsInst==null){
+			LearningPathInstance lp=getRunningLearningPathBylpId(lpInstId);
+			
+			throw new LearningPathException("There are no next learningscenarios available for Learning path: "+lp.getLpId());
+		}
+		
+		//what is starting a learning scenario instance?
+		
+		//1. start the corresponding BPMN Process
+		LearningScenario corLS=lpRepositoryService.getDeployedLearningScenario(lsInst.getLsId());
+		String processId=corLS.getBpmnProcessid();
+		String processInstId=runtimeService.startProcessInstanceByKey(processId).getProcessInstanceId();
+		//2. change the status in LSI
+		lsInst.setStatus("running");
+		//3. set the processinstanceid in LSI
+		lsInst.setProcessInstanceId(processInstId);
+		
+		//set the initial values to the oracle
+		oracleService.updateOracleValues(lsInst, corLS.getInitialValuation().getDataObject());
+		lsRepository.save(lsInst);	
+		
+		//save everythin
+		
 	}
 }

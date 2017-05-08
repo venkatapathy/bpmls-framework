@@ -2,8 +2,8 @@ package it.cnr.isti.labsedc.bpmls;
 
 import java.util.List;
 
+import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
-import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
 
 public interface LearningEngineRepositoryService {

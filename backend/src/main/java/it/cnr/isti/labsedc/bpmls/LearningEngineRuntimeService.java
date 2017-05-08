@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.camunda.bpm.engine.task.Task;
 
+import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
-import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathInstance;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioInstance;
 
@@ -32,8 +32,9 @@ public interface LearningEngineRuntimeService {
 	
 	public LearningScenarioInstance getNextLearningScenarioByLpInstId(String lpInstId);
 	
-	public LearningScenarioInstance getRunningLearningScenario(String lpInstId);
+	public LearningScenarioInstance getRunningLearningScenarioByIpInstId(String lpInstId);
 	
+	public void startNextLearningScenario(String lpInstId) throws LearningPathException;
 		
 //	/**
 //	 * Returns a learning path instance given its instance id
