@@ -89,3 +89,10 @@ public void initLPE(final ProcessApplicationStartedEvent unused) throws Exceptio
 	public Task getCurrentLearningTask(String learningPathInstanceId);
 	
 	public void completeLearningTask(String learningPathInstanceId, List<DataObject> userSubmittedDOs);
+	
+	
+	
+	_____
+	<configuration>
+          <skipTests>true</skipTests>
+        </configuration>
