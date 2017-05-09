@@ -17,12 +17,17 @@
 
 <LearningGoals>
 <LearningGoal id="">
+<LearningScenarios>
 <LearningScenario lsid="learningscenario1"/>
+<LearningScenario lsid="learningscenario2"/>
+</LearningScenarios>
 <KPIs>
 </KPIs>
 </LearningGoal>
 <LearningGoal id="">
-<LearningScenario lsid="learningscenario2"/>
+<LearningScenarios>
+<LearningScenario lsid="learningscenario3"/>
+</LearningScenarios>
 <KPIs>
 </KPIs>
 </LearningGoal>

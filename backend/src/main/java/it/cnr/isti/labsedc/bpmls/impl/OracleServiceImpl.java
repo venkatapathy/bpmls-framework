@@ -19,6 +19,8 @@ public class OracleServiceImpl implements OracleService{
 	@Autowired
 	OracleValuesJpaRepository oracleRepo;
 	
+	//TODO logger
+	
 	private void saveOracleValue(OracleValue oVa){
 		System.out.println("saving oracle values for "+oVa.getBpmnCamId());
 		oracleRepo.save(oVa);
@@ -31,9 +33,13 @@ public class OracleServiceImpl implements OracleService{
 			OracleValue oV= oracleRepo.findBylsInstanceAndBpmnCamId(lsInst,sinDo.getBpmnCamundaid());
 			
 			//if not present create a new one
-			if(oV==null) oV=new OracleValue(lsInst, sinDo.getBpmnCamundaid(),sinDo.getValue());
+			if(oV==null){
+				oV=new OracleValue(lsInst, sinDo.getBpmnCamundaid(),sinDo.getValue());
+			}
 			//else update
-			else oV.setCurrentExpectedValue(sinDo.getValue());
+			else{
+				oV.setCurrentExpectedValue(sinDo.getValue());
+			}
 			
 			//saveOracleValue
 			saveOracleValue(oV);

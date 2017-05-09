@@ -89,6 +89,8 @@ public class LearningPathTests {
 				.getRunningLearningPathBylpId(deployedLps.get(0).getId());
 		learningProcessEngine.getLearningEngineRuntimeService()
 				.startNextLearningScenario(Integer.toString(lpInst.getLpInstId()));
+		
+		//Assert Missing
 	}
 
 	@Test(expected = LearningPathException.class)

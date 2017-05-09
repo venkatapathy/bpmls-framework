@@ -64,7 +64,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 
 	@Autowired
 	private OracleService oracleService;
-	
+
 	LearningEngineRuntimeServiceImpl() {
 		logger.info("Empty Constructor of LearningEngineRuntimeService");
 	}
@@ -81,10 +81,15 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 
 		Iterator<LearningGoal> lgIt = lg.getLearningGoal().iterator();
 		while (lgIt.hasNext()) {
-			LearningScenario ls = lpRepositoryService
-					.getDeployedLearningScenario(lgIt.next().getLearningScenario().getLsid());
+			// loop through the learning scenarios
+			Iterator<it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath.LearningGoals.LearningGoal.LearningScenarios.LearningScenario> lssIt = lgIt
+					.next().getLearningScenarios().getLearningScenario().iterator();
 
-			lsInstLists.add(createaLSInst(ls, order++));
+			while (lssIt.hasNext()) {
+				LearningScenario ls = lpRepositoryService.getDeployedLearningScenario(lssIt.next().getLsid());
+
+				lsInstLists.add(createaLSInst(ls, order++));
+			}
 		}
 
 		// if order hasnt changed. No learning Scenario is there, return null
@@ -126,7 +131,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 
 		// set LpInstance for all lps instance
 
-		//System.out.print("to stop");
+		// System.out.print("to stop");
 		// //3. add to running learningpaths list
 		//
 		// //if first time init the list
@@ -157,8 +162,8 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	public LearningScenarioInstance getNextLearningScenarioByLpInstId(String lpInstId) {
 		LearningPathInstance lpInst = lpRepository.findByLpInstId(Integer.parseInt(lpInstId));
 		List<LearningScenarioInstance> nextLS = lsRepository.findBylpInstanceAndStatusOrderByOrderinLP(lpInst, "init");
-		
-		//if there is next
+
+		// if there is next
 		if (nextLS.size() > 0)
 			return nextLS.get(0);
 		else
@@ -176,40 +181,42 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		else
 			return null;
 	}
-	
+
 	@Transactional
-	public void startNextLearningScenario(String lpInstId) throws LearningPathException{
-		LearningScenarioInstance lsInst=getRunningLearningScenarioByIpInstId(lpInstId);
-		
-		//if there is a LS already running, throw exception
-		if(lsInst!=null){
-			throw new LearningPathException("A Learning Scenario for the LS ID: "+lsInst.getLsId()+" is already running");
+	public void startNextLearningScenario(String lpInstId) throws LearningPathException {
+		LearningScenarioInstance lsInst = getRunningLearningScenarioByIpInstId(lpInstId);
+
+		// if there is a LS already running, throw exception
+		if (lsInst != null) {
+			throw new LearningPathException(
+					"A Learning Scenario for the LS ID: " + lsInst.getLsId() + " is already running");
 		}
-		
-		lsInst=getNextLearningScenarioByLpInstId(lpInstId);
-		//no next LS available throw exception
-		if(lsInst==null){
-			LearningPathInstance lp=getRunningLearningPathBylpId(lpInstId);
-			
-			throw new LearningPathException("There are no next learningscenarios available for Learning path: "+lp.getLpId());
+
+		lsInst = getNextLearningScenarioByLpInstId(lpInstId);
+		// no next LS available throw exception
+		if (lsInst == null) {
+			LearningPathInstance lp = getRunningLearningPathBylpId(lpInstId);
+
+			throw new LearningPathException(
+					"There are no next learningscenarios available for Learning path: " + lp.getLpId());
 		}
-		
-		//what is starting a learning scenario instance?
-		
-		//1. start the corresponding BPMN Process
-		LearningScenario corLS=lpRepositoryService.getDeployedLearningScenario(lsInst.getLsId());
-		String processId=corLS.getBpmnProcessid();
-		String processInstId=runtimeService.startProcessInstanceByKey(processId).getProcessInstanceId();
-		//2. change the status in LSI
+
+		// what is starting a learning scenario instance?
+
+		// 1. start the corresponding BPMN Process
+		LearningScenario corLS = lpRepositoryService.getDeployedLearningScenario(lsInst.getLsId());
+		String processId = corLS.getBpmnProcessid();
+		String processInstId = runtimeService.startProcessInstanceByKey(processId).getProcessInstanceId();
+		// 2. change the status in LSI
 		lsInst.setStatus("running");
-		//3. set the processinstanceid in LSI
+		// 3. set the processinstanceid in LSI
 		lsInst.setProcessInstanceId(processInstId);
-		
-		//set the initial values to the oracle
+
+		// set the initial values to the oracle
 		oracleService.updateOracleValues(lsInst, corLS.getInitialValuation().getDataObject());
-		lsRepository.save(lsInst);	
-		
-		//save everythin
-		
+		lsRepository.save(lsInst);
+
+		// save everythin
+
 	}
 }

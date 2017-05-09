@@ -1,5 +1,6 @@
 package it.cnr.isti.labsedc.bpmls;
 
+import java.io.File;
 import java.util.List;
 
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
@@ -8,6 +9,7 @@ import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
 
 public interface LearningEngineRepositoryService {
 
+	public void deployLearningPath(File bpmnFile, File learningPathFile, File[] learningScenariosFiles) throws LearningPathException;
 	/**gets the current learning path as Learningpath class
 	 * 
 	 * @return {@link List} of {@link LearningPath}

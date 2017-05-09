@@ -78,7 +78,7 @@ public class LearningProcessEngineController implements LearningProcessEngineCon
 
 	private String processInstanceId = null;
 
-	private static String LEARNINGSCENARIO = "learningscenario1";
+	
 
 	@Autowired
 	private LearningProcessEngine learningProcessEngine;
