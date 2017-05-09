@@ -1,5 +1,6 @@
 package it.cnr.isti.labsedc.bpmls.impl;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,6 +29,10 @@ public class LearningEngineRepositoryServiceImpl implements LearningEngineReposi
 
 	LearningEngineRepositoryServiceImpl() {
 		logger.info("Empty Constructor of LearningEngineRepositoryService");
+	}
+	
+	public void deployLearningPath(File bpmnFile, File learningPathFile, File[] learningScenariosFiles) throws LearningPathException{
+		//TODO Empty deployment method
 	}
 
 	/**

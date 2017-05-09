@@ -9,7 +9,7 @@
                 <xs:complexType>
                   <xs:simpleContent>
                     <xs:extension base="xs:string">
-                      <xs:attribute type="xs:string" name="pre_lpid" use="optional"/>
+                      <xs:attribute type="xs:string" name="refid" use="optional"/>
                     </xs:extension>
                   </xs:simpleContent>
                 </xs:complexType>
@@ -58,13 +58,19 @@
               <xs:element name="LearningGoal" maxOccurs="unbounded" minOccurs="0">
                 <xs:complexType>
                   <xs:sequence>
-                    <xs:element name="LearningScenario">
+                    <xs:element name="LearningScenarios">
                       <xs:complexType>
-                        <xs:simpleContent>
-                          <xs:extension base="xs:string">
-                            <xs:attribute type="xs:string" name="lsid" use="optional"/>
-                          </xs:extension>
-                        </xs:simpleContent>
+                        <xs:sequence>
+                          <xs:element name="LearningScenario" maxOccurs="unbounded" minOccurs="0">
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                  <xs:attribute type="xs:string" name="lsid" use="optional"/>
+                                </xs:extension>
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
                       </xs:complexType>
                     </xs:element>
                     <xs:element type="xs:string" name="KPIs"/>
