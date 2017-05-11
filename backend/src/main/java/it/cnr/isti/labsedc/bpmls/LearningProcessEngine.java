@@ -37,7 +37,7 @@ public interface LearningProcessEngine {
 	public LearningEngineRuntimeService getLearningEngineRuntimeService();
 	
 	
-	
+	public LearningEngineTaskService getLearningEngineTaskService();
 	
 	
 //	/**

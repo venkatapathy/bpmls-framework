@@ -82,8 +82,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		Iterator<LearningGoal> lgIt = lg.getLearningGoal().iterator();
 		while (lgIt.hasNext()) {
 			// loop through the learning scenarios
-			Iterator<it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath.LearningGoals.LearningGoal.LearningScenarios.LearningScenario> lssIt = lgIt
-					.next().getLearningScenarios().getLearningScenario().iterator();
+			Iterator<it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath.LearningGoals.LearningGoal.LearningScenarios.LearningScenario> lssIt = lgIt.next().getLearningScenarios().getLearningScenario().iterator();
 
 			while (lssIt.hasNext()) {
 				LearningScenario ls = lpRepositoryService.getDeployedLearningScenario(lssIt.next().getLsid());
@@ -182,6 +181,8 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 			return null;
 	}
 
+	
+	
 	@Transactional
 	public void startNextLearningScenario(String lpInstId) throws LearningPathException {
 		LearningScenarioInstance lsInst = getRunningLearningScenarioByIpInstId(lpInstId);
@@ -212,6 +213,11 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		// 3. set the processinstanceid in LSI
 		lsInst.setProcessInstanceId(processInstId);
 
+		//set the first learningtask as this instances next learningtask
+		LearningScenario ls=lpRepositoryService.getDeployedLearningScenario(lsInst.getLsId());
+		String nextLT=corLS.getTargetVertexes().getVertex().iterator().next().getBpmnActivityid();
+		lsInst.setNextLearningTask(nextLT);
+		
 		// set the initial values to the oracle
 		oracleService.updateOracleValues(lsInst, corLS.getInitialValuation().getDataObject());
 		lsRepository.save(lsInst);

@@ -7,4 +7,6 @@ import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioInstance;
 
 public interface OracleService {
 	public void updateOracleValues(LearningScenarioInstance lsInst,List<DataObject> dos);
+	
+	
 }

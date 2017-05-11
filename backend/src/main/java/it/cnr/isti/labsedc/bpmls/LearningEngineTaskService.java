@@ -5,6 +5,7 @@ import java.util.Map;
 import org.camunda.bpm.engine.task.Task;
 
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningTaskException;
+import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioInstance;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;;
 
 public interface LearningEngineTaskService {
@@ -23,4 +24,6 @@ public interface LearningEngineTaskService {
 	 * @throws it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException If the given learning path is non existant
 	 */
 	public void completeCurrentLearningTask(String lpInstId,Map<String, Object> taskInputs)throws LearningTaskException,it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
+	
+	
 }

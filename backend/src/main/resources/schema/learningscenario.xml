@@ -8,8 +8,8 @@
 <vertex id="closecase" bpmn_activityid="" bpmn_activitylabel=""></vertex>  
 </Trace>
 <TargetVertexes>
-<vertex id="opencase" bpmn_activityid="" bpmn_activitylabel=""></vertex>
-<vertex id="checkresolution" bpmn_activityid="" bpmn_activitylabel=""></vertex>
+<vertex id="opencase" bpmn_activityid="opencase" bpmn_activitylabel="opencase"></vertex>
+<vertex id="checkresolution" bpmn_activityid="caseresolution" bpmn_activitylabel="caseresolution"></vertex>
 </TargetVertexes>
 
 <InitialValuation>

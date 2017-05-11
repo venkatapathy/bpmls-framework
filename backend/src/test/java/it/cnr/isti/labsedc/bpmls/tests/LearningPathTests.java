@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 
 import org.camunda.bpm.engine.RuntimeService;
+import org.camunda.bpm.engine.task.Task;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -91,6 +92,7 @@ public class LearningPathTests {
 				.startNextLearningScenario(Integer.toString(lpInst.getLpInstId()));
 		
 		//Assert Missing
+		
 	}
 
 	@Test(expected = LearningPathException.class)
@@ -103,6 +105,7 @@ public class LearningPathTests {
 				.getRunningLearningPathBylpId(deployedLps.get(0).getId());
 		learningProcessEngine.getLearningEngineRuntimeService()
 				.startNextLearningScenario(Integer.toString(lpInst.getLpInstId()));
+		
 
 	}
 
@@ -125,6 +128,21 @@ public class LearningPathTests {
 
 				// Should be the first learningscenario
 				Assert.assertEquals("learningscenario2", nextLsInst.getLsId());
+	}
+	
+	@Test
+	public void t7checkLearningTasks(){
+		List<LearningPath> deployedLps = learningProcessEngine.getLearningEngineRepositoryService()
+				.getDeployedLearningPaths();
+		LearningPathInstance lpInst = learningProcessEngine.getLearningEngineRuntimeService()
+				.getRunningLearningPathBylpId(deployedLps.get(0).getId());
+		Task task=learningProcessEngine.getLearningEngineTaskService().getCurrentLearningTask(Integer.toString(lpInst.getLpInstId()));
+		
+		LearningScenarioInstance currentLsInst = learningProcessEngine.getLearningEngineRuntimeService()
+				.getRunningLearningScenarioByIpInstId(Integer.toString(lpInst.getLpInstId()));
+		
+		//task id should be same as the next learning activity
+		Assert.assertEquals(currentLsInst.getNextLearningTask(), task.getTaskDefinitionKey());
 	}
 
 }

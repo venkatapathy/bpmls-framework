@@ -35,6 +35,7 @@ import org.springframework.stereotype.Component;
 import it.cnr.isti.labsedc.bpmls.HtmlFormEngine;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRepositoryService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRuntimeService;
+import it.cnr.isti.labsedc.bpmls.LearningEngineTaskService;
 import it.cnr.isti.labsedc.bpmls.LearningProcessEngine;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
@@ -60,6 +61,9 @@ public class LearningProcessEngineImpl implements LearningProcessEngine {
 	@Autowired
 	private LearningEngineRuntimeService learningEngineRuntimeService;
 
+	@Autowired
+	private LearningEngineTaskService learningEngineTaskService;
+	
 	LearningProcessEngineImpl() {
 		logger.info("Empty Constructor of LearningProcessEngine");
 	}
@@ -73,6 +77,10 @@ public class LearningProcessEngineImpl implements LearningProcessEngine {
 		return this.learningEngineRuntimeService;
 	}
 
+	public LearningEngineTaskService getLearningEngineTaskService(){
+		return this.learningEngineTaskService;
+	}
+	
 	// public List<LearningPathInstance> getRunningLearningPaths(){
 	// return runningLearningPaths;
 	// }
