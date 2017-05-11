@@ -42,6 +42,7 @@ public class LearningScenarioInstance {
 	
 	private String result;
 
+	private String nextLearningTask;
 	
 	public int getLsInstId() {
 		return lsInstId;
@@ -97,6 +98,14 @@ public class LearningScenarioInstance {
 
 	public void setProcessInstanceId(String processInstanceId) {
 		this.processInstanceId = processInstanceId;
+	}
+
+	public String getNextLearningTask() {
+		return nextLearningTask;
+	}
+
+	public void setNextLearningTask(String nextLearningTask) {
+		this.nextLearningTask = nextLearningTask;
 	}
 	
 	
