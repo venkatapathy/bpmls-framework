@@ -9,7 +9,7 @@ import {TreeModel} from 'ng2-tree';
 export class TreeView {
 
   tree: TreeModel = {
-    value: 'Hello worlds versrion2',
+    value: 'Hello worlds versrion2 email change',
     children: [
       {
         value: 'Object-oriented programming',

@@ -1,0 +1,35 @@
+<LearningPath competencyid="" id="LearningPath1" name="Learning Path1" processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+
+<Prerequesties>
+<PreLearningPath refid=""/>
+<PreLearningPath refid=""/>
+</Prerequesties>
+
+<Competencies>
+<Competency id="" name="" url=""/>
+<Competency id="" name="" url=""/>
+</Competencies>
+
+<LearningActivities>
+<LearningActivity id="" bpmn_activityid="" competencyid="" bpmn_activitylabel=""/>
+<LearningActivity id="" bpmn_activityid="" competencyid="" bpmn_activitylabel=""/>
+</LearningActivities>
+
+<LearningGoals>
+<LearningGoal id="">
+<LearningScenarios>
+<LearningScenario lsid="learningscenario1"/>
+<LearningScenario lsid="learningscenario2"/>
+</LearningScenarios>
+<KPIs>
+</KPIs>
+</LearningGoal>
+<LearningGoal id="">
+<LearningScenarios>
+<LearningScenario lsid="learningscenario1"/>
+</LearningScenarios>
+<KPIs>
+</KPIs>
+</LearningGoal>
+</LearningGoals>
+</LearningPath>

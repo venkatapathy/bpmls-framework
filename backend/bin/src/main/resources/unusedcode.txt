@@ -1,0 +1,98 @@
+@EventListener
+public void initLPE(final ProcessApplicationStartedEvent unused) throws Exception {
+
+		// init empty Arraylists
+		//deployedLearningScenarios = new ArrayList<LearningScenario>();
+		runningLearningScenarios = new ArrayList<LearningScenarioInstance>();
+
+		String lsid = "learningscenario.xml";
+		logger.info("Deploying Learning Scenarios after BPMN have been deployed to Camunda");
+		logger.info("Hardcoded deployement of LearningScenario ");
+		Resource learningScenarioXml;
+		learningScenarioXml = new UrlResource("classpath:schema/" + lsid);
+		JAXBContext jaxbContext = JAXBContext.newInstance(LearningScenario.class);
+
+		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+		LearningScenario learningScenario = (LearningScenario) jaxbUnmarshaller
+				.unmarshal(learningScenarioXml.getInputStream());
+
+		deployLearningScenario(learningScenario);
+	}
+	
+	
+	private void deployLearningScenario(LearningScenario learningScenario) {
+		// deploying of learning scenario is checking if the corresponding
+		// process is deployed in
+		// camunda and add it to the list of deployed learning scenarios
+
+		if (processEngine.getRepositoryService().createProcessDefinitionQuery()
+				.processDefinitionKey(learningScenario.getBpmnProcessid()).singleResult() != null) {
+			logger.info("Process with id, " + learningScenario.getBpmnProcessid() + " found");
+			logger.info("Adding " + learningScenario.getName() + " to Deployed Learning Scenario");
+			//deployedLearningScenarios.add(learningScenario);
+
+		} else {
+			// ideally should throw an exception
+			System.out.println("process not  found");
+		}
+
+	}
+
+	/*public List<LearningScenario> getDeployedLearningScenarios() {
+		return deployedLearningScenarios;
+	}*/
+
+	public LearningScenarioInstance startLearningScenario(LearningScenario learningScenario) {
+		LearningScenarioInstance startedLPInst = null;
+		return startedLPInst;
+	}
+
+	public LearningScenario getLearningScenario(String learningScenarioId) {
+		LearningScenario retrivedLearningSenario = null;
+		return retrivedLearningSenario;
+	}
+
+	public LearningScenarioInstance getLearningScenarioInstance(String learningScenarioInstanceId) {
+		return null;
+	}
+
+	public Task getCurrentLearningTask(LearningScenarioInstance learningScenarioInstance) {
+		return null;
+	}
+
+	public void completeLearningTask(LearningScenarioInstance learningScenarioInstance,
+			List<DataObject> userSubmittedDOs) {
+
+	}
+
+	public List<LearningPath> getDeployedLearningPaths(){
+		return deployedLearningPaths;
+	}
+	
+	/*public LearningPathInstance startaLearningPath(LearningPath learningPath){
+		//determine if the learning path is already started, if so throw an error
+		//create a learningpath instance
+		//start the first learning scenario in the list
+	}*/
+	
+	public Task getCurrentLearningTask(String lpInstId) {
+		//get the LearningPathInstance
+	}
+	
+	
+	//learning process engine
+	 public void deployLearningPathandScenarios();
+	public List<LearningPath> getDeployedLearningPaths();
+	
+	public LearningPathInstance startaLearningPath(LearningPath learningPath);
+	
+	public Task getCurrentLearningTask(String learningPathInstanceId);
+	
+	public void completeLearningTask(String learningPathInstanceId, List<DataObject> userSubmittedDOs);
+	
+	
+	
+	_____
+	<configuration>
+          <skipTests>true</skipTests>
+        </configuration>

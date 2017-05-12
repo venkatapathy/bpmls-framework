@@ -1,0 +1,46 @@
+<LearningScenario id="learningscenario2" name="Learning Scenario2" bpmn_processlabel="" bpmn_processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<Trace>
+<vertex id="opencase" bpmn_activityid="opencase" bpmn_activitylabel=""></vertex>
+<vertex id="analyzecase" bpmn_activityid="" bpmn_activitylabel=""></vertex>
+<vertex id="caseresolution" bpmn_activityid="" bpmn_activitylabel=""></vertex>
+<vertex id="notifyuser" bpmn_activityid="" bpmn_activitylabel=""></vertex>
+<vertex id="checkresolution" bpmn_activityid="" bpmn_activitylabel=""></vertex>
+<vertex id="closecase" bpmn_activityid="" bpmn_activitylabel=""></vertex>  
+</Trace>
+<TargetVertexes>
+<vertex id="opencase" bpmn_activityid="" bpmn_activitylabel=""></vertex>
+<vertex id="checkresolution" bpmn_activityid="" bpmn_activitylabel=""></vertex>
+</TargetVertexes>
+
+<InitialValuation>
+<DataObject id="" bpmn_camundaid="FormField_issolutionworking" bpmn_dolabel="FormField_issolutionworking">yes</DataObject>
+<DataObject id="" bpmn_camundaid="FormField_caseresolution" bpmn_dolabel="FormField_caseresolution">Change the DNS</DataObject>
+</InitialValuation>
+
+<ValuationOracle>
+<ValuationFunction id="opencase" bpmn_activityid="opencase" bpmn_activitylabel="">
+<DataObject id="" bpmn_camundaid="FormField_casepriority" bpmn_dolabel="FormField_casepriority">
+Value_15h73hf
+</DataObject>
+<DataObject id="" bpmn_camundaid="FormField_casepriority" bpmn_dolabel="FormField_casepriority">
+Value_15h73hf
+</DataObject>
+</ValuationFunction>
+<ValuationFunction id="Task_10opm4b" bpmn_activityid="Task_10opm4b" bpmn_activitylabel="">
+<DataObject id="" bpmn_camundaid="FormField_1kl39d2" bpmn_dolabel="FormField_1kl39d2">
+Internet
+</DataObject>
+
+</ValuationFunction>
+<ValuationFunction id="caseresolution" bpmn_activityid="caseresolution" bpmn_activitylabel="">
+<DataObject id="" bpmn_camundaid="FormField_caseresolution" bpmn_dolabel="FormField_caseresolution">
+Change the DNS
+</DataObject>
+</ValuationFunction>
+<ValuationFunction id="checkresolution" bpmn_activityid="checkresolution" bpmn_activitylabel="">
+<DataObject id="" bpmn_camundaid="FormField_issolutionworking" bpmn_dolabel="FormField_issolutionworking">
+true
+</DataObject>
+</ValuationFunction>
+</ValuationOracle>
+</LearningScenario>

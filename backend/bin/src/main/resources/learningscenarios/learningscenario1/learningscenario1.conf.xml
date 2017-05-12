@@ -1,0 +1,12 @@
+<LearningScenario name="learningscenario1">
+<InitialConfiguaration>
+<DataObject name="solution" value="yes"/>
+</InitialConfiguaration>
+
+<LearningTask name="">
+<EvaluationFunctions>
+<DataObject name="solution" value="yes"/>
+</EvaluationFunctions>
+</LearningTask>
+
+</LearningScenario>
