@@ -44,7 +44,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService{
 		//if not collect the wrong inputs with msgs and throw an exception
 		
 		//if all is fine complete the task
-		Task task= getCurrentLearningTask(learningengineRuntimeService.getRunningLearningScenarioByIpInstId(lpInstId)
+		//Task task= getCurrentLearningTask(learningengineRuntimeService.getRunningLearningScenarioByIpInstId(lpInstId)
 		//dont end check for if the next user task is a learning task in this learning scenario context
 		
 		//complete all the upcoming user tasks that are not learnign tasks
