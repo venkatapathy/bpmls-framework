@@ -15,6 +15,10 @@ export const routes: Routes = [
     loadChildren: 'app/pages/register/register.module#RegisterModule'
   },
   {
+    path: '',
+    redirectTo: 'pages', pathMatch: 'full'
+  },
+  {
     path: 'pages',
     component: Pages,
     children: [

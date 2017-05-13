@@ -93,7 +93,7 @@
 		</dependency>
   
         <dependency>
-			<groupId>com.bpmls</groupId>
+			<groupId>it.cnr.isti.labsedc.bpmls</groupId>
 			<artifactId>frontend</artifactId>
 			<scope>runtime</scope>
 			<version>${project.version}</version>
