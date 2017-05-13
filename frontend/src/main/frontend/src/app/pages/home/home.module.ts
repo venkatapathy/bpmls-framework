@@ -17,6 +17,9 @@ import { LearningSimulator } from './home/learningSimulator/learningSimulator.co
 import { LsCompletionChart } from './home/learningSimulator/lsCompletionChart';
 import { LsCompletionChartService } from './home/learningSimulator/lsCompletionChart/lsCompletionChart.service';
 
+import {SimulatorService} from './home/learningSimulator/simulator.service';
+import {AdHocComponentFactoryCreator} from './home/learningSimulator/adhoc-component-factory.service';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -35,7 +38,8 @@ import { LsCompletionChartService } from './home/learningSimulator/lsCompletionC
   ],
   providers: [
     LsCompletionChartService,
-    
+    SimulatorService,
+    AdHocComponentFactoryCreator
   ]
 })
 export class HomeModule {}
