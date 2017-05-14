@@ -1,13 +1,11 @@
 <div class="col-md-6">
-  <ba-card title="Learning Path 1">
+  <ng-container *ngIf="availableLPS && availableLPS.alps">
+  <ba-card title="Learning Path 1" *ngFor="let alp of availableLPS.alps;" >
     <p>
     Description: This learning Path is designed for the managers. </p>
 
     <button type="submit" class="btn btn-success">Start Learning</button>
   </ba-card>
 
-  <ba-card title="Learning Path 1">
-    Description: This learning Path is designed for the managers. <br/>
-    <button type="submit" class="btn btn-success">Start Learning</button>
-  </ba-card>
+  </ng-container>
 </div>

@@ -1,13 +1,14 @@
-import {Component} from '@angular/core';
-import {TreeModel} from 'ng2-tree';
+import { Component,AfterViewInit, NgZone } from '@angular/core';
+import { TreeModel } from 'ng2-tree';
+import { LearningEngineService } from './learningengine.service';
 
 @Component({
   selector: 'tree-view',
   templateUrl: './treeView.html',
 })
 
-export class TreeView {
-
+export class TreeView implements AfterViewInit{
+   availableLPS:JSON;
   tree: TreeModel = {
     value: 'The Learning Scenarios are:',
     children: [
@@ -17,15 +18,28 @@ export class TreeView {
       {
         value: 'Prototype-based programming',
         children: [
-          {value: 'JavaScript'},
-          {value: 'CoffeeScript'},
-          {value: 'Lua'},
+          { value: 'JavaScript' },
+          { value: 'CoffeeScript' },
+          { value: 'Lua' },
         ]
       }
     ]
   };
 
-  constructor() {
+  constructor(private learningEngineService: LearningEngineService,private zone:NgZone) {
   }
 
+  ngAfterViewInit() {
+    this.loadAvailableLearningPaths();
+  }
+  loadAvailableLearningPaths() {
+    this.learningEngineService.getavailablelearningpaths().subscribe(response => {
+      this.zone.run(()=>{
+        this.availableLPS=response;
+      
+      });
+      
+      console.log(response);
+    });
+  }
 }

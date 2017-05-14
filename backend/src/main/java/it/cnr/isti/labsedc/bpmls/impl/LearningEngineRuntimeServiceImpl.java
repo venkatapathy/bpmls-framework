@@ -45,12 +45,6 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	private RuntimeService runtimeService;
 
 	@Autowired
-	private TaskService taskService;
-
-	@Autowired
-	private FormService formService;
-
-	@Autowired
 	private OracleService oracleService;
 
 	LearningEngineRuntimeServiceImpl() {

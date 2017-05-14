@@ -20,6 +20,8 @@ import { LsCompletionChartService } from './home/learningSimulator/lsCompletionC
 import {SimulatorService} from './home/learningSimulator/simulator.service';
 import {AdHocComponentFactoryCreator} from './home/learningSimulator/adhoc-component-factory.service';
 
+import {LearningEngineService} from './home/treeView/learningengine.service';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -39,7 +41,8 @@ import {AdHocComponentFactoryCreator} from './home/learningSimulator/adhoc-compo
   providers: [
     LsCompletionChartService,
     SimulatorService,
-    AdHocComponentFactoryCreator
+    AdHocComponentFactoryCreator,
+    LearningEngineService
   ]
 })
 export class HomeModule {}
