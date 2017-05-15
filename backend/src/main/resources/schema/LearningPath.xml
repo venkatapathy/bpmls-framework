@@ -1,4 +1,4 @@
-<LearningPath competencyid="" id="LearningPath1" name="Learning Path1" processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<LearningPath competencyid="" id="learningpath1" name="Learning Path1" processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
 
 <Prerequesties>
 <PreLearningPath refid=""/>

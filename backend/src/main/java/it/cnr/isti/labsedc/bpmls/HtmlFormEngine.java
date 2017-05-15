@@ -145,7 +145,7 @@ public class HtmlFormEngine implements FormEngine {
     return renderFormData(taskForm);
   }
 
-  protected String renderFormData(FormData formData) {
+  public String renderFormData(FormData formData) {
 
     if(formData == null
         || (formData.getFormFields() == null || formData.getFormFields().isEmpty())

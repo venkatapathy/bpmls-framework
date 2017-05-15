@@ -3,7 +3,7 @@ import { TreeModel } from 'ng2-tree';
 import { LearningEngineService } from '../learningengine.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DefaultModal } from '../../components/default-modal/default-modal.component';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'tree-view',
@@ -29,7 +29,7 @@ export class TreeView implements AfterViewInit {
     ]
   };
 
-  constructor(private modalService: NgbModal,private learningEngineService: LearningEngineService, private zone: NgZone) {
+  constructor(private modalService: NgbModal,private learningEngineService: LearningEngineService, private zone: NgZone,private router:Router) {
   }
 
   ngAfterViewInit() {
@@ -49,25 +49,17 @@ export class TreeView implements AfterViewInit {
 
   startaLearningPath(lpid: string) {
     this.learningEngineService.startaLearningPath(lpid).subscribe(response => {
+
       if (response.error) {
         const activeModal = this.modalService.open(DefaultModal, {
           size: 'sm',
           backdrop: 'static'
         });
         activeModal.componentInstance.modalHeader = 'Static modal';
-        activeModal.componentInstance.modalContent = `This is static modal, backdrop click
-                                                    will not close it. Click × or confirmation button to close modal.`;
+        activeModal.componentInstance.modalContent = response.success.lpinstid;
       }
       if(response.success){
-        const activeModal = this.modalService.open(DefaultModal, {
-          size: 'sm',
-          backdrop: 'static'
-        });
-        activeModal.componentInstance.modalHeader = 'Starting a Learning Path';
-        activeModal.componentInstance.modalContent = `Successfully started a learning path. 
-                                                        You will be taken to Simulator`;
-        activeModal.componentInstance.nextpageURL= "home/learningsimulator";
-         activeModal.componentInstance.lpinstid= response.success.lpinstid;
+        this.router.navigate(['/pages','home','learningsimulator',response.success.lpid]);
 
 
       }

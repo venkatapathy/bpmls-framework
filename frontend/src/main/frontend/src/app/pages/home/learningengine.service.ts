@@ -30,10 +30,10 @@ export class LearningEngineService {
     }
     
     getcurrentlearningtask(lpintid: string) {
-        console.log('http://localhost:8080/getcurrentlearningtask');
+        console.log('http://localhost:8080/getcurrentlearningtask/'+lpintid);
         let params = new URLSearchParams();
         params.set('lpinstid', lpintid);
-        return this.http.get('http://localhost:8080/getcurrentlearningtask', { search: params })
+        return this.http.get('http://localhost:8080/getcurrentlearningtask/'+lpintid, { search: params })
 
             .map((response: Response) => {
                 // login successful if there's a jwt token in the response
@@ -56,13 +56,33 @@ export class LearningEngineService {
     }
 
     startaLearningPath(lpid:string){
-        let responseJson = "{\"lpid\":" + lpid +"}";
+        let responseJson = "{\"lpid\":\"" + lpid +"\"}";
 
 
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let params = new URLSearchParams();
         
-        return this.http.post('http://localhost:8080/startalearningpath', responseJson)
+        console.log("Starting a learning path for: "+lpid);
+
+        return this.http.post('http://localhost:8080/startalearningpath/'+lpid, responseJson)
+
+            .map((response: Response) => {
+                // login successful if there's a jwt token in the response
+
+                return response.json();
+            });
+    }
+
+    startalearningscenario(lpid:string,lpinstd:string){
+         let responseJson = "{\"lpid\":\"" + lpid +"\"}";
+
+
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let params = new URLSearchParams();
+        
+        console.log("Starting a learning path for: "+lpid);
+
+        return this.http.post('http://localhost:8080/startalearningscenario/'+lpid+"/"+lpinstd, responseJson)
 
             .map((response: Response) => {
                 // login successful if there's a jwt token in the response

@@ -10,8 +10,8 @@ declare var introJs:any;
   templateUrl: './learningSimulator.html',
 })
 export class LearningSimulator implements AfterViewInit {
+   private lpid:string;
   
-   private lpinstid: string;
   @ViewChild('taskFormContainer', { read: ViewContainerRef }) parent: ViewContainerRef;
   isChecked: boolean = false;
   constructor(private route:ActivatedRoute, private adHocComponentFactoryCreator: AdHocComponentFactoryCreator,private learningEngineService:LearningEngineService) {
@@ -33,6 +33,11 @@ export class LearningSimulator implements AfterViewInit {
 
         intro.start();
       }
+
+      startLs(lpinstid){
+        simulatorComponent.startLearningScenario(lpinstid);
+        //alert("hi");
+      }
     }
 
     return InsertedComponent;
@@ -42,11 +47,11 @@ export class LearningSimulator implements AfterViewInit {
 
   ngAfterViewInit() {
     this.route
-      .queryParams
+      .params
       .subscribe(params => {
         // Defaults to 0 if no query param provided.
-        this.lpinstid = params['id'] || '0' ;
-        console.log("initalized lpinstid: "+this.lpinstid)
+        this.lpid = params['id'] || '0' ;
+        console.log("initalized lpinstid: "+this.lpid)
       });
       
     //this.simulatorService.getcurrentlearningtask('learningscenario1','7').subscribe(response=> {this.dataContainer.nativeElement.innerHTML =response; console.log(this.taskform);});
@@ -57,8 +62,8 @@ export class LearningSimulator implements AfterViewInit {
 
 
   loadForm() {
-    this.learningEngineService.getcurrentlearningtask(this.lpinstid).subscribe(response => {
-      let prompt = JSON.parse("{\"steps\": [{ \"intro\": \"welcome to case \"}]}");
+    this.learningEngineService.getcurrentlearningtask(this.lpid).subscribe(response => {
+      let prompt = JSON.parse("{\"steps\": [{ \"intro\": \"welcome to case \"},{ \"intro\": \"In this scenario you will open a case \"}]}");
       let component = this.createDynamicComponent(response, prompt, this);
       console.log(response);
       let componentFactory = this.adHocComponentFactoryCreator.getFactory(component);
@@ -71,7 +76,7 @@ export class LearningSimulator implements AfterViewInit {
   completeLearning(learningForm: string) {
 
     //submit the form
-    this.learningEngineService.completeLearningTask(this.lpinstid, learningForm).subscribe(response => {
+    this.learningEngineService.completeLearningTask(this.lpid, learningForm).subscribe(response => {
       //get the response after submitting the task
       console.log(response.status);
       if (response.status === "completed") {
@@ -82,8 +87,16 @@ export class LearningSimulator implements AfterViewInit {
       }
     });
 
-    //send the values to completelearningtask
-
-    //get the reply and check the status, display the status and refresh the form
+    
   }
+
+  startLearningScenario(lpinstid: string){
+    this.learningEngineService.startalearningscenario(this.lpid,lpinstid).subscribe(response =>{
+      if(response.success){
+         this.loadForm();
+      }else{
+        console.log(response);
+      }
+    });
+    }
 }
