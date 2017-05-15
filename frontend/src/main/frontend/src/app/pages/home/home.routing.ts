@@ -10,7 +10,7 @@ const routes: Routes = [
     component: Home,
     children: [
       { path: 'treeview', component: TreeView },
-      { path: 'learningsimulator', component: LearningSimulator },
+      { path: 'learningsimulator/:id', component: LearningSimulator },
     ],
   },
 ];

@@ -2,25 +2,22 @@ import { Home } from './home.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgaModule } from '../../theme/nga.module';
 import { TreeModule } from 'ng2-tree';
 
 import { routing } from './home.routing';
+
 import { Tab } from './home/tabPanel/tab.component';
 import { Tabs } from './home/tabPanel/tabs.component';
-
 import { TreeView } from './home/treeView/treeView.component';
 import { LearningSimulator } from './home/learningSimulator/learningSimulator.component';
-
 import { LsCompletionChart } from './home/learningSimulator/lsCompletionChart';
 import { LsCompletionChartService } from './home/learningSimulator/lsCompletionChart/lsCompletionChart.service';
-
-import {SimulatorService} from './home/learningSimulator/simulator.service';
-import {AdHocComponentFactoryCreator} from './home/learningSimulator/adhoc-component-factory.service';
-
-import {LearningEngineService} from './home/treeView/learningengine.service';
+import { SimulatorService } from './home/learningSimulator/simulator.service';
+import { AdHocComponentFactoryCreator } from './home/learningSimulator/adhoc-component-factory.service';
+import { LearningEngineService } from './learningengine.service';
+import { DefaultModal } from '../ui/components/modals/default-modal/default-modal.component';
 
 @NgModule({
   imports: [
@@ -29,6 +26,7 @@ import {LearningEngineService} from './home/treeView/learningengine.service';
     NgaModule,
     TreeModule,
     routing,
+    NgbModalModule,
   ],
   declarations: [
     Home,
@@ -36,7 +34,11 @@ import {LearningEngineService} from './home/treeView/learningengine.service';
     LearningSimulator,
     LsCompletionChart,
     Tabs,
-    Tab
+    Tab,
+    DefaultModal,
+  ],
+ entryComponents: [
+    DefaultModal
   ],
   providers: [
     LsCompletionChartService,
@@ -45,4 +47,4 @@ import {LearningEngineService} from './home/treeView/learningengine.service';
     LearningEngineService
   ]
 })
-export class HomeModule {}
+export class HomeModule { }

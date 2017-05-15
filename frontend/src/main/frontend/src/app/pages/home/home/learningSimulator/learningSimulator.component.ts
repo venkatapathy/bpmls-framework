@@ -1,6 +1,8 @@
 import { Type, Component, ViewChild, ViewContainerRef, AfterViewInit } from '@angular/core';
-import {SimulatorService} from './simulator.service';
+import {LearningEngineService} from '../../learningengine.service';
 import {AdHocComponentFactoryCreator} from './adhoc-component-factory.service';
+import { ActivatedRoute } from '@angular/router';
+
 declare var introJs:any;
 
 @Component({
@@ -8,10 +10,11 @@ declare var introJs:any;
   templateUrl: './learningSimulator.html',
 })
 export class LearningSimulator implements AfterViewInit {
-  private lsinstid: string;
+  
+   private lpinstid: string;
   @ViewChild('taskFormContainer', { read: ViewContainerRef }) parent: ViewContainerRef;
   isChecked: boolean = false;
-  constructor(private adHocComponentFactoryCreator: AdHocComponentFactoryCreator,private simulatorService:SimulatorService) {
+  constructor(private route:ActivatedRoute, private adHocComponentFactoryCreator: AdHocComponentFactoryCreator,private learningEngineService:LearningEngineService) {
   }
 
   private createDynamicComponent(taskform:string,prompt:JSON,simulatorComponent:LearningSimulator): Type<any> {
@@ -38,7 +41,14 @@ export class LearningSimulator implements AfterViewInit {
 
 
   ngAfterViewInit() {
-
+    this.route
+      .queryParams
+      .subscribe(params => {
+        // Defaults to 0 if no query param provided.
+        this.lpinstid = params['id'] || '0' ;
+        console.log("initalized lpinstid: "+this.lpinstid)
+      });
+      
     //this.simulatorService.getcurrentlearningtask('learningscenario1','7').subscribe(response=> {this.dataContainer.nativeElement.innerHTML =response; console.log(this.taskform);});
     this.loadForm();
 
@@ -47,7 +57,7 @@ export class LearningSimulator implements AfterViewInit {
 
 
   loadForm() {
-    this.simulatorService.getcurrentlearningtask(this.lsinstid).subscribe(response => {
+    this.learningEngineService.getcurrentlearningtask(this.lpinstid).subscribe(response => {
       let prompt = JSON.parse("{\"steps\": [{ \"intro\": \"welcome to case \"}]}");
       let component = this.createDynamicComponent(response, prompt, this);
       console.log(response);
@@ -61,12 +71,12 @@ export class LearningSimulator implements AfterViewInit {
   completeLearning(learningForm: string) {
 
     //submit the form
-    this.simulatorService.completeLearningTask(this.lsinstid, learningForm).subscribe(response => {
+    this.learningEngineService.completeLearningTask(this.lpinstid, learningForm).subscribe(response => {
       //get the response after submitting the task
       console.log(response.status);
       if (response.status === "completed") {
         console.log("Setting alter mesage");
-        this.simulatorService.publishAlertMsg("Completed task")
+        this.learningEngineService.publishAlertMsg("Completed task")
         this.loadForm();
 
       }

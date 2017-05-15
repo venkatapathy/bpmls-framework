@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import it.cnr.isti.labsedc.bpmls.LearningProcessEngine;
 import it.cnr.isti.labsedc.bpmls.LearningProcessEngineController;
@@ -49,5 +50,11 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 		
 		return availLPs.toString();
 		
+	}
+	
+	public String startalearningpath(String lpid){
+		//StringBuilder retMsg=new StringBuilder("{\"error\": \"sample error\"}"); 
+		StringBuilder retMsg=new StringBuilder("{\"success\": {\"lpinstid\":\"1\"}}");
+		return retMsg.toString();	
 	}
 }

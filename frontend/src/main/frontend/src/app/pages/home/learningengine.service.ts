@@ -5,27 +5,34 @@ import 'rxjs/add/operator/map'
 import { Subject } from 'rxjs/Subject';
 
 @Injectable()
-export class SimulatorService {
+export class LearningEngineService {
     public currentTaskHtml: any;
     public alertMessage: string;
-    constructor(private http: Http) { }
     private alertMsg = new Subject<string>();
     alertMsg$ = this.alertMsg.asObservable();
-    /**
-     * This returns a new form component that can be loaded into simulator. The component consists
-     * of dynamically created form template from server based on the
-     * current task of the given learning instanceid
-     * @param lsintid 
-     * @param pinstid 
-     */
-    publishAlertMsg(textToPublish: string) {
+
+    constructor(private http: Http) { }
+
+    getavailablelearningpaths() {
+        //console.log('http://localhost:8080/getavailablelearningpaths');
+        
+        return this.http.get('http://localhost:8080/getavailablelearningpaths')
+
+            .map((response: Response) => {
+                // login successful if there's a jwt token in the response
+
+                return JSON.parse(response.text());
+            });
+    }
+
+     publishAlertMsg(textToPublish: string) {
         this.alertMsg.next(textToPublish);
     }
     
-    getcurrentlearningtask(lsintid: string) {
+    getcurrentlearningtask(lpintid: string) {
         console.log('http://localhost:8080/getcurrentlearningtask');
         let params = new URLSearchParams();
-        params.set('lpinstid', lsintid);
+        params.set('lpinstid', lpintid);
         return this.http.get('http://localhost:8080/getcurrentlearningtask', { search: params })
 
             .map((response: Response) => {
@@ -34,6 +41,7 @@ export class SimulatorService {
                 return response.text();
             });
     }
+
     completeLearningTask(lsintid: string, learningForm: string) {
         let responseJson = "{\"lsinstid\":" + lsintid + ",\"learningform\":" + learningForm + "}";
 
@@ -47,5 +55,20 @@ export class SimulatorService {
 
     }
 
-    
+    startaLearningPath(lpid:string){
+        let responseJson = "{\"lpid\":" + lpid +"}";
+
+
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let params = new URLSearchParams();
+        
+        return this.http.post('http://localhost:8080/startalearningpath', responseJson)
+
+            .map((response: Response) => {
+                // login successful if there's a jwt token in the response
+
+                return response.json();
+            });
+    }
+
 }

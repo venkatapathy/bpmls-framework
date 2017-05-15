@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'add-service-modal',
@@ -17,12 +18,18 @@ export class DefaultModal implements OnInit {
    nostrud exerci tation ullamcorper suscipit lobortis
    nisl ut aliquip ex ea commodo consequat.`;
 
-  constructor(private activeModal: NgbActiveModal) {
+//custom for BPMLS
+  nextpageURL:string;
+  lpinstid:string;
+
+  constructor(private activeModal: NgbActiveModal,private router:Router) {
   }
 
   ngOnInit() {}
 
   closeModal() {
     this.activeModal.close();
+    this.router.navigate(['/pages','home','learningsimulator',this.lpinstid]);
+    //
   }
 }

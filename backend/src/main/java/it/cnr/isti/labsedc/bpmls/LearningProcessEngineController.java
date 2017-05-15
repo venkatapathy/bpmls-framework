@@ -15,4 +15,8 @@ public interface LearningProcessEngineController {
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/getavailablelearningpaths", method = RequestMethod.GET)
 	public String getAvailableLearningPaths();
+	
+	@CrossOrigin(origins = "http://localhost:4200")
+	@RequestMapping(value = "/startalearningpath", method = RequestMethod.POST)
+	public String startalearningpath(@RequestParam(value = "lpid") String lpid);
 }
