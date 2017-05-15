@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import it.cnr.isti.labsedc.bpmls.LearningProcessEngine;
 import it.cnr.isti.labsedc.bpmls.LearningProcessEngineController;
+import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathInstance;
+import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioInstance;
 
 
 @Component
@@ -18,8 +21,25 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 	@Autowired
 	LearningProcessEngine lpEngine;
 	
-	public String getCurrentLearningTask(String lsinstid){
+	public String getCurrentLearningTask(String lpInstId){
 		//check if there any learning path engine for that
+		LearningPathInstance lpInst=lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpInstId);
+		
+		if(lpInst==null){
+			StringBuilder retMsg=new StringBuilder("{\"error\": {\"message\":\"No learning path running that you selected\"}}");
+			return retMsg.toString();
+		}
+		
+		LearningScenarioInstance lsInst=lpEngine.getLearningEngineRuntimeService().getRunningLearningScenarioByIpInstId(lpInstId);
+		
+		//if lsinst null then get the next Learning Scenario
+		if(lsInst==null){
+			lsInst=lpEngine.getLearningEngineRuntimeService().getNextLearningScenarioByLpInstId(lpInstId);
+			
+			if(lsInst==null){
+				
+			}
+		}
 		return "I am Working";
 	}
 	
@@ -54,7 +74,19 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 	
 	public String startalearningpath(String lpid){
 		//StringBuilder retMsg=new StringBuilder("{\"error\": \"sample error\"}"); 
-		StringBuilder retMsg=new StringBuilder("{\"success\": {\"lpinstid\":\"1\"}}");
-		return retMsg.toString();	
+		
+		
+		//start the learning path
+		try {
+			LearningPathInstance lpInst= lpEngine.getLearningEngineRuntimeService().startaLearningPathById(lpid);
+			StringBuilder retMsg=new StringBuilder("{\"success\": {\"lpinstid\":\""+lpInst.getLpInstId()+"\"}}");
+			return retMsg.toString();
+		} catch (LearningPathException e) {
+			// TODO Auto-generated catch block
+			StringBuilder retMsg=new StringBuilder("{\"error\": {\"message\":\""+e.getMessage()+"\"}}");
+			return retMsg.toString();
+			
+		}
+			
 	}
 }

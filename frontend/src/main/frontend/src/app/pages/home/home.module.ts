@@ -8,16 +8,16 @@ import { TreeModule } from 'ng2-tree';
 
 import { routing } from './home.routing';
 
-import { Tab } from './home/tabPanel/tab.component';
-import { Tabs } from './home/tabPanel/tabs.component';
-import { TreeView } from './home/treeView/treeView.component';
-import { LearningSimulator } from './home/learningSimulator/learningSimulator.component';
-import { LsCompletionChart } from './home/learningSimulator/lsCompletionChart';
-import { LsCompletionChartService } from './home/learningSimulator/lsCompletionChart/lsCompletionChart.service';
-import { SimulatorService } from './home/learningSimulator/simulator.service';
-import { AdHocComponentFactoryCreator } from './home/learningSimulator/adhoc-component-factory.service';
+import { Tab } from './tabPanel/tab.component';
+import { Tabs } from './tabPanel/tabs.component';
+import { TreeView } from './treeView/treeView.component';
+import { LearningSimulator } from './learningSimulator/learningSimulator.component';
+import { LsCompletionChart } from './learningSimulator/lsCompletionChart';
+import { LsCompletionChartService } from './learningSimulator/lsCompletionChart/lsCompletionChart.service';
+import { SimulatorService } from './learningSimulator/simulator.service';
+import { AdHocComponentFactoryCreator } from './learningSimulator/adhoc-component-factory.service';
 import { LearningEngineService } from './learningengine.service';
-import { DefaultModal } from '../ui/components/modals/default-modal/default-modal.component';
+import { DefaultModal } from '../components/default-modal/default-modal.component';
 
 @NgModule({
   imports: [

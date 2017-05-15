@@ -1,5 +1,5 @@
 import { Type, Component, ViewChild, ViewContainerRef, AfterViewInit } from '@angular/core';
-import {LearningEngineService} from '../../learningengine.service';
+import {LearningEngineService} from '../learningengine.service';
 import {AdHocComponentFactoryCreator} from './adhoc-component-factory.service';
 import { ActivatedRoute } from '@angular/router';
 

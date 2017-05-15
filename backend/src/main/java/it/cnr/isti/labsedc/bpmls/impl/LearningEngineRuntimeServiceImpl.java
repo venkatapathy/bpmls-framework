@@ -89,7 +89,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	}
 
 	@Transactional
-	private void startaLearningPath(LearningPath learningPath) throws LearningPathException {
+	private LearningPathInstance startaLearningPath(LearningPath learningPath) throws LearningPathException {
 		// when you start a learning path
 
 		// 1. make sure that the learning path is not already started
@@ -108,6 +108,8 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 			lsInst.setLpInstance(lpInst);
 			lsRepository.save(lsInst);
 		}
+		
+		return lpInst;
 		//
 
 		// set LpInstance for all lps instance
@@ -125,8 +127,8 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 
 	}
 
-	public void startaLearningPathById(String learningPathId) throws LearningPathException {
-		startaLearningPath(lpRepositoryService.getDeployedLearningPath(learningPathId));
+	public LearningPathInstance startaLearningPathById(String learningPathId) throws LearningPathException {
+		return startaLearningPath(lpRepositoryService.getDeployedLearningPath(learningPathId));
 	}
 
 	public List<LearningPathInstance> getRunningLearningPaths() {
@@ -206,9 +208,11 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 
 		// save everythin
 		
+		//TODO
 		//dont stop yet
 		//simulate the corresponding user tasks that are not learning tasks
-		//TODO
+		
+		
 
 	}
 }

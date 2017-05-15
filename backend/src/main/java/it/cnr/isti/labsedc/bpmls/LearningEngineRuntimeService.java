@@ -19,7 +19,7 @@ public interface LearningEngineRuntimeService {
 	 * @param learningPathId ID of the learning path we wanted to start
 	 * @throws LearningPathException If ID is not found or if a Learning path already running
 	 */
-	public void startaLearningPathById(String learningPathId)throws LearningPathException;
+	public LearningPathInstance startaLearningPathById(String learningPathId)throws LearningPathException;
 	
 	
 	/**

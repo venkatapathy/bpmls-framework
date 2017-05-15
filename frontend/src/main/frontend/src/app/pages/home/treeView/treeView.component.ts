@@ -1,8 +1,8 @@
 import { Component, AfterViewInit, NgZone } from '@angular/core';
 import { TreeModel } from 'ng2-tree';
-import { LearningEngineService } from '../../learningengine.service';
+import { LearningEngineService } from '../learningengine.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { DefaultModal } from '../../../ui/components/modals/default-modal/default-modal.component';
+import { DefaultModal } from '../../components/default-modal/default-modal.component';
 
 
 @Component({

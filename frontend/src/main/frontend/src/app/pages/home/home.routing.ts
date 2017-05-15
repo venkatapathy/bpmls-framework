@@ -1,8 +1,8 @@
 import { Routes, RouterModule }  from '@angular/router';
 
 import { Home } from './home.component';
-import { TreeView } from './home/treeView/treeView.component';
-import { LearningSimulator } from './home/learningSimulator/learningSimulator.component';
+import { TreeView } from './treeView/treeView.component';
+import { LearningSimulator } from './learningSimulator/learningSimulator.component';
 // noinspection TypeScriptValidateTypes
 const routes: Routes = [
   {
