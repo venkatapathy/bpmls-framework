@@ -42,14 +42,14 @@ export class LearningEngineService {
             });
     }
 
-    completeLearningTask(lsintid: string, learningForm: string) {
+    completeLearningTask(lpid:string,lsintid: string, learningForm: string) {
         let responseJson = "{\"lsinstid\":" + lsintid + ",\"learningform\":" + learningForm + "}";
 
 
         let headers = new Headers({ 'Content-Type': 'application/json' }); // ... Set content type to JSON
 
 
-        return this.http.post('http://localhost:8080/completelearningtask', responseJson) // ...using post request
+        return this.http.post('http://localhost:8080/completelearningtask/'+lpid, responseJson) // ...using post request
             .map((res: Response) => { console.log(res); return res.json() }); // ...and calling .json() on the response to return data
         //...errors if any
 

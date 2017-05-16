@@ -76,14 +76,16 @@ export class LearningSimulator implements AfterViewInit {
   completeLearning(learningForm: string) {
 
     //submit the form
-    this.learningEngineService.completeLearningTask(this.lpid, learningForm).subscribe(response => {
+    this.learningEngineService.completeLearningTask(this.lpid,"1", learningForm).subscribe(response => {
       //get the response after submitting the task
       console.log(response.status);
-      if (response.status === "completed") {
+      if (response.success) {
         console.log("Setting alter mesage");
         this.learningEngineService.publishAlertMsg("Completed task")
         this.loadForm();
 
+      }else if(response.error){
+        alert(response.error.message);
       }
     });
 
