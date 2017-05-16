@@ -13,6 +13,7 @@ package it.cnr.isti.labsedc.bpmls;
  * limitations under the License.
  */
 
+
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,7 +41,7 @@ import org.camunda.bpm.engine.impl.form.type.StringFormType;
  * @author Daniel Meyer
  *
  */
-public class HtmlFormEngine implements FormEngine {
+public class HtmlFormEnginebkup implements FormEngine {
 
   /* elements */
   protected static final String FORM_ELEMENT = "form";
@@ -63,20 +64,20 @@ public class HtmlFormEngine implements FormEngine {
   protected static final String TYPE_ATTRIBUTE = "type";
   protected static final String SELECTED_ATTRIBUTE = "selected";
 
-  /* datepicker attributes*/
-  protected static final String IS_OPEN_ATTRIBUTE = "is-open";
-  protected static final String DATEPICKER_POPUP_ATTRIBUTE = "datepicker-popup";
+//  /* datepicker attributes*/
+//  protected static final String IS_OPEN_ATTRIBUTE = "is-open";
+//  protected static final String DATEPICKER_POPUP_ATTRIBUTE = "datepicker-popup";
 
-  /* camunda attributes */
-  protected static final String CAM_VARIABLE_TYPE_ATTRIBUTE = "cam-variable-type";
-  protected static final String CAM_VARIABLE_NAME_ATTRIBUTE = "cam-variable-name";
-  protected static final String CAM_SCRIPT_ATTRIBUTE = "cam-script";
-  protected static final String CAM_BUSINESS_KEY_ATTRIBUTE = "cam-business-key";
-
-  /* angular attributes*/
-  protected static final String NG_CLICK_ATTRIBUTE = "ng-click";
-  protected static final String NG_IF_ATTRIBUTE = "ng-if";
-  protected static final String NG_SHOW_ATTRIBUTE = "ng-show";
+//  /* camunda attributes */
+//  protected static final String CAM_VARIABLE_TYPE_ATTRIBUTE = "cam-variable-type";
+//  protected static final String CAM_VARIABLE_NAME_ATTRIBUTE = "cam-variable-name";
+//  protected static final String CAM_SCRIPT_ATTRIBUTE = "cam-script";
+//  protected static final String CAM_BUSINESS_KEY_ATTRIBUTE = "cam-business-key";
+//
+//  /* angular attributes*/
+//  protected static final String NG_CLICK_ATTRIBUTE = "ng-click";
+//  protected static final String NG_IF_ATTRIBUTE = "ng-if";
+//  protected static final String NG_SHOW_ATTRIBUTE = "ng-show";
 
   /* classes */
   protected static final String FORM_GROUP_CLASS = "form-group";
@@ -111,26 +112,26 @@ public class HtmlFormEngine implements FormEngine {
   /* form element selector */
   protected static final String FORM_ELEMENT_SELECTOR = "this." + GENERATED_FORM_NAME + ".%s";
 
-  /* expressions */
-  protected static final String INVALID_EXPRESSION = FORM_ELEMENT_SELECTOR + ".$invalid";
-  protected static final String DIRTY_EXPRESSION = FORM_ELEMENT_SELECTOR + ".$dirty";
-  protected static final String ERROR_EXPRESSION = FORM_ELEMENT_SELECTOR + ".$error";
-  protected static final String DATE_ERROR_EXPRESSION = ERROR_EXPRESSION + ".date";
-  protected static final String REQUIRED_ERROR_EXPRESSION = ERROR_EXPRESSION + ".required";
-  protected static final String TYPE_ERROR_EXPRESSION = ERROR_EXPRESSION + ".camVariableType";
+//  /* expressions */
+//  protected static final String INVALID_EXPRESSION = FORM_ELEMENT_SELECTOR + ".$invalid";
+//  protected static final String DIRTY_EXPRESSION = FORM_ELEMENT_SELECTOR + ".$dirty";
+//  protected static final String ERROR_EXPRESSION = FORM_ELEMENT_SELECTOR + ".$error";
+//  protected static final String DATE_ERROR_EXPRESSION = ERROR_EXPRESSION + ".date";
+//  protected static final String REQUIRED_ERROR_EXPRESSION = ERROR_EXPRESSION + ".required";
+//  protected static final String TYPE_ERROR_EXPRESSION = ERROR_EXPRESSION + ".camVariableType";
 
-  /* JavaScript snippets */
-  protected static final String DATE_FIELD_OPENED_ATTRIBUTE = "dateFieldOpened%s";
-  protected static final String OPEN_DATEPICKER_SNIPPET = "$scope.open%s = function ($event) { $event.preventDefault(); $event.stopPropagation(); $scope.dateFieldOpened%s = true; };";
-  protected static final String OPEN_DATEPICKER_FUNCTION_SNIPPET = "open%s($event)";
+//  /* JavaScript snippets */
+//  protected static final String DATE_FIELD_OPENED_ATTRIBUTE = "dateFieldOpened%s";
+//  protected static final String OPEN_DATEPICKER_SNIPPET = "$scope.open%s = function ($event) { $event.preventDefault(); $event.stopPropagation(); $scope.dateFieldOpened%s = true; };";
+//  protected static final String OPEN_DATEPICKER_FUNCTION_SNIPPET = "open%s($event)";
 
   /* date format */
   protected static final String DATE_FORMAT = "dd/MM/yyyy";
 
-  /* messages */
-  protected static final String REQUIRED_FIELD_MESSAGE = "Required field";
-  protected static final String TYPE_FIELD_MESSAGE = "Only a %s value is allowed";
-  protected static final String INVALID_DATE_FIELD_MESSAGE = "Invalid date format: the date should have the pattern '" + DATE_FORMAT + "'";
+//  /* messages */
+//  protected static final String REQUIRED_FIELD_MESSAGE = "Required field";
+//  protected static final String TYPE_FIELD_MESSAGE = "Only a %s value is allowed";
+//  protected static final String INVALID_DATE_FIELD_MESSAGE = "Invalid date format: the date should have the pattern '" + DATE_FORMAT + "'";
 
   public String getName() {
     return "html";
@@ -148,13 +149,30 @@ public class HtmlFormEngine implements FormEngine {
 
     if(formData == null
         || (formData.getFormFields() == null || formData.getFormFields().isEmpty())
-        && (formData.getFormProperties() == null || formData.getFormProperties().isEmpty())) {
-      return null;
+       ) {
+    	//when no fields are there just return forms with a complete learning button
+    	 HtmlElementWriter formElement = new HtmlElementWriter(FORM_ELEMENT)
+    	          .attribute(NAME_ATTRIBUTE, GENERATED_FORM_NAME)
+    	          .attribute(ROLE_ATTRIBUTE, FORM_ROLE)
+    	          //for angular 2 client
+    	          .attribute("#learningForm", "ngForm")
+    	          .attribute("(ngSubmit)", "completeLearning(learningForm)");
+    	 HtmlElementWriter divElement = new HtmlElementWriter("button")
+     	        .attribute("type", "submit")
+     	        .textContent("Complete Learning");
+       // end document element
+    	 HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(formElement);
+       documentBuilder.startElement(divElement).endElement();
+       documentBuilder.endElement();
+      return documentBuilder.getHtmlString();
 
     } else {
       HtmlElementWriter formElement = new HtmlElementWriter(FORM_ELEMENT)
           .attribute(NAME_ATTRIBUTE, GENERATED_FORM_NAME)
-          .attribute(ROLE_ATTRIBUTE, FORM_ROLE);
+          .attribute(ROLE_ATTRIBUTE, FORM_ROLE)
+          //for angular 2 client
+          .attribute("#learningForm", "ngForm")
+          .attribute("(ngSubmit)", "completeLearning(learningForm)");
 
       HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(formElement);
 
@@ -163,15 +181,19 @@ public class HtmlFormEngine implements FormEngine {
         renderFormField(formField, documentBuilder);
       }
 
-      // render deprecated form properties
-      for (FormProperty formProperty : formData.getFormProperties()) {
-        renderFormField(new FormPropertyAdapter(formProperty), documentBuilder);
-      }
-
+      //submitbutton
+      HtmlElementWriter divElement = new HtmlElementWriter("button")
+    	        .attribute("type", "submit")
+    	        .textContent("Complete Learning");
       // end document element
+      
+      documentBuilder.startElement(divElement).endElement();
       documentBuilder.endElement();
-
-      return documentBuilder.getHtmlString();
+      
+      //custom here we send the prompter
+      StringBuilder sb=new StringBuilder(documentBuilder.getHtmlString());
+      sb.append(IntroJSPromptBuilder.getPromptFile());
+      return sb.toString();
 
     }
   }
@@ -212,7 +234,7 @@ public class HtmlFormEngine implements FormEngine {
 
     }
 
-    renderInvalidMessageElement(formField, documentBuilder);
+    //renderInvalidMessageElement(formField, documentBuilder);
 
     // end group
     documentBuilder.endElement();
@@ -243,11 +265,11 @@ public class HtmlFormEngine implements FormEngine {
     // input field
     HtmlElementWriter inputField = createInputField(formField);
 
-    if(!isReadOnly) {
-      inputField
-          .attribute(DATEPICKER_POPUP_ATTRIBUTE, DATE_FORMAT)
-          .attribute(IS_OPEN_ATTRIBUTE, String.format(DATE_FIELD_OPENED_ATTRIBUTE, formFieldId));
-    }
+//    if(!isReadOnly) {
+//      inputField
+//          .attribute(DATEPICKER_POPUP_ATTRIBUTE, DATE_FORMAT)
+//          .attribute(IS_OPEN_ATTRIBUTE, String.format(DATE_FIELD_OPENED_ATTRIBUTE, formFieldId));
+//    }
 
     // <input ... />
     documentBuilder
@@ -256,50 +278,50 @@ public class HtmlFormEngine implements FormEngine {
 
 
     // if form field is read only, do not render date picker open button
-    if(!isReadOnly) {
-
-      // input addon
-      HtmlElementWriter addonElement = new HtmlElementWriter(DIV_ELEMENT)
-          .attribute(CLASS_ATTRIBUTE, INPUT_GROUP_BTN_CLASS);
-
-      // <div>
-      documentBuilder.startElement(addonElement);
-
-      // button to open date picker
-      HtmlElementWriter buttonElement = new HtmlElementWriter(BUTTON_ELEMENT)
-          .attribute(TYPE_ATTRIBUTE, BUTTON_BUTTON_TYPE)
-          .attribute(CLASS_ATTRIBUTE, BUTTON_DEFAULT_CLASS)
-          .attribute(NG_CLICK_ATTRIBUTE, String.format(OPEN_DATEPICKER_FUNCTION_SNIPPET, formFieldId));
-
-      // <button>
-      documentBuilder.startElement(buttonElement);
-
-      HtmlElementWriter iconElement = new HtmlElementWriter(I_ELEMENT)
-          .attribute(CLASS_ATTRIBUTE, CALENDAR_GLYPHICON);
-
-      // <i ...></i>
-      documentBuilder
-          .startElement(iconElement)
-          .endElement();
-
-      // </button>
-      documentBuilder.endElement();
-
-      // </div>
-      documentBuilder.endElement();
-
-
-      HtmlElementWriter scriptElement = new HtmlElementWriter(SCRIPT_ELEMENT)
-          .attribute(CAM_SCRIPT_ATTRIBUTE, null)
-          .attribute(TYPE_ATTRIBUTE, TEXT_FORM_SCRIPT_TYPE)
-          .textContent(String.format(OPEN_DATEPICKER_SNIPPET, formFieldId, formFieldId));
-
-      // <script ...> </script>
-      documentBuilder
-          .startElement(scriptElement)
-          .endElement();
-
-    }
+//    if(!isReadOnly) {
+//
+//      // input addon
+//      HtmlElementWriter addonElement = new HtmlElementWriter(DIV_ELEMENT)
+//          .attribute(CLASS_ATTRIBUTE, INPUT_GROUP_BTN_CLASS);
+//
+//      // <div>
+//      documentBuilder.startElement(addonElement);
+//
+//      // button to open date picker
+//      HtmlElementWriter buttonElement = new HtmlElementWriter(BUTTON_ELEMENT)
+//          .attribute(TYPE_ATTRIBUTE, BUTTON_BUTTON_TYPE)
+//          .attribute(CLASS_ATTRIBUTE, BUTTON_DEFAULT_CLASS);
+//          //.attribute(NG_CLICK_ATTRIBUTE, String.format(OPEN_DATEPICKER_FUNCTION_SNIPPET, formFieldId));
+//
+//      // <button>
+//      documentBuilder.startElement(buttonElement);
+//
+//      HtmlElementWriter iconElement = new HtmlElementWriter(I_ELEMENT)
+//          .attribute(CLASS_ATTRIBUTE, CALENDAR_GLYPHICON);
+//
+//      // <i ...></i>
+//      documentBuilder
+//          .startElement(iconElement)
+//          .endElement();
+//
+//      // </button>
+//      documentBuilder.endElement();
+//
+//      // </div>
+//      documentBuilder.endElement();
+//
+//
+//      HtmlElementWriter scriptElement = new HtmlElementWriter(SCRIPT_ELEMENT);
+//          .attribute(CAM_SCRIPT_ATTRIBUTE, null)
+//          .attribute(TYPE_ATTRIBUTE, TEXT_FORM_SCRIPT_TYPE)
+//          .textContent(String.format(OPEN_DATEPICKER_SNIPPET, formFieldId, formFieldId));
+//
+//      // <script ...> </script>
+//      documentBuilder
+//          .startElement(scriptElement)
+//          .endElement();
+//
+//    }
 
     // </div>
     documentBuilder.endElement();
@@ -353,99 +375,99 @@ public class HtmlFormEngine implements FormEngine {
     }
   }
 
-  protected void renderInvalidMessageElement(FormField formField, HtmlDocumentBuilder documentBuilder) {
-    HtmlElementWriter divElement = new HtmlElementWriter(DIV_ELEMENT);
+//  protected void renderInvalidMessageElement(FormField formField, HtmlDocumentBuilder documentBuilder) {
+//    HtmlElementWriter divElement = new HtmlElementWriter(DIV_ELEMENT);
+//
+//    String formFieldId = formField.getId();
+//    String ifExpression = String.format(INVALID_EXPRESSION + " && " + DIRTY_EXPRESSION, formFieldId, formFieldId);
+//
+//    divElement
+//        //.attribute(NG_IF_ATTRIBUTE, ifExpression)
+//        .attribute(CLASS_ATTRIBUTE, HAS_ERROR_CLASS);
+//
+//    // <div ng-if="....$invalid && ....$dirty"...>
+//    documentBuilder.startElement(divElement);
+//
+//    if (!isDate(formField)) {
+//      renderInvalidValueMessage(formField, documentBuilder);
+//      renderInvalidTypeMessage(formField, documentBuilder);
+//
+//    } else {
+//      renderInvalidDateMessage(formField, documentBuilder);
+//    }
+//
+//    documentBuilder.endElement();
+//  }
+//
+//  protected void renderInvalidValueMessage(FormField formField, HtmlDocumentBuilder documentBuilder) {
+//    HtmlElementWriter divElement = new HtmlElementWriter(DIV_ELEMENT);
+//
+//    String formFieldId = formField.getId();
+//
+//    String expression = String.format(REQUIRED_ERROR_EXPRESSION, formFieldId);
+//
+//    divElement
+//        .attribute(NG_SHOW_ATTRIBUTE, expression)
+//        .attribute(CLASS_ATTRIBUTE, HELP_BLOCK_CLASS)
+//        .textContent(REQUIRED_FIELD_MESSAGE);
+//
+//    documentBuilder
+//        .startElement(divElement)
+//        .endElement();
+//  }
 
-    String formFieldId = formField.getId();
-    String ifExpression = String.format(INVALID_EXPRESSION + " && " + DIRTY_EXPRESSION, formFieldId, formFieldId);
-
-    divElement
-        .attribute(NG_IF_ATTRIBUTE, ifExpression)
-        .attribute(CLASS_ATTRIBUTE, HAS_ERROR_CLASS);
-
-    // <div ng-if="....$invalid && ....$dirty"...>
-    documentBuilder.startElement(divElement);
-
-    if (!isDate(formField)) {
-      renderInvalidValueMessage(formField, documentBuilder);
-      renderInvalidTypeMessage(formField, documentBuilder);
-
-    } else {
-      renderInvalidDateMessage(formField, documentBuilder);
-    }
-
-    documentBuilder.endElement();
-  }
-
-  protected void renderInvalidValueMessage(FormField formField, HtmlDocumentBuilder documentBuilder) {
-    HtmlElementWriter divElement = new HtmlElementWriter(DIV_ELEMENT);
-
-    String formFieldId = formField.getId();
-
-    String expression = String.format(REQUIRED_ERROR_EXPRESSION, formFieldId);
-
-    divElement
-        .attribute(NG_SHOW_ATTRIBUTE, expression)
-        .attribute(CLASS_ATTRIBUTE, HELP_BLOCK_CLASS)
-        .textContent(REQUIRED_FIELD_MESSAGE);
-
-    documentBuilder
-        .startElement(divElement)
-        .endElement();
-  }
-
-  protected void renderInvalidTypeMessage(FormField formField, HtmlDocumentBuilder documentBuilder) {
-    HtmlElementWriter divElement = new HtmlElementWriter(DIV_ELEMENT);
-
-    String formFieldId = formField.getId();
-
-    String expression = String.format(TYPE_ERROR_EXPRESSION, formFieldId);
-
-    String typeName = formField.getTypeName();
-
-    if (isEnum(formField)) {
-      typeName = StringFormType.TYPE_NAME;
-    }
-
-    divElement
-        .attribute(NG_SHOW_ATTRIBUTE, expression)
-        .attribute(CLASS_ATTRIBUTE, HELP_BLOCK_CLASS)
-        .textContent(String.format(TYPE_FIELD_MESSAGE, typeName));
-
-    documentBuilder
-        .startElement(divElement)
-        .endElement();
-  }
-
-  protected void renderInvalidDateMessage(FormField formField, HtmlDocumentBuilder documentBuilder) {
-    String formFieldId = formField.getId();
-
-    HtmlElementWriter firstDivElement = new HtmlElementWriter(DIV_ELEMENT);
-
-    String firstExpression = String.format(REQUIRED_ERROR_EXPRESSION + " && !" + DATE_ERROR_EXPRESSION, formFieldId, formFieldId);
-
-    firstDivElement
-        .attribute(NG_SHOW_ATTRIBUTE, firstExpression)
-        .attribute(CLASS_ATTRIBUTE, HELP_BLOCK_CLASS)
-        .textContent(REQUIRED_FIELD_MESSAGE);
-
-    documentBuilder
-        .startElement(firstDivElement)
-        .endElement();
-
-    HtmlElementWriter secondDivElement = new HtmlElementWriter(DIV_ELEMENT);
-
-    String secondExpression = String.format(DATE_ERROR_EXPRESSION, formFieldId);
-
-    secondDivElement
-        .attribute(NG_SHOW_ATTRIBUTE, secondExpression)
-        .attribute(CLASS_ATTRIBUTE, HELP_BLOCK_CLASS)
-        .textContent(INVALID_DATE_FIELD_MESSAGE);
-
-    documentBuilder
-        .startElement(secondDivElement)
-        .endElement();
-  }
+//  protected void renderInvalidTypeMessage(FormField formField, HtmlDocumentBuilder documentBuilder) {
+//    HtmlElementWriter divElement = new HtmlElementWriter(DIV_ELEMENT);
+//
+//    String formFieldId = formField.getId();
+//
+//    String expression = String.format(TYPE_ERROR_EXPRESSION, formFieldId);
+//
+//    String typeName = formField.getTypeName();
+//
+//    if (isEnum(formField)) {
+//      typeName = StringFormType.TYPE_NAME;
+//    }
+//
+//    divElement
+//        .attribute(NG_SHOW_ATTRIBUTE, expression)
+//        .attribute(CLASS_ATTRIBUTE, HELP_BLOCK_CLASS)
+//        .textContent(String.format(TYPE_FIELD_MESSAGE, typeName));
+//
+//    documentBuilder
+//        .startElement(divElement)
+//        .endElement();
+//  }
+//
+//  protected void renderInvalidDateMessage(FormField formField, HtmlDocumentBuilder documentBuilder) {
+//    String formFieldId = formField.getId();
+//
+//    HtmlElementWriter firstDivElement = new HtmlElementWriter(DIV_ELEMENT);
+//
+//    String firstExpression = String.format(REQUIRED_ERROR_EXPRESSION + " && !" + DATE_ERROR_EXPRESSION, formFieldId, formFieldId);
+//
+//    firstDivElement
+//        .attribute(NG_SHOW_ATTRIBUTE, firstExpression)
+//        .attribute(CLASS_ATTRIBUTE, HELP_BLOCK_CLASS)
+//        .textContent(REQUIRED_FIELD_MESSAGE);
+//
+//    documentBuilder
+//        .startElement(firstDivElement)
+//        .endElement();
+//
+//    HtmlElementWriter secondDivElement = new HtmlElementWriter(DIV_ELEMENT);
+//
+//    String secondExpression = String.format(DATE_ERROR_EXPRESSION, formFieldId);
+//
+//    secondDivElement
+//        .attribute(NG_SHOW_ATTRIBUTE, secondExpression)
+//        .attribute(CLASS_ATTRIBUTE, HELP_BLOCK_CLASS)
+//        .textContent(INVALID_DATE_FIELD_MESSAGE);
+//
+//    documentBuilder
+//        .startElement(secondDivElement)
+//        .endElement();
+//  }
 
   protected void addCommonFormFieldAttributes(FormField formField, HtmlElementWriter formControl) {
 
@@ -461,16 +483,18 @@ public class HtmlFormEngine implements FormEngine {
 
     formControl
         .attribute(CLASS_ATTRIBUTE, FORM_CONTROL_CLASS)
-        .attribute(NAME_ATTRIBUTE, formFieldId);
+        
+        .attribute(NAME_ATTRIBUTE, formFieldId)
+        .attribute("ngModel", null);
 
-    if (!formField.isBusinessKey()) {
-      formControl
-          .attribute(CAM_VARIABLE_TYPE_ATTRIBUTE, typeName)
-          .attribute(CAM_VARIABLE_NAME_ATTRIBUTE, formFieldId);
-    }
-    else {
-      formControl.attribute(CAM_BUSINESS_KEY_ATTRIBUTE, null);
-    }
+//    if (!formField.isBusinessKey()) {
+//      formControl
+//          .attribute(CAM_VARIABLE_TYPE_ATTRIBUTE, typeName)
+//          .attribute(CAM_VARIABLE_NAME_ATTRIBUTE, formFieldId);
+//    }
+//    else {
+//      formControl.attribute(CAM_BUSINESS_KEY_ATTRIBUTE, null);
+//    }
 
     // add validation constraints
     for (FormFieldValidationConstraint constraint : formField.getValidationConstraints()) {

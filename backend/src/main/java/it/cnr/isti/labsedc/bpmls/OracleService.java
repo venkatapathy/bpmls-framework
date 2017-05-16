@@ -12,4 +12,6 @@ public interface OracleService {
 	public void updateOracleValues(LearningScenarioInstance lsInst,List<DataObject> dos);
 	
 	public String checkOracleValues(LearningScenarioInstance lsInst,Map<String, Object> formMap);
+	
+	public Map<String, Object> getOracleValues();
 }

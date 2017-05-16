@@ -3,6 +3,7 @@ package it.cnr.isti.labsedc.bpmls.impl;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import it.cnr.isti.labsedc.bpmls.LearningEngineRepositoryService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRuntimeService;
+import it.cnr.isti.labsedc.bpmls.LearningEngineTaskService;
 import it.cnr.isti.labsedc.bpmls.OracleService;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
@@ -47,6 +49,9 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	@Autowired
 	private OracleService oracleService;
 
+	@Autowired
+	private LearningEngineTaskService lpTaskService; 
+	
 	LearningEngineRuntimeServiceImpl() {
 		logger.info("Empty Constructor of LearningEngineRuntimeService");
 	}
@@ -191,6 +196,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		// 1. start the corresponding BPMN Process
 		LearningScenario corLS = lpRepositoryService.getDeployedLearningScenario(lsInst.getLsId());
 		String processId = corLS.getBpmnProcessid();
+		
 		String processInstId = runtimeService.startProcessInstanceByKey(processId).getProcessInstanceId();
 		// 2. change the status in LSI
 		lsInst.setStatus("running");
@@ -206,12 +212,13 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		oracleService.updateOracleValues(lsInst, corLS.getInitialValuation().getDataObject());
 		lsRepository.save(lsInst);
 
+		
 		// save everythin
 		
 		//TODO
 		//dont stop yet
 		//simulate the corresponding user tasks that are not learning tasks
-		
+		((LearningEngineTaskServiceImpl) lpTaskService).simulateNonLearningTasks(lsInst);
 		
 
 	}

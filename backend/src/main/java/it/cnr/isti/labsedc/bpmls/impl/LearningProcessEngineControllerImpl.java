@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.camunda.bpm.engine.FormService;
+import org.camunda.bpm.engine.form.TaskFormData;
 import org.camunda.bpm.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,6 +82,12 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 		}
 		Task task = lpEngine.getLearningEngineTaskService()
 				.getCurrentLearningTask(Integer.toString(lpInst.getLpInstId()));
+		if(task==null){
+			ContainerTag resMsg = div()
+					.with(text("Congrats you completed this learnign scenario."));
+			return resMsg.toString();
+		}
+		
 		return new HtmlFormEngine().renderFormData(formService.getTaskFormData(task.getId()));
 	}
 
@@ -103,10 +110,11 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 					availLPs.append("\"lpname\":\"");
 					availLPs.append(lp.getName() + "\"");
-					availLPs.append("}");
+					availLPs.append("},");
 				}
 			}
 		}
+		availLPs=availLPs.deleteCharAt(availLPs.length()-1);
 		availLPs.append(" ]}");
 
 		return availLPs.toString();

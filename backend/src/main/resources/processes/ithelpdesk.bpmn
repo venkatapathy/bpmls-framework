@@ -8,7 +8,7 @@
       <bpmn:lane id="Lane_1mxrsh1" name="Employee">
         <bpmn:flowNodeRef>opencase</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_0urk1d3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>checkresolution</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>ExclusiveGateway_1maqy15</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_0t4et4e</bpmn:flowNodeRef>
       </bpmn:lane>
@@ -28,11 +28,12 @@
         <camunda:formData>
           <camunda:formField id="FormField_casepriority" label="casepriority" type="enum">
             <camunda:value id="Value_06n31bv" name="low" />
-            <camunda:value id="Value_15h73hf" name="medium" />
+            <camunda:value id="medium" name="medium" />
             <camunda:value id="Value_0jf2jsi" name="high" />
           </camunda:formField>
           <camunda:formField id="FormField_casedescription" label="casedescription" type="string" />
           <camunda:formField id="FormField_1ajd94c" label="nameofuser" type="string" />
+          <camunda:formField id="sample" label="sample" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0z4nasv</bpmn:incoming>
@@ -45,11 +46,13 @@
       <bpmn:outgoing>SequenceFlow_0z4nasv</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="SequenceFlow_1qn6mzr" sourceRef="Task_0c43ixa" targetRef="Task_1e1f74p" />
-    <bpmn:sequenceFlow id="SequenceFlow_00wp3uo" sourceRef="Task_1e1f74p" targetRef="Task_0urk1d3" />
-    <bpmn:userTask id="Task_0urk1d3" name="Check Resolution">
+    <bpmn:sequenceFlow id="SequenceFlow_00wp3uo" sourceRef="Task_1e1f74p" targetRef="checkresolution" />
+    <bpmn:userTask id="checkresolution" name="Check Resolution">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="FormField_issolutionworking" label="issolutionworking" type="boolean" defaultValue="false" />
+          <camunda:formField id="FormField_caseresolution" label="Case Form" type="string" />
+          <camunda:formField id="FormField_issolutionworking" label="Is Solution working" type="boolean" defaultValue="false" />
+          <camunda:formField id="FormField_casedescription" label="Case Desc" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_00wp3uo</bpmn:incoming>
@@ -63,13 +66,13 @@
         <bpmn:targetRef>DataObjectReference_1xh2qjv</bpmn:targetRef>
       </bpmn:dataOutputAssociation>
     </bpmn:userTask>
-    <bpmn:sequenceFlow id="SequenceFlow_1irvfhj" sourceRef="Task_0urk1d3" targetRef="ExclusiveGateway_1maqy15" />
+    <bpmn:sequenceFlow id="SequenceFlow_1irvfhj" sourceRef="checkresolution" targetRef="ExclusiveGateway_1maqy15" />
     <bpmn:sequenceFlow id="SequenceFlow_1dr9by2" name="Solution does not work" sourceRef="ExclusiveGateway_1maqy15" targetRef="Task_0t4et4e">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${FormField_issolutionworking=='no'}]]></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${FormField_issolutionworking=='false'}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0icyup8" sourceRef="Task_0t4et4e" targetRef="Task_10opm4b" />
     <bpmn:sequenceFlow id="SequenceFlow_0wxg60d" name="Solution works" sourceRef="ExclusiveGateway_1maqy15" targetRef="Task_0m0ax17">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${FormField_issolutionworking=='yes'}]]></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${FormField_issolutionworking=='true'}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:userTask id="Task_0m0ax17" name="Close Case">
       <bpmn:incoming>SequenceFlow_0wxg60d</bpmn:incoming>
@@ -212,7 +215,7 @@
           <dc:Bounds x="753" y="204.5" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_0y0bt2e_di" bpmnElement="Task_0urk1d3">
+      <bpmndi:BPMNShape id="UserTask_0y0bt2e_di" bpmnElement="checkresolution">
         <dc:Bounds x="688" y="97" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_1maqy15_di" bpmnElement="ExclusiveGateway_1maqy15" isMarkerVisible="true">
