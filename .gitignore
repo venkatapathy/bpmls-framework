@@ -2,6 +2,8 @@
 frontend/src/main/frontend/node
 frontend/src/main/frontend/node_modules
 
+change.sh
+
 target/
 !.mvn/wrapper/maven-wrapper.jar
 
