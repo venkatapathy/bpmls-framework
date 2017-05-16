@@ -25,5 +25,7 @@ public interface LearningEngineTaskService {
 	 */
 	public void completeCurrentLearningTask(String lpInstId,Map<String, Object> taskInputs)throws LearningTaskException,it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 	
+	public String completeCurrentLearningTask(LearningScenarioInstance lsInst,Map<String, Object> taskInputs);
+	
 	
 }

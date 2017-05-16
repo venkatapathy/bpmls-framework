@@ -298,7 +298,7 @@ public class LearningProcessEngineControllerOld implements LearningProcessEngine
 	 * @throws Exception
 	 */
 	@CrossOrigin(origins = "http://localhost:4200")
-	@PostMapping(value = "/completelearningtask")
+	@PostMapping(value = "/completelearningtaskold")
 	public String completeLearningTask(@RequestBody String responseJSON) throws Exception {
 		StringBuilder errorMsg = new StringBuilder();
 

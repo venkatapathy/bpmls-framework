@@ -22,6 +22,11 @@ public class OracleValue {
 	@JoinColumn(name="lsInstId")
 	private LearningScenarioInstance lsInstance;
 	
+	public OracleValue() {
+		
+		// TODO Auto-generated constructor stub
+	}
+
 	private String bpmnCamId;
 	
 	private String currentExpectedValue;

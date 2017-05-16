@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import it.cnr.isti.labsedc.bpmls.LearningEngineRuntimeService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineTaskService;
+import it.cnr.isti.labsedc.bpmls.OracleService;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningTaskException;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioInstance;
@@ -21,6 +22,9 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService{
 	
 	@Autowired
 	LearningEngineRuntimeService learningengineRuntimeService;
+	
+	@Autowired
+	OracleService oracleService;
 	
 	public Task getCurrentLearningTask(String lpInstId){
 		//get the current LearningScenarioInstance
@@ -50,6 +54,20 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService{
 		//complete all the upcoming user tasks that are not learnign tasks
 		
 		//done
+		//String retMsg= oracleService.checkOracleValues(lsInst, taskInputs);
+		
+		
+	}
+	
+	public String completeCurrentLearningTask(LearningScenarioInstance lsInst,Map<String, Object> taskInputs){
+		String retMsg= oracleService.checkOracleValues(lsInst, taskInputs);
+		
+		if(!retMsg.contains("error")){
+			Task task=getCurrentLearningTask(Integer.toString(lsInst.getLpInstance().getLpInstId()));
+			taskServiceCamunda.complete(task.getId());
+		}
+		
+		return retMsg;
 	}
 	
 	protected void simulateNonLearningTasks(String lpInstId, LearningScenarioInstance lsInst){

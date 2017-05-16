@@ -1,6 +1,7 @@
 package it.cnr.isti.labsedc.bpmls.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -45,5 +46,32 @@ public class OracleServiceImpl implements OracleService{
 			saveOracleValue(oV);
 				
 		}
+	}
+	
+	public String checkOracleValues(LearningScenarioInstance lsInst,Map<String, Object> formMap){
+		//for each form value check if there is oracle value and if it is the same
+		boolean errExists=false;
+		StringBuilder retMsg=new StringBuilder("{\"error\":");
+		StringBuilder errMsg=new StringBuilder("{\"message\":\"");
+		for(String formkey:formMap.keySet()){
+			OracleValue oV= oracleRepo.findBylsInstanceAndBpmnCamId(lsInst,formkey);
+			if(oV!=null){
+				if(!oV.getCurrentExpectedValue().equals(formMap.get(formkey))){
+					errExists=true;
+					errMsg.append("Expected:"+oV.getCurrentExpectedValue()+"Provided: "+formMap.get(formkey)+"<br>" );
+					
+				}
+			}
+		}
+		
+		if(errExists){
+			errMsg.append("\"}}");
+			retMsg.append(errMsg);
+			return retMsg.toString();
+		}else{
+			retMsg=new StringBuilder("{\"success\":\"success\"}");
+			return retMsg.toString();
+		}
+		
 	}
 }
