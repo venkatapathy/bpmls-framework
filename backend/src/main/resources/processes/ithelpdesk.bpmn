@@ -50,9 +50,17 @@
     <bpmn:userTask id="checkresolution" name="Check Resolution">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="FormField_caseresolution" label="Case Form" type="string" />
+          <camunda:formField id="FormField_caseresolution" label="Case Form" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
           <camunda:formField id="FormField_issolutionworking" label="Is Solution working" type="boolean" defaultValue="false" />
-          <camunda:formField id="FormField_casedescription" label="Case Desc" type="string" />
+          <camunda:formField id="FormField_casedescription" label="Case Desc" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_00wp3uo</bpmn:incoming>

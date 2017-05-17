@@ -1,6 +1,7 @@
 package it.cnr.isti.labsedc.bpmls.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath.LearningGoals;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath.LearningGoals.LearningGoal;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.InitialValuation.DataObject;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathInstance;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathJpaRepository;
@@ -197,7 +199,13 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		LearningScenario corLS = lpRepositoryService.getDeployedLearningScenario(lsInst.getLsId());
 		String processId = corLS.getBpmnProcessid();
 		
-		String processInstId = runtimeService.startProcessInstanceByKey(processId).getProcessInstanceId();
+		//conver init oracle values into map
+		List<DataObject> dos=corLS.getInitialValuation().getDataObject();
+		Map<String, Object> map=new HashMap<String, Object>();
+		for (DataObject sinDo : dos) {
+			map.put(sinDo.getBpmnCamundaid(), sinDo.getValue());
+		}
+		String processInstId = runtimeService.startProcessInstanceByKey(processId,map).getProcessInstanceId();
 		// 2. change the status in LSI
 		lsInst.setStatus("running");
 		// 3. set the processinstanceid in LSI

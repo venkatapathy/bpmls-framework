@@ -1,23 +1,36 @@
 import { Type, Component, ViewChild, ViewContainerRef, AfterViewInit } from '@angular/core';
-import {LearningEngineService} from '../learningengine.service';
-import {AdHocComponentFactoryCreator} from './adhoc-component-factory.service';
+import { LearningEngineService } from '../learningengine.service';
+import { AdHocComponentFactoryCreator } from './adhoc-component-factory.service';
 import { ActivatedRoute } from '@angular/router';
 
-declare var introJs:any;
+declare var introJs: any;
 
 @Component({
   selector: 'learning-simulator',
   templateUrl: './learningSimulator.html',
 })
 export class LearningSimulator implements AfterViewInit {
-   private lpid:string;
-  
+  private lpid: string;
+
+  public checkboxModel = [{
+    name: 'Check 1',
+    checked: false,
+    class: 'col-md-4'
+  }, {
+    name: 'Check 2',
+    checked: true,
+    class: 'col-md-4'
+  }, {
+    name: 'Check 3',
+    checked: false,
+    class: 'col-md-4'
+  }];
   @ViewChild('taskFormContainer', { read: ViewContainerRef }) parent: ViewContainerRef;
   isChecked: boolean = false;
-  constructor(private route:ActivatedRoute, private adHocComponentFactoryCreator: AdHocComponentFactoryCreator,private learningEngineService:LearningEngineService) {
+  constructor(private route: ActivatedRoute, private adHocComponentFactoryCreator: AdHocComponentFactoryCreator, private learningEngineService: LearningEngineService) {
   }
 
-  private createDynamicComponent(taskform:string,prompt:JSON,simulatorComponent:LearningSimulator): Type<any> {
+  private createDynamicComponent(taskform: string, prompt: JSON, simulatorComponent: LearningSimulator): Type<any> {
     @Component({
       template: taskform
     })
@@ -34,7 +47,7 @@ export class LearningSimulator implements AfterViewInit {
         intro.start();
       }
 
-      startLs(lpinstid){
+      startLs(lpinstid) {
         simulatorComponent.startLearningScenario(lpinstid);
         //alert("hi");
       }
@@ -50,10 +63,10 @@ export class LearningSimulator implements AfterViewInit {
       .params
       .subscribe(params => {
         // Defaults to 0 if no query param provided.
-        this.lpid = params['id'] || '0' ;
-        console.log("initalized lpinstid: "+this.lpid)
+        this.lpid = params['id'] || '0';
+        console.log("initalized lpinstid: " + this.lpid)
       });
-      
+
     //this.simulatorService.getcurrentlearningtask('learningscenario1','7').subscribe(response=> {this.dataContainer.nativeElement.innerHTML =response; console.log(this.taskform);});
     this.loadForm();
 
@@ -76,7 +89,7 @@ export class LearningSimulator implements AfterViewInit {
   completeLearning(learningForm: string) {
 
     //submit the form
-    this.learningEngineService.completeLearningTask(this.lpid,"1", learningForm).subscribe(response => {
+    this.learningEngineService.completeLearningTask(this.lpid, "1", learningForm).subscribe(response => {
       //get the response after submitting the task
       console.log(response.status);
       if (response.success) {
@@ -84,21 +97,21 @@ export class LearningSimulator implements AfterViewInit {
         this.learningEngineService.publishAlertMsg("Completed task")
         this.loadForm();
 
-      }else if(response.error){
+      } else if (response.error) {
         alert(response.error.message);
       }
     });
 
-    
+
   }
 
-  startLearningScenario(lpinstid: string){
-    this.learningEngineService.startalearningscenario(this.lpid,lpinstid).subscribe(response =>{
-      if(response.success){
-         this.loadForm();
-      }else{
+  startLearningScenario(lpinstid: string) {
+    this.learningEngineService.startalearningscenario(this.lpid, lpinstid).subscribe(response => {
+      if (response.success) {
+        this.loadForm();
+      } else {
         console.log(response);
       }
     });
-    }
+  }
 }
