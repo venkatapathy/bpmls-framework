@@ -3,6 +3,7 @@ package it.cnr.isti.labsedc.bpmls;
 import javax.sql.DataSource;
 
 import org.camunda.bpm.engine.spring.SpringProcessEngineConfiguration;
+import org.camunda.bpm.extension.reactor.CamundaReactor;
 import org.h2.server.web.WebServlet;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -52,6 +53,7 @@ public class CamundaProcessEngineConfiguration {
 		config.setHistory("audit");
 		config.setJobExecutorActivate(true);
 
+		config.getProcessEnginePlugins().add(CamundaReactor.plugin());
 		return config;
 	}
 

@@ -105,7 +105,7 @@ public class HtmlFormEngine implements FormEngine {
 	protected static final String CALENDAR_GLYPHICON = "glyphicon glyphicon-calendar";
 
 	// form learning simuator
-	protected static final String FORM_ID_ATTRIBUTE = "#learningForm";
+	protected static final String FORM_ID_ATTRIBUTE = "learningForm";
 	protected static final String FORM_ID_ATTRIBUTE_VALUE = "ngForm";
 	/* generated form name */
 	// protected static final String GENERATED_FORM_NAME = "generatedForm";
@@ -164,15 +164,53 @@ public class HtmlFormEngine implements FormEngine {
 		return renderFormData(taskForm);
 	}
 
+	public String getFormModel(FormData formData) {
+		StringBuilder retMsg = new StringBuilder("{\"learningform\":");
+        if(formData.getFormFields().size()>0){
+        	retMsg.append("{");
+        }
+		for (FormField formField : formData.getFormFields()) {
+			
+			Object defaultValue = formField.getValue().getValue();
+			if (defaultValue != null) {
+				retMsg.append("\"" + formField.getId() + "\":\"" + defaultValue.toString() + "\",");
+
+			} else {
+				retMsg.append("\"" + formField.getId() + "\":\"\",");
+			}
+		}
+		if(formData.getFormFields().size()>0){
+			retMsg.deleteCharAt(retMsg.length()-1);
+        	retMsg.append("}}");
+        	
+        }else{
+        	retMsg.append("{}}");
+        }
+		
+		
+		
+		return retMsg.toString();
+	}
+
 	public String renderFormData(FormData formData) {
 
 		if (formData == null || (formData.getFormFields() == null || formData.getFormFields().isEmpty())
 				&& (formData.getFormProperties() == null || formData.getFormProperties().isEmpty())) {
-			return null;
+			// when no fields are there just return forms with a complete
+			// learning button
+			HtmlElementWriter formElement = new HtmlElementWriter(FORM_ELEMENT).attribute(FORM_ID_ATTRIBUTE,
+					"#"+FORM_ID_ATTRIBUTE_VALUE);
+			HtmlElementWriter divElement = new HtmlElementWriter("button").attribute("type", "button")
+					.textContent("Complete Learning");
+			// end document element
+			HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(formElement);
+			documentBuilder.startElement(divElement).endElement();
+			documentBuilder.endElement();
+			return documentBuilder.getHtmlString();
 
 		} else {
-			HtmlElementWriter formElement = new HtmlElementWriter(FORM_ELEMENT).attribute(FORM_ID_ATTRIBUTE,
-					FORM_ID_ATTRIBUTE_VALUE);
+			HtmlElementWriter formElement = new HtmlElementWriter(FORM_ELEMENT).attribute("#f", "ngForm").attribute("novalidate", null)
+					;
 
 			HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(formElement);
 
@@ -182,11 +220,16 @@ public class HtmlFormEngine implements FormEngine {
 			}
 
 			// render deprecated form properties
-//			for (FormProperty formProperty : formData.getFormProperties()) {
-//				renderFormField(new FormPropertyAdapter(formProperty), documentBuilder);
-//			}
-
+			// for (FormProperty formProperty : formData.getFormProperties()) {
+			// renderFormField(new FormPropertyAdapter(formProperty),
+			// documentBuilder);
+			// }
+			// submitbutton
+			HtmlElementWriter divElement = new HtmlElementWriter("button").attribute("type", "submit").attribute("(click)", "completeLearning(f)")
+					.attribute("class", "btn btn-primary").textContent("Complete Task");
 			// end document element
+
+			documentBuilder.startElement(divElement).endElement();
 			documentBuilder.endElement();
 
 			return documentBuilder.getHtmlString();
@@ -206,10 +249,11 @@ public class HtmlFormEngine implements FormEngine {
 		// write label
 		if (formFieldLabel != null && !formFieldLabel.isEmpty()) {
 			HtmlElementWriter labelElement;
-			
-			//if check box different label
-			if(isBoolean(formField)){
-				labelElement = new HtmlElementWriter(LABEL_ELEMENT).attribute("class", "checkbox-inline custom-checkbox nowrap");
+
+			// if check box different label
+			if (isBoolean(formField)) {
+				labelElement = new HtmlElementWriter(LABEL_ELEMENT).attribute("class",
+						"checkbox-inline custom-checkbox nowrap");
 				documentBuilder.startElement(labelElement);
 				renderInputField(formField, documentBuilder);
 				HtmlElementWriter spanElement = new HtmlElementWriter(SPAN_ELEMENT).textContent(formFieldLabel);
@@ -217,11 +261,10 @@ public class HtmlFormEngine implements FormEngine {
 				documentBuilder.endElement();
 				documentBuilder.endElement();
 				return;
-			}else{
+			} else {
 				labelElement = new HtmlElementWriter(LABEL_ELEMENT).attribute(FOR_ATTRIBUTE, formFieldId)
 						.textContent(formFieldLabel);
 			}
-			
 
 			// <label for="...">...</label>
 			documentBuilder.startElement(labelElement).endElement();
@@ -243,7 +286,7 @@ public class HtmlFormEngine implements FormEngine {
 
 		}
 
-		//renderInvalidMessageElement(formField, documentBuilder);
+		// renderInvalidMessageElement(formField, documentBuilder);
 
 		// end group
 		documentBuilder.endElement();
@@ -344,36 +387,35 @@ public class HtmlFormEngine implements FormEngine {
 	//
 	protected void renderInputField(FormField formField, HtmlDocumentBuilder documentBuilder) {
 		HtmlElementWriter inputField = new HtmlElementWriter(INPUT_ELEMENT, true);
-		
 
 		String inputType = !isBoolean(formField) ? TEXT_INPUT_TYPE : CHECKBOX_INPUT_TYPE;
 
 		inputField.attribute(TYPE_ATTRIBUTE, inputType);
+
+		// diff for check box and text
 		
-		//diff for check box and text
-		if (inputType == TEXT_INPUT_TYPE){
 			addCommonFormFieldAttributes(formField, inputField);
-		}
 		
 
 		// add current value for the text box
 
-		if (inputType == TEXT_INPUT_TYPE) {
-			Object defaultValue = formField.getValue().getValue();
-			if (defaultValue != null) {
-				inputField.attribute("placeholder", defaultValue.toString());
-			}
-		}else{
-			//TODO: checked if the value has true or false
-			Boolean defaultValue = (Boolean)formField.getValue().getValue();
-			if (defaultValue != null && defaultValue) {
-				inputField.attribute("checked", null);
-			}
-		}
-		
-		//TODO: make it readonly if needed
-		if(isReadOnly(formField)){
-			inputField.attribute("disabled", null);
+//		if (inputType == TEXT_INPUT_TYPE) {
+//			Object defaultValue = formField.getValue().getValue();
+//			if (defaultValue != null) {
+//				inputField.attribute("placeholder", defaultValue.toString()).attribute("value",
+//						defaultValue.toString());
+//			}
+//		} else {
+//			// TODO: checked if the value has true or false
+//			Boolean defaultValue = (Boolean) formField.getValue().getValue();
+//			if (defaultValue != null && defaultValue) {
+//				inputField.attribute("checked", null);
+//			}
+//		}
+
+		// TODO: make it readonly if needed
+		if (isReadOnly(formField)) {
+			inputField.attribute("readonly", "readonly");
 		}
 		// <input ... />
 		documentBuilder.startElement(inputField).endElement();
@@ -402,95 +444,108 @@ public class HtmlFormEngine implements FormEngine {
 			// <option>
 			HtmlElementWriter option = new HtmlElementWriter(OPTION_ELEMENT, false)
 					.attribute(VALUE_ATTRIBUTE, value.getKey()).textContent(value.getValue());
-			
-			//if selected
+
+			// if selected
 			Object defaultValue = formField.getValue().getValue();
 			if (defaultValue != null) {
-				if(value.getKey().equals(defaultValue)){
+				if (value.getKey().equals(defaultValue)) {
 					option.attribute("selected", null);
 				}
 			}
-			
+
 			documentBuilder.startElement(option).endElement();
 		}
 	}
 
-//	protected void renderInvalidMessageElement(FormField formField, HtmlDocumentBuilder documentBuilder) {
-//		HtmlElementWriter divElement = new HtmlElementWriter(DIV_ELEMENT);
-//
-//		String formFieldId = formField.getId();
-//		String ifExpression = String.format(INVALID_EXPRESSION + " && " + DIRTY_EXPRESSION, formFieldId, formFieldId);
-//
-//		divElement.attribute(NG_IF_ATTRIBUTE, ifExpression).attribute(CLASS_ATTRIBUTE, HAS_ERROR_CLASS);
-//
-//		// <div ng-if="....$invalid && ....$dirty"...>
-//		documentBuilder.startElement(divElement);
-//
-//		if (!isDate(formField)) {
-//			renderInvalidValueMessage(formField, documentBuilder);
-//			renderInvalidTypeMessage(formField, documentBuilder);
-//
-//		} else {
-//			renderInvalidDateMessage(formField, documentBuilder);
-//		}
-//
-//		documentBuilder.endElement();
-//	}
-//
-//	protected void renderInvalidValueMessage(FormField formField, HtmlDocumentBuilder documentBuilder) {
-//		HtmlElementWriter divElement = new HtmlElementWriter(DIV_ELEMENT);
-//
-//		String formFieldId = formField.getId();
-//
-//		String expression = String.format(REQUIRED_ERROR_EXPRESSION, formFieldId);
-//
-//		divElement.attribute(NG_SHOW_ATTRIBUTE, expression).attribute(CLASS_ATTRIBUTE, HELP_BLOCK_CLASS)
-//				.textContent(REQUIRED_FIELD_MESSAGE);
-//
-//		documentBuilder.startElement(divElement).endElement();
-//	}
-//
-//	protected void renderInvalidTypeMessage(FormField formField, HtmlDocumentBuilder documentBuilder) {
-//		HtmlElementWriter divElement = new HtmlElementWriter(DIV_ELEMENT);
-//
-//		String formFieldId = formField.getId();
-//
-//		String expression = String.format(TYPE_ERROR_EXPRESSION, formFieldId);
-//
-//		String typeName = formField.getTypeName();
-//
-//		if (isEnum(formField)) {
-//			typeName = StringFormType.TYPE_NAME;
-//		}
-//
-//		divElement.attribute(NG_SHOW_ATTRIBUTE, expression).attribute(CLASS_ATTRIBUTE, HELP_BLOCK_CLASS)
-//				.textContent(String.format(TYPE_FIELD_MESSAGE, typeName));
-//
-//		documentBuilder.startElement(divElement).endElement();
-//	}
-//
-//	protected void renderInvalidDateMessage(FormField formField, HtmlDocumentBuilder documentBuilder) {
-//		String formFieldId = formField.getId();
-//
-//		HtmlElementWriter firstDivElement = new HtmlElementWriter(DIV_ELEMENT);
-//
-//		String firstExpression = String.format(REQUIRED_ERROR_EXPRESSION + " && !" + DATE_ERROR_EXPRESSION, formFieldId,
-//				formFieldId);
-//
-//		firstDivElement.attribute(NG_SHOW_ATTRIBUTE, firstExpression).attribute(CLASS_ATTRIBUTE, HELP_BLOCK_CLASS)
-//				.textContent(REQUIRED_FIELD_MESSAGE);
-//
-//		documentBuilder.startElement(firstDivElement).endElement();
-//
-//		HtmlElementWriter secondDivElement = new HtmlElementWriter(DIV_ELEMENT);
-//
-//		String secondExpression = String.format(DATE_ERROR_EXPRESSION, formFieldId);
-//
-//		secondDivElement.attribute(NG_SHOW_ATTRIBUTE, secondExpression).attribute(CLASS_ATTRIBUTE, HELP_BLOCK_CLASS)
-//				.textContent(INVALID_DATE_FIELD_MESSAGE);
-//
-//		documentBuilder.startElement(secondDivElement).endElement();
-//	}
+	// protected void renderInvalidMessageElement(FormField formField,
+	// HtmlDocumentBuilder documentBuilder) {
+	// HtmlElementWriter divElement = new HtmlElementWriter(DIV_ELEMENT);
+	//
+	// String formFieldId = formField.getId();
+	// String ifExpression = String.format(INVALID_EXPRESSION + " && " +
+	// DIRTY_EXPRESSION, formFieldId, formFieldId);
+	//
+	// divElement.attribute(NG_IF_ATTRIBUTE,
+	// ifExpression).attribute(CLASS_ATTRIBUTE, HAS_ERROR_CLASS);
+	//
+	// // <div ng-if="....$invalid && ....$dirty"...>
+	// documentBuilder.startElement(divElement);
+	//
+	// if (!isDate(formField)) {
+	// renderInvalidValueMessage(formField, documentBuilder);
+	// renderInvalidTypeMessage(formField, documentBuilder);
+	//
+	// } else {
+	// renderInvalidDateMessage(formField, documentBuilder);
+	// }
+	//
+	// documentBuilder.endElement();
+	// }
+	//
+	// protected void renderInvalidValueMessage(FormField formField,
+	// HtmlDocumentBuilder documentBuilder) {
+	// HtmlElementWriter divElement = new HtmlElementWriter(DIV_ELEMENT);
+	//
+	// String formFieldId = formField.getId();
+	//
+	// String expression = String.format(REQUIRED_ERROR_EXPRESSION,
+	// formFieldId);
+	//
+	// divElement.attribute(NG_SHOW_ATTRIBUTE,
+	// expression).attribute(CLASS_ATTRIBUTE, HELP_BLOCK_CLASS)
+	// .textContent(REQUIRED_FIELD_MESSAGE);
+	//
+	// documentBuilder.startElement(divElement).endElement();
+	// }
+	//
+	// protected void renderInvalidTypeMessage(FormField formField,
+	// HtmlDocumentBuilder documentBuilder) {
+	// HtmlElementWriter divElement = new HtmlElementWriter(DIV_ELEMENT);
+	//
+	// String formFieldId = formField.getId();
+	//
+	// String expression = String.format(TYPE_ERROR_EXPRESSION, formFieldId);
+	//
+	// String typeName = formField.getTypeName();
+	//
+	// if (isEnum(formField)) {
+	// typeName = StringFormType.TYPE_NAME;
+	// }
+	//
+	// divElement.attribute(NG_SHOW_ATTRIBUTE,
+	// expression).attribute(CLASS_ATTRIBUTE, HELP_BLOCK_CLASS)
+	// .textContent(String.format(TYPE_FIELD_MESSAGE, typeName));
+	//
+	// documentBuilder.startElement(divElement).endElement();
+	// }
+	//
+	// protected void renderInvalidDateMessage(FormField formField,
+	// HtmlDocumentBuilder documentBuilder) {
+	// String formFieldId = formField.getId();
+	//
+	// HtmlElementWriter firstDivElement = new HtmlElementWriter(DIV_ELEMENT);
+	//
+	// String firstExpression = String.format(REQUIRED_ERROR_EXPRESSION + " &&
+	// !" + DATE_ERROR_EXPRESSION, formFieldId,
+	// formFieldId);
+	//
+	// firstDivElement.attribute(NG_SHOW_ATTRIBUTE,
+	// firstExpression).attribute(CLASS_ATTRIBUTE, HELP_BLOCK_CLASS)
+	// .textContent(REQUIRED_FIELD_MESSAGE);
+	//
+	// documentBuilder.startElement(firstDivElement).endElement();
+	//
+	// HtmlElementWriter secondDivElement = new HtmlElementWriter(DIV_ELEMENT);
+	//
+	// String secondExpression = String.format(DATE_ERROR_EXPRESSION,
+	// formFieldId);
+	//
+	// secondDivElement.attribute(NG_SHOW_ATTRIBUTE,
+	// secondExpression).attribute(CLASS_ATTRIBUTE, HELP_BLOCK_CLASS)
+	// .textContent(INVALID_DATE_FIELD_MESSAGE);
+	//
+	// documentBuilder.startElement(secondDivElement).endElement();
+	// }
 
 	protected void addCommonFormFieldAttributes(FormField formField, HtmlElementWriter formControl) {
 
@@ -504,8 +559,8 @@ public class HtmlFormEngine implements FormEngine {
 
 		String formFieldId = formField.getId();
 
-		formControl.attribute(CLASS_ATTRIBUTE, FORM_CONTROL_CLASS).attribute(NAME_ATTRIBUTE, formFieldId).attribute("ngModel", null);
-
+		formControl.attribute(CLASS_ATTRIBUTE, FORM_CONTROL_CLASS).attribute("[(ngModel)]", FORM_ID_ATTRIBUTE+"."+formFieldId)
+				.attribute("ngControl", formFieldId).attribute("name", formFieldId);
 
 		// add validation constraints
 		for (FormFieldValidationConstraint constraint : formField.getValidationConstraints()) {

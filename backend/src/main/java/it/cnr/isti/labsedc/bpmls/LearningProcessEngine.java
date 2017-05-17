@@ -2,7 +2,10 @@ package it.cnr.isti.labsedc.bpmls;
 
 import java.util.List;
 
+import org.camunda.bpm.application.ProcessApplication;
 import org.camunda.bpm.engine.task.Task;
+import org.camunda.bpm.extension.reactor.spring.EnableCamundaReactor;
+import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication;
 
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
@@ -16,6 +19,9 @@ import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOrac
  * @author venkat
  *
  */
+@ProcessApplication
+@EnableProcessApplication
+@EnableCamundaReactor
 public interface LearningProcessEngine {
 	/*public List<LearningScenario> getDeployedLearningScenarios();
 

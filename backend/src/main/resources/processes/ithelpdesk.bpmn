@@ -89,7 +89,7 @@
         <bpmn:targetRef>DataObjectReference_1xh2qjv</bpmn:targetRef>
       </bpmn:dataOutputAssociation>
     </bpmn:userTask>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_1maqy15" camunda:asyncAfter="true">
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1maqy15">
       <bpmn:incoming>SequenceFlow_1irvfhj</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1dr9by2</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0wxg60d</bpmn:outgoing>

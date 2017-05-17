@@ -8,15 +8,22 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
+import org.camunda.bpm.application.PostDeploy;
+import org.camunda.bpm.application.ProcessApplication;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.delegate.ExecutionListener;
 import org.camunda.bpm.engine.task.Task;
+import org.camunda.bpm.extension.reactor.CamundaReactor;
+import org.camunda.bpm.extension.reactor.bus.CamundaEventBus;
+import org.camunda.bpm.extension.reactor.spring.EnableCamundaReactor;
+import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication;
 import org.camunda.bpm.spring.boot.starter.event.ProcessApplicationStartedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +41,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
+import it.cnr.isti.labsedc.bpmls.GlobalExecutionListener;
 import it.cnr.isti.labsedc.bpmls.HtmlFormEngine;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRepositoryService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRuntimeService;
@@ -47,6 +55,7 @@ import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOrac
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenarioInstance;
 
 @Component
+
 public class LearningProcessEngineImpl implements LearningProcessEngine {
 	@Autowired
 	JdbcTemplate jdbcTemplate;
@@ -66,10 +75,15 @@ public class LearningProcessEngineImpl implements LearningProcessEngine {
 	@Autowired
 	private LearningEngineTaskService learningEngineTaskService;
 	
+	
 	LearningProcessEngineImpl() {
 		logger.info("Empty Constructor of LearningProcessEngine");
+		
 	}
 
+	
+	
+	
 	public LearningEngineRepositoryService getLearningEngineRepositoryService(){
 		return this.learningEngineRepositoryService;
 	
@@ -83,6 +97,12 @@ public class LearningProcessEngineImpl implements LearningProcessEngine {
 		return this.learningEngineTaskService;
 	}
 	
+	@PostConstruct
+	public void registerMonitor(){
+		
+	    System.out.println("System deployed");
+	    
+	}
 	
 	// public List<LearningPathInstance> getRunningLearningPaths(){
 	// return runningLearningPaths;

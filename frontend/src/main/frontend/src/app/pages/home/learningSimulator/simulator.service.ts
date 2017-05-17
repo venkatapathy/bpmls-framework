@@ -22,6 +22,7 @@ export class SimulatorService {
         this.alertMsg.next(textToPublish);
     }
     
+   
     getcurrentlearningtask(lsintid: string) {
         console.log('http://localhost:8080/getcurrentlearningtask');
         let params = new URLSearchParams();

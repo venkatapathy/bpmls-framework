@@ -1,11 +1,14 @@
 package it.cnr.isti.labsedc.bpmls.impl;
 
+import static j2html.TagCreator.*;
+
+
 import java.util.List;
 import java.util.Map;
 
 import org.camunda.bpm.engine.FormService;
-import org.camunda.bpm.engine.form.TaskFormData;
 import org.camunda.bpm.engine.task.Task;
+import org.dom4j.Branch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,12 +27,9 @@ import it.cnr.isti.labsedc.bpmls.LearningProcessEngine;
 import it.cnr.isti.labsedc.bpmls.LearningProcessEngineController;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
-import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathInstance;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioInstance;
 import j2html.tags.ContainerTag;
-
-import static j2html.TagCreator.*;
 
 @Component
 @RestController
@@ -74,8 +73,10 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 					.attr("(click)", "startLs(" + Integer.toString(lpInst.getLpInstId()) + ")")
 					.attr("class", "btn btn-primary");
 
-			ContainerTag lsText = div().withText("Currently you dont have learning scenarion. Start one!")
+			
+			ContainerTag lsText = div().withText("Currently you dont have learning scenarion. Start one!").with(br())
 					.with(lsButton);
+			
 			System.out.println(lsText.render());
 			return lsText.render();
 
@@ -88,9 +89,42 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 			return resMsg.toString();
 		}
 		
+		//return tthe form and controler
+		
 		return new HtmlFormEngine().renderFormData(formService.getTaskFormData(task.getId()));
 	}
 
+	@CrossOrigin(origins = "http://localhost:4200")
+	@RequestMapping(value = "/getcurrentlearningtaskmodel/{lpid}", method = RequestMethod.GET)
+	public String getCurrentLearningTaskModel(@PathVariable("lpid") String lpId) {
+		// check if there any learning path engine for that
+		LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpId);
+
+		if (lpInst == null) {
+			return "{}";
+		}
+
+		LearningScenarioInstance lsInst = lpEngine.getLearningEngineRuntimeService()
+				.getRunningLearningScenarioByIpInstId(Integer.toString(lpInst.getLpInstId()));
+
+		// if lsinst null then null
+		if (lsInst == null) {
+			return "{}";
+
+		}
+		Task task = lpEngine.getLearningEngineTaskService()
+				.getCurrentLearningTask(Integer.toString(lpInst.getLpInstId()));
+		if(task==null){
+			ContainerTag resMsg = div()
+					.with(text("Congrats you completed this learnign scenario."));
+			return "{}";
+		}
+		
+		//return tthe form and controler
+		
+		return new HtmlFormEngine().getFormModel(formService.getTaskFormData(task.getId()));
+	}
+	
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/getavailablelearningpaths", method = RequestMethod.GET)
 	public String getAvailableLearningPaths() {

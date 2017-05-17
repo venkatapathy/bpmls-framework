@@ -183,8 +183,8 @@ public class HtmlFormEnginebkup implements FormEngine {
 
       //submitbutton
       HtmlElementWriter divElement = new HtmlElementWriter("button")
-    	        .attribute("type", "submit")
-    	        .textContent("Complete Learning");
+    	        .attribute("type", "submit").attribute("class", "btn btn-primary")
+    	        .textContent("Complete Task");
       // end document element
       
       documentBuilder.startElement(divElement).endElement();

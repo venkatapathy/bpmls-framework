@@ -3,16 +3,16 @@
 
 
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <div>
 
                 <tabs>
                     <tab [tabTitle]="'Tab 1'">
 
                         <ba-card title="Basic Form" baCardClass="with-scroll">
-                            <div style="min-height: 800px;">
+                            <div style="min-height: 500px;">
 
-                                <form #learningForm="ngForm" (ngSubmit)="completeLearning(learningForm)">
+                                <!--<form #learningForm="ngForm" (ngSubmit)="completeLearning(learningForm)">
                                     <div class="form-group">
                                         <label for="input01">Text</label>
                                         <input type="text" class="form-control" id="input01" placeholder="Text">
@@ -37,7 +37,7 @@
                                         <span>Check box label</span>
                                     </label>
                                     </div>
-                                </form>
+                                </form>-->
                                 <div #taskFormContainer></div>
                             </div>
                         </ba-card>

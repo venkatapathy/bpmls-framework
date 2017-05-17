@@ -29,6 +29,20 @@ export class LearningEngineService {
         this.alertMsg.next(textToPublish);
     }
     
+     getcurrenttaskmodel(lpintid: string){
+        //console.log('http://localhost:8080/getcurrentlearningtask');
+        let params = new URLSearchParams();
+        params.set('lpinstid', lpintid);
+        return this.http.get('http://localhost:8080/getcurrentlearningtaskmodel/'+lpintid   , { search: params })
+
+            .map((response: Response) => {
+                // login successful if there's a jwt token in the response
+                
+                return response.json();
+            });
+    }
+
+
     getcurrentlearningtask(lpintid: string) {
         console.log('http://localhost:8080/getcurrentlearningtask/'+lpintid);
         let params = new URLSearchParams();
