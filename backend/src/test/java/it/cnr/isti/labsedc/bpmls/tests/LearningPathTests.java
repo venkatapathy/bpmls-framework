@@ -1,10 +1,7 @@
 package it.cnr.isti.labsedc.bpmls.tests;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.List;
 
-import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.task.Task;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
@@ -52,10 +49,6 @@ public class LearningPathTests {
 
 	@Test(expected = LearningPathException.class)
 	public void t2startAnotherLearningProcessInstance() throws LearningPathException {
-		// there should be only one deployed learning process
-		List<LearningPath> deployedLps = learningProcessEngine.getLearningEngineRepositoryService()
-				.getDeployedLearningPaths();
-
 		// start a learningpath- will throw an exception
 		learningProcessEngine.getLearningEngineRuntimeService().startaLearningPathById(learningProcessEngine.getLearningEngineRuntimeService().getRunningLearningPaths().get(0).getLpId());
 	}
@@ -110,7 +103,7 @@ public class LearningPathTests {
 	}
 
 	@Test
-	public void t6checkRunningLearningScenario() {
+	public void t6checkRunningLearningScenario() throws LearningPathException {
 		// get the running learningpath
 		List<LearningPath> deployedLps = learningProcessEngine.getLearningEngineRepositoryService()
 				.getDeployedLearningPaths();
@@ -122,16 +115,13 @@ public class LearningPathTests {
 		
 		// Should be the first learningscenario
 				Assert.assertEquals("learningscenario1", currentLsInst.getLsId());
-				
-				LearningScenarioInstance nextLsInst = learningProcessEngine.getLearningEngineRuntimeService()
-						.getNextLearningScenarioByLpInstId(Integer.toString(lpInst.getLpInstId()));
 
 				// Should be the first learningscenario
 				//Assert.assertEquals("learningscenario2", nextLsInst.getLsId());
 	}
 	
 	@Test
-	public void t7checkLearningTasks(){
+	public void t7checkLearningTasks() throws LearningPathException{
 		List<LearningPath> deployedLps = learningProcessEngine.getLearningEngineRepositoryService()
 				.getDeployedLearningPaths();
 		LearningPathInstance lpInst = learningProcessEngine.getLearningEngineRuntimeService()

@@ -15,7 +15,7 @@ import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenarioInstance;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction.DataObject;
 
 /**
- * 
+ * Main interfact of the Learning Process Engine which contains within itself the Camunda Process Engine
  * @author venkat
  *
  */

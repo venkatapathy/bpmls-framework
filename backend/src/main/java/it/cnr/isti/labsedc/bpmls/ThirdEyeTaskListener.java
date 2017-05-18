@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @CamundaSelector(type = "userTask", event = TaskListener.EVENTNAME_CREATE)
-public class GlobalExecutionListener extends ReactorTaskListener {
+public class ThirdEyeTaskListener extends ReactorTaskListener {
 
     public static final String ACTIVITY_EXECUTION_MAP_VAR_NAME = "activityExecutionMap";
 

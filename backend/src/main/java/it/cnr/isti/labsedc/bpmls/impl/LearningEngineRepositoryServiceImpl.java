@@ -7,14 +7,13 @@ import java.util.List;
 import org.camunda.bpm.spring.boot.starter.event.ProcessApplicationStartedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
-
 import it.cnr.isti.labsedc.bpmls.LearningEngineRepositoryService;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
+import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathExceptionErrorCodes;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
 
@@ -78,10 +77,19 @@ public class LearningEngineRepositoryServiceImpl implements LearningEngineReposi
 
 	}
 
+	/**
+	 * Returns a {@link List} of {@link LearningPath} or null if none is deployed (hope not null for this will break hell 
+	 * with the current application. you need atleast one learning path else what good is a process-driven learning engine? 
+	 */
 	public List<LearningPath> getDeployedLearningPaths() {
 		return deployedLearningPaths;
 	}
 
+	/**
+	 * Returns a {@link LearningPath}, given the lpid.
+	 * Throws {@link LearningPathException} if not found with LearningPathExceptionErrorCodes.LP_NOT_FOUND
+	 */
+	
 	public LearningPath getDeployedLearningPath(String lpId) throws LearningPathException {
 		Iterator<LearningPath> lpIt = deployedLearningPaths.iterator();
 
@@ -92,9 +100,13 @@ public class LearningEngineRepositoryServiceImpl implements LearningEngineReposi
 			}
 		}
 
-		throw new LearningPathException("Learning path with id, "+ lpId+" not found");
+		throw new LearningPathException("Learning path with id, "+ lpId+" not found",LearningPathExceptionErrorCodes.LP_NOT_FOUND);
 	}
 
+	/**
+	 * Returns {@link LearningScenario}, given the lpid.
+	 * Throws {@link LearningPathException} if not found with LearningPathExceptionErrorCodes.LP_LEARNING_SCENARIO_NOT_FOUND
+	 */
 	public LearningScenario getDeployedLearningScenario(String lsId) throws LearningPathException {
 		Iterator<LearningScenario> lpIt = deployedLearningScenarios.iterator();
 
@@ -105,7 +117,7 @@ public class LearningEngineRepositoryServiceImpl implements LearningEngineReposi
 			}
 		}
 
-		throw new LearningPathException("Learning scenario id, "+ lsId+" not found");
+		throw new LearningPathException("Learning scenario id, "+ lsId+" not found",LearningPathExceptionErrorCodes.LP_LEARNING_SCENARIO_NOT_FOUND);
 
 	}
 }

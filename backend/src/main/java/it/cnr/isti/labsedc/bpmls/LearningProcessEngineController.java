@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 public interface LearningProcessEngineController {
 	
-	public String getCurrentLearningTask(String lpid);
+	public String getCurrentLPStatus(String lpid);
 	
 	
 	public String getAvailableLearningPaths();

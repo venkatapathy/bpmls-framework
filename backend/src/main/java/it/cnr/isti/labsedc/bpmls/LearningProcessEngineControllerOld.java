@@ -51,7 +51,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import it.cnr.isti.labsedc.bpmls.impl.LearningProcessEngineControllerI;
+
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenarioInstance;
 
@@ -63,7 +63,7 @@ import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenarioInstance;
  *
  */
 
-public class LearningProcessEngineControllerOld implements LearningProcessEngineControllerI{
+public class LearningProcessEngineControllerOld{
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 

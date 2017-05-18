@@ -41,7 +41,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
-import it.cnr.isti.labsedc.bpmls.GlobalExecutionListener;
+import it.cnr.isti.labsedc.bpmls.ThirdEyeTaskListener;
 import it.cnr.isti.labsedc.bpmls.HtmlFormEngine;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRepositoryService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRuntimeService;

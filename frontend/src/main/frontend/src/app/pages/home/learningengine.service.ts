@@ -19,7 +19,7 @@ export class LearningEngineService {
         return this.http.get('http://localhost:8080/getavailablelearningpaths')
 
             .map((response: Response) => {
-                // login successful if there's a jwt token in the response
+                
 
                 return JSON.parse(response.text());
             });
@@ -36,7 +36,7 @@ export class LearningEngineService {
         return this.http.get('http://localhost:8080/getcurrentlearningtaskmodel/'+lpintid   , { search: params })
 
             .map((response: Response) => {
-                // login successful if there's a jwt token in the response
+                
                 
                 return response.json();
             });
@@ -44,15 +44,15 @@ export class LearningEngineService {
 
 
     getcurrentlearningtask(lpintid: string) {
-        console.log('http://localhost:8080/getcurrentlearningtask/'+lpintid);
+        //console.log('http://localhost:8080/getcurrentlearningpathstatus/'+lpintid);
         let params = new URLSearchParams();
         params.set('lpinstid', lpintid);
-        return this.http.get('http://localhost:8080/getcurrentlearningtask/'+lpintid, { search: params })
+        return this.http.get('http://localhost:8080/getcurrentlearningpathstatus/'+lpintid, { search: params })
 
             .map((response: Response) => {
                 // login successful if there's a jwt token in the response
 
-                return response.text();
+                return response.json();
             });
     }
 

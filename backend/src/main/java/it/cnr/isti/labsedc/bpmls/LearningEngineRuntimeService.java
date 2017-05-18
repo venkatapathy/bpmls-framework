@@ -38,17 +38,30 @@ public interface LearningEngineRuntimeService {
 	
 	/**
 	 * Gets the next learning scenario that we need to run given by the lpInstId
-	 * @param lpInstId the id of the lp instance for which we want the learning scenario
-	 * @return {@link LearningScenarioInstance} that needs to be executed next for learning or null if there is none
+	 * TODO: find it per user
+	 * 
+	 * @param lpInstId
+	 *            the id of the lp instance for which we want the learning
+	 *            scenario
+	 * @return {@link LearningScenarioInstance} that needs to be executed next
+	 *         for learning or null if there is none
+	 * @throws LearningPathException
+	 *             with LearningPathExceptionErrorCodes.LP_RUNNING_NOT_FOUND if
+	 *             the LearningScenarioInstance with the given id is not found
 	 */
-	public LearningScenarioInstance getNextLearningScenarioByLpInstId(String lpInstId);
+	public LearningScenarioInstance getNextLearningScenarioByLpInstId(String lpInstId)throws LearningPathException;
 	
 	/**
-	 * Gets the running learning scenario given by the lpInstId
-	 * @param lpInstId the id of the lp instance for which we want the learning scenario
-	 * @return {@link LearningScenarioInstance} that is executed now for learning or null if there is none
+	 * TODO: Per user
+	 * 
+	 * @return a {@link LearningScenarioInstance} given a lpinstid, null if no
+	 *         Learning Scenario is currently running
+	 * @throws LearningPathException
+	 *             with LearningPathExceptionErrorCodes.LP_RUNNING_NOT_FOUND, if
+	 *             LearningPathInstance not found with the id
+	 * 
 	 */
-	public LearningScenarioInstance getRunningLearningScenarioByIpInstId(String lpInstId);
+	public LearningScenarioInstance getRunningLearningScenarioByIpInstId(String lpInstId)throws LearningPathException;
 	
 	/**
 	 * Start the {@link #getNextLearningScenarioByLpInstId(String)}} 

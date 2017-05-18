@@ -43,23 +43,23 @@ export class TreeView implements AfterViewInit {
 
       });
 
-      console.log(response);
+      //console.log(response);
     });
   }
 
   startaLearningPath(lpid: string) {
     this.learningEngineService.startaLearningPath(lpid).subscribe(response => {
 
-      if (response.error) {
+      if (response.status=="error") {
         const activeModal = this.modalService.open(DefaultModal, {
           size: 'sm',
           backdrop: 'static'
         });
         activeModal.componentInstance.modalHeader = 'Static modal';
-        activeModal.componentInstance.modalContent = response.success.lpinstid;
+        activeModal.componentInstance.modalContent = response.status.error.errMsg;
       }
-      if(response.success){
-        this.router.navigate(['/pages','home','learningsimulator',response.success.lpid]);
+      if(response.status=="success"){
+        this.router.navigate(['/pages','home','learningsimulator',response.lpid]);
 
 
       }

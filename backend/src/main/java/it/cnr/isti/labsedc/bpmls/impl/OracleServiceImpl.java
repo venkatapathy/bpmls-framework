@@ -1,5 +1,6 @@
 package it.cnr.isti.labsedc.bpmls.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,9 @@ public class OracleServiceImpl implements OracleService {
 		oracleRepo.save(oVa);
 	}
 
+	/**
+	 * Updates oracle value. Need to be called when starting a learning scenario and before every task is entered
+	 */
 	@Transactional
 	public void updateOracleValues(LearningScenarioInstance lsInst, List<DataObject> dos) {
 		for (DataObject sinDo : dos) {
@@ -49,29 +53,25 @@ public class OracleServiceImpl implements OracleService {
 		}
 	}
 
-	public String checkOracleValues(LearningScenarioInstance lsInst, Map<String, Object> formMap) {
+	public List<TaskIncompleteErrorMessage> checkOracleValues(LearningScenarioInstance lsInst, Map<String, Object> formMap) {
 		// for each form value check if there is oracle value and if it is the
 		// same
 		boolean errExists = false;
-		StringBuilder retMsg = new StringBuilder("{\"error\":");
-		StringBuilder errMsg = new StringBuilder("{\"message\":\"");
+		List<TaskIncompleteErrorMessage> errMsgs=new ArrayList<TaskIncompleteErrorMessage>();
 		for (String formkey : formMap.keySet()) {
 			OracleValue oV = oracleRepo.findBylsInstanceAndBpmnCamId(lsInst, formkey);
 			if (oV != null) {
 				if (formMap.get(formkey) instanceof String) {
 					if (!oV.getCurrentExpectedValue().equals(formMap.get(formkey))) {
 						errExists = true;
-
-						errMsg.append("Expected:" + oV.getCurrentExpectedValue() + " Provided: " + formMap.get(formkey)
-								+ "<br>");
-
+						TaskIncompleteErrorMessage erMsg=new TaskIncompleteErrorMessage(oV.getBpmnCamId(), oV.getBpmnCamId(), oV.getCurrentExpectedValue(), formMap.get(formkey));
+						errMsgs.add(erMsg);
 					}
 				} else if (formMap.get(formkey) instanceof Boolean) {
 					if (! (oV.getCurrentExpectedValue()).equals(Boolean.toString((Boolean)formMap.get(formkey)))) {
 						errExists = true;
-
-						errMsg.append("Expected:" + oV.getCurrentExpectedValue() + " Provided: " + formMap.get(formkey)
-								+ "<br>");
+						TaskIncompleteErrorMessage erMsg=new TaskIncompleteErrorMessage(oV.getBpmnCamId(), oV.getBpmnCamId(), oV.getCurrentExpectedValue(), formMap.get(formkey));
+						errMsgs.add(erMsg);
 
 					}
 				}
@@ -79,12 +79,10 @@ public class OracleServiceImpl implements OracleService {
 		}
 
 		if (errExists) {
-			errMsg.append("\"}}");
-			retMsg.append(errMsg);
-			return retMsg.toString();
+			return errMsgs;
 		} else {
-			retMsg = new StringBuilder("{\"success\":\"success\"}");
-			return retMsg.toString();
+			
+			return null;
 		}
 
 	}

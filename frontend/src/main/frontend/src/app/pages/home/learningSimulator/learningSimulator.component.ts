@@ -35,13 +35,13 @@ export class LearningSimulator implements AfterViewInit {
       template: taskform
     })
     class InsertedComponent {
-      learningForm=modelJs;
-     constructor(){
-       
-       //alert(JSON.stringify(this.learningForm));
-     }
+      learningForm = modelJs;
+      constructor() {
+
+        //alert(JSON.stringify(this.learningForm));
+      }
       private completeLearning(f) {
-        
+
         //alert(JSON.stringify(f.value));
         simulatorComponent.completeLearning(JSON.stringify(f.value));
 
@@ -67,7 +67,7 @@ export class LearningSimulator implements AfterViewInit {
       template: taskform
     })
     class InsertedComponent {
-      
+
       completeLearning(learningForm) {
         alert(JSON.stringify(learningForm.getRawValue()));
         simulatorComponent.completeLearning(JSON.stringify(learningForm.value));
@@ -110,20 +110,32 @@ export class LearningSimulator implements AfterViewInit {
   loadForm() {
     //try to get the model
     this.learningEngineService.getcurrenttaskmodel(this.lpid).subscribe(response => {
-      if (response.learningform) {
+      if (response.status == "success") {
         //alert(JSON.stringify(response.learningpath));
-        let model = response.learningform;
+        let model = response.formmodel;
         this.learningEngineService.getcurrentlearningtask(this.lpid).subscribe(response => {
-          let prompt = JSON.parse("{\"steps\": [{ \"intro\": \"welcome to case \"},{ \"intro\": \"In this scenario you will open a case \"}]}");
-          let component = this.createDynamicComponentwithModel(response, model, prompt, this);
-          //console.log(response);
-          let componentFactory = this.adHocComponentFactoryCreator.getFactory(component);
-          this.parent.clear();
-          let componentRef = this.parent.createComponent(componentFactory);
+          if (response.status == "success") {
+            let prompt = JSON.parse("{\"steps\": [{ \"intro\": \"welcome to case \"},{ \"intro\": \"In this scenario you will open a case \"}]}");
+            let component = this.createDynamicComponentwithModel(response.htmlform, model, prompt, this);
+            //console.log(response);
+            let componentFactory = this.adHocComponentFactoryCreator.getFactory(component);
+            this.parent.clear();
+            let componentRef = this.parent.createComponent(componentFactory);
 
-          componentRef.changeDetectorRef.detectChanges();
+            componentRef.changeDetectorRef.detectChanges();
+          }else{
+            //TODO: better error handling
+            alert(response.errMsg)
+
+          }
+
         });
       } else {
+        //TODO: Better error handling
+        alert(response.errMsg);
+
+      }
+      /*else {
         this.learningEngineService.getcurrentlearningtask(this.lpid).subscribe(response => {
           let prompt = JSON.parse("{\"steps\": [{ \"intro\": \"welcome to case \"},{ \"intro\": \"In this scenario you will open a case \"}]}");
           let component = this.createDynamicComponent(response, prompt, this);
@@ -133,24 +145,26 @@ export class LearningSimulator implements AfterViewInit {
           let componentRef = this.parent.createComponent(componentFactory);
 
           componentRef.changeDetectorRef.detectChanges();
-        });
-      }
+        }
+        );
+      }*/
     });
 
   }
+
   completeLearning(learningForm: string) {
 
     //submit the form
     this.learningEngineService.completeLearningTask(this.lpid, "1", learningForm).subscribe(response => {
       //get the response after submitting the task
       console.log(response.status);
-      if (response.success) {
+      if (response.status=="success") {
         console.log("Setting alter mesage");
         this.learningEngineService.publishAlertMsg("Completed task")
         this.loadForm();
 
-      } else if (response.error) {
-        alert(response.error.message);
+      } else if (response.status=="error") {
+        alert(JSON.stringify(response.errMsg));
       }
     });
 
@@ -159,10 +173,11 @@ export class LearningSimulator implements AfterViewInit {
 
   startLearningScenario(lpinstid: string) {
     this.learningEngineService.startalearningscenario(this.lpid, lpinstid).subscribe(response => {
-      if (response.success) {
+      if (response.status == "success") {
         this.loadForm();
       } else {
-        console.log(response);
+        //TODO: Better Error Handling
+        alert(response.errMsg);
       }
     });
   }

@@ -14,7 +14,6 @@ import { TreeView } from './treeView/treeView.component';
 import { LearningSimulator } from './learningSimulator/learningSimulator.component';
 import { LsCompletionChart } from './learningSimulator/lsCompletionChart';
 import { LsCompletionChartService } from './learningSimulator/lsCompletionChart/lsCompletionChart.service';
-import { SimulatorService } from './learningSimulator/simulator.service';
 import { AdHocComponentFactoryCreator } from './learningSimulator/adhoc-component-factory.service';
 import { LearningEngineService } from './learningengine.service';
 import { DefaultModal } from '../components/default-modal/default-modal.component';
@@ -42,7 +41,6 @@ import { DefaultModal } from '../components/default-modal/default-modal.componen
   ],
   providers: [
     LsCompletionChartService,
-    SimulatorService,
     AdHocComponentFactoryCreator,
     LearningEngineService
   ]
