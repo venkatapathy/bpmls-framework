@@ -36,4 +36,4 @@ Now with a browser access to: ``http://localhost:8080``
 
 # Logging
 
-> TODO!!!
+> THIS WILL COME SOON
