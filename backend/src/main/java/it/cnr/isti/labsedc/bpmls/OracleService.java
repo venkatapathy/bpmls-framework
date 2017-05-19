@@ -10,9 +10,11 @@ import it.cnr.isti.labsedc.bpmls.persistance.OracleValue;
 
 public interface OracleService {
 	
-	public void updateOracleValues(LearningScenarioInstance lsInst,List<DataObject> dos);
+	public void updateOracleValuesinit(LearningScenarioInstance lsInst,List<DataObject> dos);
+	
+	public void updateOracleValues(LearningScenarioInstance lsInst,List<it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction.DataObject> dos);
 	
 	public List<TaskIncompleteErrorMessage> checkOracleValues(LearningScenarioInstance lsInst,Map<String, Object> formMap);
 	
-	public Map<String, Object> getOracleValues();
+	public Map<String, Object> getOracleValues(LearningScenarioInstance lsInst);
 }

@@ -8,6 +8,8 @@ import javax.transaction.Transactional;
 
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.task.Task;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +29,8 @@ import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioJpaRepository;
 
 @Component
 public class LearningEngineTaskServiceImpl implements LearningEngineTaskService {
+
+	private final Logger logger = LoggerFactory.getLogger(LearningProcessEngineImpl.class);
 
 	@Autowired
 	TaskService taskServiceCamunda;
@@ -74,7 +78,6 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 		return task;
 	}
 
-	
 	private Task getCurrentLearningTask(LearningScenarioInstance lsInst) {
 
 		// get its corresponding process instance and its task
@@ -86,30 +89,21 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 		return task;
 	}
 
-	/*
-	 * public void completeCurrentLearningTask(String lpInstId, Map<String,
-	 * Object> taskInputs) throws LearningTaskException, LearningPathException {
-	 * // check if the input is per the expected oracle values
-	 * 
-	 * // if not collect the wrong inputs with msgs and throw an exception
-	 * 
-	 * // if all is fine complete the task // Task task= //
-	 * getCurrentLearningTask(learningengineRuntimeService.
-	 * getRunningLearningScenarioByIpInstId(lpInstId) // dont end check for if
-	 * the next user task is a learning task in this // learning scenario
-	 * context
-	 * 
-	 * // complete all the upcoming user tasks that are not learnign tasks
-	 * 
-	 * // done // String retMsg= oracleService.checkOracleValues(lsInst,
-	 * taskInputs);
-	 * 
-	 * }
-	 */
-
 	private void completeAndUpdateinDB(LearningScenarioInstance lsInst, String taskId, Map<String, Object> taskInputs) {
 		taskServiceCamunda.complete(taskId, taskInputs);
 		updateNextLearningTaskinLearningScenarioInstance(lsInst);
+		// then assign a dummy user
+		// TODO: assign to the actual user
+		Task task;
+		try {
+			task = getCurrentLearningTask(Integer.toString(lsInst.getLsInstId()));
+			taskServiceCamunda.setAssignee(task.getId(), "dummmy");
+
+		} catch (LearningPathException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -121,34 +115,43 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 	 * @param taskInputs
 	 *            Input from the user for the task
 	 * @throws LearningTaskException
-	 *             1. When the user input does not match to the expected oracle values
+	 *             1. When the user input does not match to the expected oracle
+	 *             values
 	 */
 	@Transactional
-	public void completeCurrentLearningTask(LearningScenarioInstance lsInst,
-			Map<String, Object> taskInputs) throws LearningTaskException {
+	public void completeCurrentLearningTask(LearningScenarioInstance lsInst, Map<String, Object> taskInputs)
+			throws LearningTaskException {
 		// if no running scenarios return null this cannot happen
-		/*if (lsInst == null) {
-			throw new LearningPathException("Not possible to be here!! because it ought to be called internally",
-					LearningPathExceptionErrorCodes.LP_NO_RUNNING_LEARNING_SCENARIOS);
-		}*/
+		/*
+		 * if (lsInst == null) { throw new
+		 * LearningPathException("Not possible to be here!! because it ought to be called internally"
+		 * , LearningPathExceptionErrorCodes.LP_NO_RUNNING_LEARNING_SCENARIOS);
+		 * }
+		 */
 
-		List<TaskIncompleteErrorMessage> errMsgList =oracleService.checkOracleValues(lsInst, taskInputs); // call the oracle
+		List<TaskIncompleteErrorMessage> errMsgList = oracleService.checkOracleValues(lsInst, taskInputs); // call
+																											// the
+																											// oracle
 
-		 
-
-		//if there is error messages
-		if(errMsgList!=null){
-			throw new LearningTaskException("Error in User inputs with respect to expected values", LearningTaskExceptionErrorCodes.LT_INPUT_ERROR, errMsgList);
+		// if there is error messages
+		if (errMsgList != null) {
+			throw new LearningTaskException("Error in User inputs with respect to expected values",
+					LearningTaskExceptionErrorCodes.LT_INPUT_ERROR, errMsgList);
 		}
 		// if the errlist is empty that is all is well
 		if (errMsgList == null) {
-			Task task = getCurrentLearningTask(lsInst);
-			
+			Task task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
+					.singleResult();
+
 			completeAndUpdateinDB(lsInst, task.getId(), taskInputs);
-			//simulateNonLearningTasks(lsInst);
+			try {
+				simulateNonLearningTasks(lsInst);
+			} catch (LearningPathException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
-		
 	}
 
 	private void updateNextLearningTaskinLearningScenarioInstance(LearningScenarioInstance lsInst) {
@@ -181,45 +184,37 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 			}
 		}
 
-		
-
 	}
 
-//	protected void simulateNonLearningTasks(LearningScenarioInstance lsInst) {
-//		// try {
-//		// Thread.sleep(3000);
-//		// } catch (InterruptedException e) {
-//		// // TODO Auto-generated catch block
-//		// e.printStackTrace();
-//		// }
-//		// List<Task> tls=;
-//		// System.out.println("2. when next ls at: " +
-//		// lsInst.getNextLearningTask() + "task size is:" +
-//		// taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId()).count());
-//
-//		Task task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
-//				.singleResult();
-//
-//		if (task == null) {
-//			// wait until either the
-//			return;
-//		}
-//		String nextLT = lsInst.getNextLearningTask();
-//		while (nextLT != null && task != null && !nextLT.equals(task.getTaskDefinitionKey())) {
-//			//
-//			// completeCurrentLearningTask
-//			taskServiceCamunda.complete(task.getId());
-//			task = getCurrentLearningTask(Integer.toString(lsInst.getLpInstance().getLpInstId()));
-//		}
-//
-//		// when no learning tasks are there, just complete remaining tasks
-//		if (nextLT == null) {
-//			task = getCurrentLearningTask(Integer.toString(lsInst.getLpInstance().getLpInstId()));
-//			while (task != null) {
-//				taskServiceCamunda.complete(task.getId(), oracleService.getOracleValues());
-//				task = getCurrentLearningTask(Integer.toString(lsInst.getLpInstance().getLpInstId()));
-//			}
-//		}
-//
-//	}
+	public void simulateNonLearningTasks(LearningScenarioInstance lsInst) throws LearningPathException {
+
+		Task task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
+				.singleResult();
+		//no tasks just return, ideally the process should have been complete by now
+		if (task == null) {
+			// wait until either the
+			return;
+		}
+		String nextLT = lsInst.getNextLearningTask();
+		while (nextLT != null && task != null && !nextLT.equals(task.getTaskDefinitionKey())) {
+			//
+			// completeCurrentLearningTask
+			System.out.println("Simulating: "+task.getTaskDefinitionKey());
+			taskServiceCamunda.complete(task.getId(),oracleService.getOracleValues(lsInst));
+			task = getCurrentLearningTask(Integer.toString(lsInst.getLpInstance().getLpInstId()));
+		}
+
+		// when no learning tasks are there, just complete remaining tasks
+		if (nextLT == null) {
+			task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
+					.singleResult();
+			while (task != null) {
+				System.out.println("Simulating: "+task.getTaskDefinitionKey());
+				taskServiceCamunda.complete(task.getId(), oracleService.getOracleValues(lsInst));
+				task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
+						.singleResult();
+			}
+		}
+
+	}
 }

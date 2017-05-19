@@ -30,21 +30,22 @@ public class OracleServiceImpl implements OracleService {
 	}
 
 	/**
-	 * Updates oracle value. Need to be called when starting a learning scenario and before every task is entered
+	 * Updates oracle value. Need to be called when starting a learning scenario
+	 * and before every task is entered
 	 */
 	@Transactional
-	public void updateOracleValues(LearningScenarioInstance lsInst, List<DataObject> dos) {
-		for (DataObject sinDo : dos) {
+	public void updateOracleValues(LearningScenarioInstance lsInst, List<it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction.DataObject> dos) {
+		for (it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction.DataObject sinDo : dos) {
 			// check if it already exists
 			OracleValue oV = oracleRepo.findBylsInstanceAndBpmnCamId(lsInst, sinDo.getBpmnCamundaid());
 
 			// if not present create a new one
 			if (oV == null) {
-				oV = new OracleValue(lsInst, sinDo.getBpmnCamundaid(), sinDo.getValue());
+				oV = new OracleValue(lsInst, sinDo.getBpmnCamundaid(), sinDo.getValue().trim());
 			}
 			// else update
 			else {
-				oV.setCurrentExpectedValue(sinDo.getValue());
+				oV.setCurrentExpectedValue(sinDo.getValue().trim());
 			}
 
 			// saveOracleValue
@@ -52,6 +53,30 @@ public class OracleServiceImpl implements OracleService {
 
 		}
 	}
+
+	
+
+	@Transactional
+	public void updateOracleValuesinit(LearningScenarioInstance lsInst, List<DataObject> dos) {
+		for (DataObject sinDo : dos) {
+			// check if it already exists
+			OracleValue oV = oracleRepo.findBylsInstanceAndBpmnCamId(lsInst, sinDo.getBpmnCamundaid());
+
+			// if not present create a new one
+			if (oV == null) {
+				oV = new OracleValue(lsInst, sinDo.getBpmnCamundaid(), sinDo.getValue().trim());
+			}
+			// else update
+			else {
+				oV.setCurrentExpectedValue(sinDo.getValue().trim());
+			}
+
+			// saveOracleValue
+			saveOracleValue(oV);
+
+		}
+	}
+
 
 	public List<TaskIncompleteErrorMessage> checkOracleValues(LearningScenarioInstance lsInst, Map<String, Object> formMap) {
 		// for each form value check if there is oracle value and if it is the
@@ -87,8 +112,8 @@ public class OracleServiceImpl implements OracleService {
 
 	}
 
-	public Map<String, Object> getOracleValues() {
-		List<OracleValue> ovL = oracleRepo.findAll();
+	public Map<String, Object> getOracleValues(LearningScenarioInstance lsInst) {
+		List<OracleValue> ovL = oracleRepo.findAllByLsInstance(lsInst);
 		Map<String, Object> map = new HashMap<String, Object>();
 		for (OracleValue i : ovL) {
 			map.put(i.getBpmnCamId(), i.getCurrentExpectedValue());

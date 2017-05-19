@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LearningScenarioJpaRepository extends JpaRepository<LearningScenarioInstance, Integer>{
 	List<LearningScenarioInstance> findBylpInstanceAndStatusOrderByOrderinLP(LearningPathInstance lpInst,String status);
+	LearningScenarioInstance findOneByProcessInstanceId(String processInstanceId);
 }

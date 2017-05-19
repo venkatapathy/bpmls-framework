@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import javax.transaction.Transactional;
 import org.camunda.bpm.engine.RuntimeService;
+import org.camunda.bpm.engine.TaskService;
+import org.camunda.bpm.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +54,11 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	LearningEngineRepositoryService lpRepositoryService;
 
 	@Autowired
-	private RuntimeService runtimeService;
+	private RuntimeService camundaRuntimeService;
 
+	@Autowired
+	private TaskService camundaTaskService;
+	
 	@Autowired
 	private OracleService oracleService;
 
@@ -205,6 +210,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	 */
 
 	public LearningScenarioInstance getNextLearningScenarioByLpInstId(String lpInstId) throws LearningPathException {
+		
 		LearningPathInstance lpInst = lpRepository.findByLpInstId(Integer.parseInt(lpInstId));
 		if (lpInst == null) {
 			throw new LearningPathException("Running Learning Path with instance id: " + lpInstId + " not found",
@@ -261,7 +267,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	 *             3. LearningPathExceptionErrorCodes.LP_NO_NEXT_LEARNING_SCENARIO when no next learning scenario is found
 	 */
 	@Transactional
-	public void startNextLearningScenario(String lpInstId) throws LearningPathException {
+	private void startNextLearningScenario1(String lpInstId) throws LearningPathException {
 		LearningScenarioInstance lsInst = getRunningLearningScenarioByIpInstId(lpInstId);
 
 		// if there is a LS already running, throw exception
@@ -286,14 +292,14 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		// 1. start the corresponding BPMN Process
 		LearningScenario corLS = lpRepositoryService.getDeployedLearningScenario(lsInst.getLsId());
 		String processId = corLS.getBpmnProcessid();
-
+		
 		// conver init oracle values into map
 		List<DataObject> dos = corLS.getInitialValuation().getDataObject();
 		Map<String, Object> map = new HashMap<String, Object>();
 		for (DataObject sinDo : dos) {
 			map.put(sinDo.getBpmnCamundaid(), sinDo.getValue());
 		}
-		String processInstId = runtimeService.startProcessInstanceByKey(processId, map).getProcessInstanceId();
+		String processInstId = camundaRuntimeService.startProcessInstanceByKey(processId, map).getProcessInstanceId();
 		// 2. change the status in LSI
 		lsInst.setStatus("running");
 		// 3. set the processinstanceid in LSI
@@ -305,15 +311,24 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		lsInst.setNextLearningTask(nextLT);
 
 		// set the initial values to the oracle
-		oracleService.updateOracleValues(lsInst, corLS.getInitialValuation().getDataObject());
+		oracleService.updateOracleValuesinit(lsInst, corLS.getInitialValuation().getDataObject());
 		lsRepository.save(lsInst);
 
 		// save everythin
 
-		// TODO: transfer to thirdeye
-		// dont stop yet
-		// simulate the corresponding user tasks that are not learning tasks
-		//((LearningEngineTaskServiceImpl) lpTaskService).simulateNonLearningTasks(lsInst);
+		//simulate non-learning user tasks
+		lpTaskService.simulateNonLearningTasks(lsInst);
+		
+		
+		
 
+	}
+	
+	public void startNextLearningScenario(String lpInstId) throws LearningPathException {
+		//first create the process and everything
+		startNextLearningScenario1(lpInstId);
+		
+		
+		
 	}
 }

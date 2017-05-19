@@ -16,6 +16,8 @@ import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathExceptionErrorCodes;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction.DataObject;
 
 @Component
 public class LearningEngineRepositoryServiceImpl implements LearningEngineRepositoryService {
@@ -119,5 +121,24 @@ public class LearningEngineRepositoryServiceImpl implements LearningEngineReposi
 
 		throw new LearningPathException("Learning scenario id, "+ lsId+" not found",LearningPathExceptionErrorCodes.LP_LEARNING_SCENARIO_NOT_FOUND);
 
+	}
+	
+	public List<DataObject> getCurrentOracleValuesFromRepo(String lsId,String cur_bpmn_activityid) throws LearningPathException{
+		//get the LS
+		LearningScenario curLS=getDeployedLearningScenario(lsId);
+		
+		//get the valuation functions
+		List<ValuationFunction> vFuncs= curLS.getValuationOracle().getValuationFunction();
+		if(vFuncs==null){
+			return null;
+		}
+		//get the valueation function for the current activity
+		for(ValuationFunction vFunc:vFuncs){
+			if(vFunc.getBpmnActivityid().equals(cur_bpmn_activityid)){
+				return vFunc.getDataObject();
+			}
+		}
+		
+		return null;
 	}
 }

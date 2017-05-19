@@ -8,6 +8,7 @@ import com.sun.research.ws.wadl.Link;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction.DataObject;
 
 public interface LearningEngineRepositoryService {
 
@@ -44,5 +45,8 @@ public interface LearningEngineRepositoryService {
 	 * @throws LearningPathException if not found
 	 */
 	public LearningScenario getDeployedLearningScenario(String lsId)throws LearningPathException;
+	
+	
+	public List<DataObject> getCurrentOracleValuesFromRepo(String lsId,String cur_bpmn_activityid)throws LearningPathException;
 	
 }

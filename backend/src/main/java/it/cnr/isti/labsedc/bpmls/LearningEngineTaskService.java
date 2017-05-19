@@ -32,4 +32,5 @@ public interface LearningEngineTaskService {
 	public void completeCurrentLearningTask(LearningScenarioInstance lsInst,Map<String, Object> taskInputs) throws LearningTaskException;
 	
 	
+	public void simulateNonLearningTasks(LearningScenarioInstance lsInst)throws LearningPathException ;
 }
