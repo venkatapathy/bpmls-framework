@@ -38,7 +38,7 @@ export class LearningSimulator implements AfterViewInit {
       learningForm = modelJs;
       constructor() {
 
-        //alert(JSON.stringify(this.learningForm));
+        alert(JSON.stringify(this.learningForm));
       }
       private completeLearning(f) {
 
@@ -111,8 +111,8 @@ export class LearningSimulator implements AfterViewInit {
     //try to get the model
     this.learningEngineService.getcurrenttaskmodel(this.lpid).subscribe(response => {
       if (response.status == "success") {
-        //alert(JSON.stringify(response.learningpath));
-        let model = response.formmodel;
+        alert(JSON.stringify(response.formmodel));
+        let model = response.formmodel.learningform;
         this.learningEngineService.getcurrentlearningtask(this.lpid).subscribe(response => {
           if (response.status == "success") {
             let prompt = JSON.parse("{\"steps\": [{ \"intro\": \"welcome to case \"},{ \"intro\": \"In this scenario you will open a case \"}]}");

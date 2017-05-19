@@ -143,7 +143,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 			Task task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
 					.singleResult();
 
-			completeAndUpdateinDB(lsInst, task.getId(), taskInputs);
+			this.completeAndUpdateinDB(lsInst, task.getId(), taskInputs);
 			try {
 				simulateNonLearningTasks(lsInst);
 			} catch (LearningPathException e) {
