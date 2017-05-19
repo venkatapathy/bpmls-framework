@@ -1,6 +1,6 @@
 <div class="col-md-6">
   <ng-container *ngIf="availableLPS && availableLPS.alps">
-  <ba-card title="Learning Path 1" *ngFor="let alp of availableLPS.alps;" >
+  <ba-card title="{{alp.lpname}}" *ngFor="let alp of availableLPS.alps;" >
     <p>
     Description: This learning Path is designed for the managers. </p>
 
