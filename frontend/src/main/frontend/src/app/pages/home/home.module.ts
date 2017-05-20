@@ -18,6 +18,7 @@ import { LsCompletionChartService } from './learningSimulator/lsCompletionChart/
 import { AdHocComponentFactoryCreator } from './learningSimulator/adhoc-component-factory.service';
 import { LearningEngineService } from './learningengine.service';
 import { DefaultModal } from '../components/default-modal/default-modal.component';
+import { WindowRefService } from './window.ref.service';
 
 @NgModule({
   imports: [
@@ -44,7 +45,8 @@ import { DefaultModal } from '../components/default-modal/default-modal.componen
   providers: [
     LsCompletionChartService,
     AdHocComponentFactoryCreator,
-    LearningEngineService
+    LearningEngineService,
+    WindowRefService,
   ]
 })
 export class HomeModule { }

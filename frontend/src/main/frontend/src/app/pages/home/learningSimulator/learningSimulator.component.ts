@@ -1,4 +1,4 @@
-import { Type, Component, ViewChild, ViewContainerRef, AfterViewInit } from '@angular/core';
+import { Inject,Type, Component, ViewChild, ViewContainerRef, AfterViewInit } from '@angular/core';
 import { LearningEngineService } from '../learningengine.service';
 import { AdHocComponentFactoryCreator } from './adhoc-component-factory.service';
 import { ActivatedRoute } from '@angular/router';
@@ -6,6 +6,8 @@ import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DefaultModal } from '../../components/default-modal/default-modal.component';
 import { Router } from '@angular/router';
+import { WindowRefService } from '../window.ref.service';
+import { Http } from '@angular/http';
 declare var introJs: any;
 
 @Component({
@@ -30,8 +32,32 @@ export class LearningSimulator implements AfterViewInit {
   }];
   @ViewChild('taskFormContainer', { read: ViewContainerRef }) parent: ViewContainerRef;
   isChecked: boolean = false;
-  constructor(private router: Router, private modalService: NgbModal, private route: ActivatedRoute, private adHocComponentFactoryCreator: AdHocComponentFactoryCreator, private learningEngineService: LearningEngineService) {
+  BpmnViewer:any;
+  viewer:any;
+  private _window: Window;
+  constructor(private http:Http,windowRef: WindowRefService,private router: Router, private modalService: NgbModal, private route: ActivatedRoute, private adHocComponentFactoryCreator: AdHocComponentFactoryCreator, private learningEngineService: LearningEngineService) {
+    this._window = windowRef.nativeWindow;
+    this.BpmnViewer=(<any>this._window).BpmnJS;
+    
   }
+
+  handleError(err: any) {
+        if (err) {
+            console.log('error rendering', err);
+        } else {
+            console.log('rendered');
+        }
+    }
+
+    loadSampleBPMN() {
+      this.viewer = new this.BpmnViewer({ container: '#canvas' });
+        const url = 'assets/diagrams/pizza-collaboration.bpmn';
+        this.http.get(url)
+            .toPromise()
+            .then(response => response.text())
+            .then(data => this.viewer.importXML(data, this.handleError))
+            .catch(this.handleError);
+    }
 
   private createDynamicComponentwithModel(taskform: string, modelJs: JSON, prompt: JSON, simulatorComponent: LearningSimulator): Type<any> {
     @Component({
@@ -39,6 +65,7 @@ export class LearningSimulator implements AfterViewInit {
     })
     class InsertedComponent {
       learningForm = modelJs;
+      
       constructor() {
 
         //alert(JSON.stringify(this.learningForm));
@@ -107,6 +134,8 @@ export class LearningSimulator implements AfterViewInit {
             let componentRef = this.parent.createComponent(componentFactory);
 
             componentRef.changeDetectorRef.detectChanges();
+
+            this.loadSampleBPMN();
           } else if (response.status == "error") {
             //TODO: better error handling
             if (response.errortype == "unexpected") {
