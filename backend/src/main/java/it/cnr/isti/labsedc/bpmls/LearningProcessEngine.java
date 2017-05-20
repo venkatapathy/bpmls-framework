@@ -140,7 +140,7 @@ public interface LearningProcessEngine {
 		
 		@Override
 		public void notify(DelegateExecution delegateExecution) {
-			System.out.println(delegateExecution.getBpmnModelElementInstance().getElementType().getTypeName());
+			
 			//when a task is created update the oracle values to its corresponding task
 			LearningScenarioInstance lsInst=lsJpaRepo.findOneByProcessInstanceId(delegateExecution.getProcessInstanceId());
 			if(lsInst==null){

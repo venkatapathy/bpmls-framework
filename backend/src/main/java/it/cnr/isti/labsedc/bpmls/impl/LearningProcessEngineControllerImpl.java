@@ -89,7 +89,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 			// you shouldnt be coming here mate!!
 			JSONObject retJson = new JSONObject();
 			retJson.put("status", "error");
-			retJson.put("errortype", "nonextls");
+			retJson.put("errortype", "unexpected");
 			retJson.put("errMsg", "Unexcepted error when trying to get running learning scenario with lpinstid: "
 					+ Integer.toString(lpInst.getLpInstId()) + ". Contact Administrator with this error message!");
 
@@ -107,7 +107,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 						+ Integer.toString(lpInst.getLpInstId()) + ". Exception message is: " + e.getMessage());
 				JSONObject retJson = new JSONObject();
 				retJson.put("status", "error");
-				retJson.put("errortype", "lpnonexistant");
+				retJson.put("errortype", "unexpected");
 				retJson.put("errMsg", "Unexcepted error when trying to get running learning scenario with lpinstid: "
 						+ Integer.toString(lpInst.getLpInstId()) + ". Contact Administrator with this error message!");
 
@@ -120,7 +120,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 						.with(text("No more learning Scenario. Congrats you completed this learning path"));
 				JSONObject retJson = new JSONObject();
 				retJson.put("status", "success");
-				retJson.put("errortype", "nonextls");
+				retJson.put("errortype", "nomorels");
 				retJson.put("htmlform", resMsg.toString());
 
 				return retJson.toString();
@@ -137,7 +137,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 			JSONObject retJson = new JSONObject();
 			retJson.put("status", "success");
-			retJson.put("errortype", "nonextls");
+			retJson.put("errortype", "nols");
 			retJson.put("htmlform", lsText.render());
 
 			return retJson.toString();
@@ -171,7 +171,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 					+ Integer.toString(lpInst.getLpInstId()) + ". Exception message is: " + e.getMessage());
 			JSONObject retJson = new JSONObject();
 			retJson.put("status", "error");
-			retJson.put("errortype", "lpnonexistant");
+			retJson.put("errortype", "unexpected");
 			retJson.put("errMsg", "Unexcepted error when trying to get current learning task with lpinstid: "
 					+ Integer.toString(lpInst.getLpInstId()) + ". Contact Administrator with this error message!");
 			return retJson.toString();
@@ -223,6 +223,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 		// if lsinst null then null
 		if (lsInst == null) {
+			
 			retJson.put("status", "success");
 			retJson.put("formmodel", "");
 			return retJson.toString();
@@ -248,10 +249,11 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 			return retJson.toString();
 		}
 
-		// return tthe form and controler
-		retJson.put("status", "success");
-		retJson.put("formmodel", new HtmlFormEngine().getFormModel(formService.getTaskFormData(task.getId())));
-		return retJson.toString();
+		// return tthe model
+		retJson = new JSONObject();
+		
+		
+		return retJson.put("status", "success").put("formmodel", new HtmlFormEngine().getFormModel(formService.getTaskFormData(task.getId()))).toString();
 
 	}
 
@@ -266,7 +268,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 		List<LearningPathInstance> lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPaths();
 
-		if (lpInst != null) {
+		if (lps != null) {
 			for (LearningPath lp : lps) {
 
 				// if not already running
@@ -283,32 +285,76 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 					 */
 				}
 			}
+			return new JSONObject().put("alps", lparray).put("status", "success").toString();
+		} else {
+			return new JSONObject().put("alps", lparray).put("status", "error")
+					.put("errMsg",
+							"All deployed Learning Paths are selected by you for learning! Good Going. Select 'Running Learning Path' page")
+					.toString();
 		}
 
-		return new JSONObject().put("alps", lparray).toString();
+	}
+
+	@CrossOrigin(origins = "http://localhost:4200")
+	@RequestMapping(value = "/getrunningpaths", method = RequestMethod.GET)
+	public String getRunningPaths() {
+		// first get the deployed learning paths
+		JSONArray lparray = new JSONArray();
+
+		List<LearningPathInstance> lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPaths();
+
+		if (lpInst != null) {
+			for (LearningPathInstance lp : lpInst) {
+				LearningPath dlp;
+				try {
+					dlp = lpEngine.getLearningEngineRepositoryService().getDeployedLearningPath(lp.getLpId());
+				} catch (LearningPathException e) {
+					// TODO Auto-generated catch block
+					logger.error("Error while looking up for deployed learning path with learning path instance id: "
+							+ lp.getLpInstId() + " and lp id: " + lp.getLpId());
+					return new JSONObject().put("rlps", lparray).put("status", "error")
+							.put("errMsg", "Error while looking up for running learning path. Contact Administrator")
+							.toString();
+				}
+				// if not already running
+				if (dlp != null) {
+					lparray.put(new JSONObject().put("lpid", lp.getLpId()).put("lpname", dlp.getName()));
+
+				}
+			}
+		}
+
+		return new JSONObject().put("rlps", lparray).put("status", "success").toString();
 
 	}
 
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/startalearningpath/{lpid}", method = RequestMethod.POST)
 	public String startalearningpath(@PathVariable("lpid") String lpid) {
-		// StringBuilder retMsg=new StringBuilder("{\"error\": \"sample
-		// error\"}");
-
 		// start the learning path
 		try {
-			LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().startaLearningPathById(lpid);
+			lpEngine.getLearningEngineRuntimeService().startaLearningPathById(lpid);
 
-			logger.info("Starting a Learning path: {\"success\": {\"lpid\":\"" + lpInst.getLpInstId() + "\"}}");
-			JSONObject retJson=new JSONObject();
+			logger.info("Starting a Learning path with LP ID: " + lpid);
+			JSONObject retJson = new JSONObject();
 			retJson.put("status", "success").put("lpid", lpid);
 			return retJson.toString();
 		} catch (LearningPathException e) {
-			logger.error("{\"error\": {\"message\":\"" + e.getMessage() + "\"}}");
-			// 
-			JSONObject retJson=new JSONObject();
+			/*
+			 * 1. LearningPathExceptionErrorCodes.LP_RUNNING_NOT_FOUND When
+			 * running learningpath with the ID is not found 2.
+			 * LearningPathExceptionErrorCodes.
+			 * LP_LEARNING_SCENARIO_ALREADY_RUNNING when a Learning Scenario
+			 * already running 3.
+			 * LearningPathExceptionErrorCodes.LP_NO_NEXT_LEARNING_SCENARIO when
+			 * no next learning scenario is found
+			 */
+			logger.error("Error starting a Learning path with LP ID: " + lpid + "Error is: " + e.getMessage());
+			JSONObject retJson = new JSONObject();
 			retJson.put("status", "error");
 			return retJson.put("errMsg", new JSONObject().put("message", e.getMessage())).toString();
+
+			//
 
 		}
 
@@ -320,12 +366,12 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 		try {
 			lpEngine.getLearningEngineRuntimeService().startNextLearningScenario(lpinstid);
-			logger.info("Starting next Learning Scenario");
-			return new JSONObject().put("status","success").put("lpid", lpid).toString();
+			logger.info("Starting next Learning Scenario with lpid:"+lpid+" and lpinstid: "+lpinstid);
+			return new JSONObject().put("status", "success").put("lpid", lpid).toString();
 		} catch (LearningPathException e) {
 			// TODO Auto-generated catch block
-			logger.error("Error in starting next LS");
-			JSONObject retJson=new JSONObject();
+			logger.error("Unexpected error while starting next Learning Scenario with lpid:"+lpid+" and lpinstid: "+lpinstid);
+			JSONObject retJson = new JSONObject();
 			retJson.put("status", "error");
 			return retJson.put("errMsg", new JSONObject().put("message", e.getMessage())).toString();
 		}
@@ -351,18 +397,19 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 		Map<String, Object> formMap = (Map) map.get("learningform");
 		try {
 			lpEngine.getLearningEngineTaskService().completeCurrentLearningTask(lsInst, formMap);
-			//if all is well return 
+			// if all is well return
 		} catch (LearningTaskException e) {
-			JSONArray errArr=new JSONArray();
-			for(TaskIncompleteErrorMessage errTask: e.userInputErrorMsgs){
-				errArr.put(new JSONObject().put("Id", errTask.label).put("expected", errTask.expectedValue).put("provided", errTask.providedValue));
-				
+			JSONArray errArr = new JSONArray();
+			for (TaskIncompleteErrorMessage errTask : e.userInputErrorMsgs) {
+				errArr.put(new JSONObject().put("Id", errTask.label).put("expected", errTask.expectedValue)
+						.put("provided", errTask.providedValue));
+
 			}
-			JSONObject retJson=new JSONObject();
+			JSONObject retJson = new JSONObject();
 			retJson.put("status", "error").put("errMsg", errArr);
 			return retJson.toString();
 		}
-		JSONObject retJson=new JSONObject();
+		JSONObject retJson = new JSONObject();
 		retJson.put("status", "success");
 		return retJson.toString();
 	}

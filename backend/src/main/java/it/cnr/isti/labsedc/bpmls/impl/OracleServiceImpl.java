@@ -25,7 +25,7 @@ public class OracleServiceImpl implements OracleService {
 	// TODO logger
 
 	private void saveOracleValue(OracleValue oVa) {
-		System.out.println("saving oracle values for " + oVa.getBpmnCamId());
+		//System.out.println("saving oracle values for " + oVa.getBpmnCamId());
 		oracleRepo.save(oVa);
 	}
 

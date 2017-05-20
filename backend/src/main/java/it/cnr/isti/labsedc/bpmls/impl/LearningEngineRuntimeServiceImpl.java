@@ -42,7 +42,7 @@ import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioJpaRepository;
 @Component
 public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeService {
 
-	private final Logger logger = LoggerFactory.getLogger(LearningProcessEngineImpl.class);
+	
 
 	@Autowired
 	LearningPathJpaRepository lpRepository;
@@ -66,7 +66,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	private LearningEngineTaskService lpTaskService;
 
 	LearningEngineRuntimeServiceImpl() {
-		logger.info("Empty Constructor of LearningEngineRuntimeService");
+		
 	}
 
 	/**
@@ -255,17 +255,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 			return null;
 	}
 
-	/**
-	 * Starts the next LearningScenario in the line given a LpInstID. TODO: per
-	 * user
-	 * 
-	 * @param The
-	 *            LearningScenarioInstanceID
-	 * @throws LearningPathException
-	 *             1. LearningPathExceptionErrorCodes.LP_RUNNING_NOT_FOUND When running learningpath with the ID is not found
-	 *             2. LearningPathExceptionErrorCodes.LP_LEARNING_SCENARIO_ALREADY_RUNNING when a Learning Scenario already running
-	 *             3. LearningPathExceptionErrorCodes.LP_NO_NEXT_LEARNING_SCENARIO when no next learning scenario is found
-	 */
+	
 	@Transactional
 	private void startNextLearningScenario1(String lpInstId) throws LearningPathException {
 		LearningScenarioInstance lsInst = getRunningLearningScenarioByIpInstId(lpInstId);
@@ -324,6 +314,17 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 
 	}
 	
+	/**
+	 * Starts the next LearningScenario in the line given a LpInstID. TODO: per
+	 * user
+	 * 
+	 * @param The
+	 *            LearningScenarioInstanceID
+	 * @throws LearningPathException
+	 *             1. LearningPathExceptionErrorCodes.LP_RUNNING_NOT_FOUND When running learningpath with the ID is not found
+	 *             2. LearningPathExceptionErrorCodes.LP_LEARNING_SCENARIO_ALREADY_RUNNING when a Learning Scenario already running
+	 *             3. LearningPathExceptionErrorCodes.LP_NO_NEXT_LEARNING_SCENARIO when no next learning scenario is found
+	 */
 	public void startNextLearningScenario(String lpInstId) throws LearningPathException {
 		//first create the process and everything
 		startNextLearningScenario1(lpInstId);

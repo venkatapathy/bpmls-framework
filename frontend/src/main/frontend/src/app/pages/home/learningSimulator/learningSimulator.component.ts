@@ -3,6 +3,9 @@ import { LearningEngineService } from '../learningengine.service';
 import { AdHocComponentFactoryCreator } from './adhoc-component-factory.service';
 import { ActivatedRoute } from '@angular/router';
 import { NgForm } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { DefaultModal } from '../../components/default-modal/default-modal.component';
+import { Router } from '@angular/router';
 declare var introJs: any;
 
 @Component({
@@ -15,19 +18,19 @@ export class LearningSimulator implements AfterViewInit {
   public checkboxModel = [{
     name: 'Check 1',
     checked: false,
-    class: 'col-md-4'
+    class: 'col-md-4',
   }, {
     name: 'Check 2',
     checked: true,
-    class: 'col-md-4'
+    class: 'col-md-4',
   }, {
     name: 'Check 3',
     checked: false,
-    class: 'col-md-4'
+    class: 'col-md-4',
   }];
   @ViewChild('taskFormContainer', { read: ViewContainerRef }) parent: ViewContainerRef;
   isChecked: boolean = false;
-  constructor(private route: ActivatedRoute, private adHocComponentFactoryCreator: AdHocComponentFactoryCreator, private learningEngineService: LearningEngineService) {
+  constructor(private router: Router, private modalService: NgbModal, private route: ActivatedRoute, private adHocComponentFactoryCreator: AdHocComponentFactoryCreator, private learningEngineService: LearningEngineService) {
   }
 
   private createDynamicComponentwithModel(taskform: string, modelJs: JSON, prompt: JSON, simulatorComponent: LearningSimulator): Type<any> {
@@ -38,7 +41,7 @@ export class LearningSimulator implements AfterViewInit {
       learningForm = modelJs;
       constructor() {
 
-        alert(JSON.stringify(this.learningForm));
+        //alert(JSON.stringify(this.learningForm));
       }
       private completeLearning(f) {
 
@@ -62,32 +65,7 @@ export class LearningSimulator implements AfterViewInit {
     return InsertedComponent;
   }
 
-  private createDynamicComponent(taskform: string, prompt: JSON, simulatorComponent: LearningSimulator): Type<any> {
-    @Component({
-      template: taskform
-    })
-    class InsertedComponent {
 
-      completeLearning(learningForm) {
-        alert(JSON.stringify(learningForm.getRawValue()));
-        simulatorComponent.completeLearning(JSON.stringify(learningForm.value));
-
-      }
-      startIntro() {
-        var intro = introJs();
-        intro.setOptions(prompt);
-
-        intro.start();
-      }
-
-      startLs(lpinstid) {
-        simulatorComponent.startLearningScenario(lpinstid);
-        //alert("hi");
-      }
-    }
-
-    return InsertedComponent;
-  }
 
 
 
@@ -111,10 +89,16 @@ export class LearningSimulator implements AfterViewInit {
     //try to get the model
     this.learningEngineService.getcurrenttaskmodel(this.lpid).subscribe(response => {
       if (response.status == "success") {
-        alert(JSON.stringify(response.formmodel));
-        let model = response.formmodel.learningform;
-        this.learningEngineService.getcurrentlearningtask(this.lpid).subscribe(response => {
+        //alert(JSON.stringify(response.formmodel).length);
+        //if not empty
+        let model=JSON.parse("{\"learningform\":\"empty\"}");
+        if(JSON.stringify(response.formmodel).length !=2 ){
+          model = JSON.parse(response.formmodel).learningform;
+        }
+        
+        this.learningEngineService.getcurrentlpstatus(this.lpid).subscribe(response => {
           if (response.status == "success") {
+            //alert(JSON.stringify(model));
             let prompt = JSON.parse("{\"steps\": [{ \"intro\": \"welcome to case \"},{ \"intro\": \"In this scenario you will open a case \"}]}");
             let component = this.createDynamicComponentwithModel(response.htmlform, model, prompt, this);
             //console.log(response);
@@ -123,31 +107,66 @@ export class LearningSimulator implements AfterViewInit {
             let componentRef = this.parent.createComponent(componentFactory);
 
             componentRef.changeDetectorRef.detectChanges();
-          }else{
+          } else if (response.status == "error") {
             //TODO: better error handling
-            alert(response.errMsg)
+            if (response.errortype == "unexpected") {
+
+              /*Modal*/
+
+              const activeModal = this.modalService.open(DefaultModal, {
+                size: 'lg',
+
+              });
+              activeModal.componentInstance.modalHeader = 'Error Acessing Learning Simulator';
+              activeModal.componentInstance.modalContent = response.errorMsg;
+              activeModal.result.then((result) => {
+                //redirect to back hom
+                this.router.navigate(['/pages', 'home', 'availablelearningpaths']);
+              }, (reason) => {
+                //do nothing
+              });
+              /*Modal*/
+            } else if (response.errortype == "lpnonexistant") {
+              /*Modal*/
+
+              const activeModal = this.modalService.open(DefaultModal, {
+                size: 'lg',
+
+              });
+              activeModal.componentInstance.modalHeader = 'Error Acessing Learning Simulator';
+              activeModal.componentInstance.modalContent = "Not a correct Learning path. Choose correct one. Taking you back!";
+              activeModal.result.then((result) => {
+                //redirect to back hom
+                this.router.navigate(['/pages', 'home', 'availablelearningpaths']);
+              }, (reason) => {
+                //do nothing
+              });
+              /*Modal*/
+            }
 
           }
 
         });
       } else {
         //TODO: Better error handling
-        alert(response.errMsg);
+        /*Modal*/
+
+        const activeModal = this.modalService.open(DefaultModal, {
+          size: 'lg',
+
+        });
+        activeModal.componentInstance.modalHeader = 'Error Acessing Learning Simulator';
+        activeModal.componentInstance.modalContent = response.errorMsg;
+        activeModal.result.then((result) => {
+          //redirect to back hom
+          this.router.navigate(['/pages', 'home', 'availablelearningpaths']);
+        }, (reason) => {
+          //do nothing
+        });
+        /*Modal*/
 
       }
-      /*else {
-        this.learningEngineService.getcurrentlearningtask(this.lpid).subscribe(response => {
-          let prompt = JSON.parse("{\"steps\": [{ \"intro\": \"welcome to case \"},{ \"intro\": \"In this scenario you will open a case \"}]}");
-          let component = this.createDynamicComponent(response, prompt, this);
-          console.log(response);
-          let componentFactory = this.adHocComponentFactoryCreator.getFactory(component);
-          this.parent.clear();
-          let componentRef = this.parent.createComponent(componentFactory);
 
-          componentRef.changeDetectorRef.detectChanges();
-        }
-        );
-      }*/
     });
 
   }
@@ -158,13 +177,27 @@ export class LearningSimulator implements AfterViewInit {
     this.learningEngineService.completeLearningTask(this.lpid, "1", learningForm).subscribe(response => {
       //get the response after submitting the task
       console.log(response.status);
-      if (response.status=="success") {
+      if (response.status == "success") {
         console.log("Setting alter mesage");
         this.learningEngineService.publishAlertMsg("Completed task")
         this.loadForm();
 
-      } else if (response.status=="error") {
-        alert(JSON.stringify(response.errMsg));
+      } else if (response.status == 'error') {
+        /*Modal*/
+
+        const activeModal = this.modalService.open(DefaultModal, {
+          size: 'lg',
+
+        });
+        activeModal.componentInstance.modalHeader = 'Error Acessing Learning Simulator';
+        activeModal.componentInstance.modalContent = response.errorMsg;
+        activeModal.result.then((result) => {
+          //redirect to back hom
+
+        }, (reason) => {
+          //do nothing
+        });
+        /*Modal*/
       }
     });
 
@@ -177,7 +210,21 @@ export class LearningSimulator implements AfterViewInit {
         this.loadForm();
       } else {
         //TODO: Better Error Handling
-        alert(response.errMsg);
+        /*Modal*/
+
+        const activeModal = this.modalService.open(DefaultModal, {
+          size: 'lg',
+
+        });
+        activeModal.componentInstance.modalHeader = 'Error Acessing Learning Simulator';
+        activeModal.componentInstance.modalContent = response.errorMsg;
+        activeModal.result.then((result) => {
+          //redirect to back hom
+          this.router.navigate(['/pages', 'home', 'availablelearningpaths']);
+        }, (reason) => {
+          //do nothing
+        });
+        /*Modal*/
       }
     });
   }

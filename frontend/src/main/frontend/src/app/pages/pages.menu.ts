@@ -10,25 +10,25 @@ export const PAGES_MENU = [
           menu: {
             title: 'general.menu.home',
             icon: 'ion-gear-a',
-            selected: false,
-            expanded: false,
+            selected: true,
+            expanded: true,
             order: 250,
           },
         },
         children: [
           {
-            path: 'treeview',
+            path: 'availablelearningpaths',
             data: {
               menu: {
-                title: 'general.menu.learning_home',
+                title: 'general.menu.learning_availablelps',
               },
             },
           },
            {
-            path: 'learningsimulator',
+            path: 'runninglearningpaths',
             data: {
               menu: {
-                title: 'general.menu.learning_simulator',
+                title: 'general.menu.learning_runninglps',
               },
             },
           },

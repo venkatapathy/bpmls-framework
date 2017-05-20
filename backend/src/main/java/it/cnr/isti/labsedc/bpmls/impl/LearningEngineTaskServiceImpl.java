@@ -30,7 +30,7 @@ import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioJpaRepository;
 @Component
 public class LearningEngineTaskServiceImpl implements LearningEngineTaskService {
 
-	private final Logger logger = LoggerFactory.getLogger(LearningProcessEngineImpl.class);
+	private final Logger logger = LoggerFactory.getLogger(LearningEngineTaskServiceImpl.class);
 
 	@Autowired
 	TaskService taskServiceCamunda;
@@ -96,7 +96,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 		// TODO: assign to the actual user
 		Task task;
 		try {
-			task = getCurrentLearningTask(Integer.toString(lsInst.getLsInstId()));
+			task = getCurrentLearningTask(Integer.toString(lsInst.getLpInstance().getLpInstId()));
 			taskServiceCamunda.setAssignee(task.getId(), "dummmy");
 
 		} catch (LearningPathException e) {
@@ -199,7 +199,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 		while (nextLT != null && task != null && !nextLT.equals(task.getTaskDefinitionKey())) {
 			//
 			// completeCurrentLearningTask
-			System.out.println("Simulating: "+task.getTaskDefinitionKey());
+			logger.info("Simulating: "+task.getTaskDefinitionKey()+" for the LearningScenario with id: "+lsInst.getLsId()+" and Instid: "+lsInst.getLsInstId());
 			taskServiceCamunda.complete(task.getId(),oracleService.getOracleValues(lsInst));
 			task = getCurrentLearningTask(Integer.toString(lsInst.getLpInstance().getLpInstId()));
 		}

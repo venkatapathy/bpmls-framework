@@ -6,11 +6,11 @@ import { DefaultModal } from '../../components/default-modal/default-modal.compo
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'tree-view',
-  templateUrl: './treeView.html',
+  selector: 'available-lps',
+  templateUrl: './availablelearningpaths.html',
 })
 
-export class TreeView implements AfterViewInit {
+export class AvailableLearningPathsComponent implements AfterViewInit {
   availableLPS: JSON;
   tree: TreeModel = {
     value: 'The Learning Scenarios are:',
@@ -24,12 +24,13 @@ export class TreeView implements AfterViewInit {
           { value: 'JavaScript' },
           { value: 'CoffeeScript' },
           { value: 'Lua' },
-        ]
-      }
-    ]
+        ],
+      },
+    ],
   };
 
-  constructor(private modalService: NgbModal,private learningEngineService: LearningEngineService, private zone: NgZone,private router:Router) {
+  constructor(private modalService: NgbModal, private learningEngineService: LearningEngineService,
+    private zone: NgZone, private router: Router) {
   }
 
   ngAfterViewInit() {
@@ -39,27 +40,49 @@ export class TreeView implements AfterViewInit {
   loadAvailableLearningPaths() {
     this.learningEngineService.getavailablelearningpaths().subscribe(response => {
       this.zone.run(() => {
+        if (response.status == 'error') {
+
+          const activeModal = this.modalService.open(DefaultModal, {
+            size: 'sm',
+            backdrop: 'static',
+          });
+          activeModal.componentInstance.modalHeader = 'Static modal';
+          activeModal.componentInstance.modalContent = response.status.error.errMsg;
+          activeModal.result.then((result) => {
+            // do nothing so return function
+            return;
+          }, (reason) => {
+            // do nothing
+            return;
+          });
+        }
         this.availableLPS = response;
 
       });
 
-      //console.log(response);
+      // console.log(response);
     });
   }
 
   startaLearningPath(lpid: string) {
     this.learningEngineService.startaLearningPath(lpid).subscribe(response => {
 
-      if (response.status=="error") {
+      if (response.status == 'error') {
+
         const activeModal = this.modalService.open(DefaultModal, {
           size: 'sm',
-          backdrop: 'static'
+          backdrop: 'static',
         });
         activeModal.componentInstance.modalHeader = 'Static modal';
         activeModal.componentInstance.modalContent = response.status.error.errMsg;
+        activeModal.result.then((result) => {
+          // do nothing
+        }, (reason) => {
+          // do nothing
+        });
       }
-      if(response.status=="success"){
-        this.router.navigate(['/pages','home','learningsimulator',response.lpid]);
+      if (response.status == 'success') {
+        this.router.navigate(['/pages', 'home', 'learningsimulator', response.lpid]);
 
 
       }

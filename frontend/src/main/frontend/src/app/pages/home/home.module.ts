@@ -10,7 +10,8 @@ import { routing } from './home.routing';
 
 import { Tab } from './tabPanel/tab.component';
 import { Tabs } from './tabPanel/tabs.component';
-import { TreeView } from './treeView/treeView.component';
+import { AvailableLearningPathsComponent } from './availablelearningpaths/availablelearningpaths.component';
+import { RunningLearningPathsComponent } from './runninglearningpaths/runninglearningpaths.component';
 import { LearningSimulator } from './learningSimulator/learningSimulator.component';
 import { LsCompletionChart } from './learningSimulator/lsCompletionChart';
 import { LsCompletionChartService } from './learningSimulator/lsCompletionChart/lsCompletionChart.service';
@@ -29,7 +30,8 @@ import { DefaultModal } from '../components/default-modal/default-modal.componen
   ],
   declarations: [
     Home,
-    TreeView,
+    AvailableLearningPathsComponent,
+    RunningLearningPathsComponent,
     LearningSimulator,
     LsCompletionChart,
     Tabs,

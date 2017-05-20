@@ -1,0 +1,11 @@
+<div class="col-md-6">
+  <ng-container *ngIf="availableLPS && availableLPS.rlps">
+  <ba-card title="{{alp.lpname}}" *ngFor="let alp of availableLPS.rlps;" >
+    <p>
+    Description: This learning Path is designed for the managers. </p>
+
+    <button type="button" class="btn btn-success" (click)="continueaLearningPath(alp.lpid)">Continue Learning</button>
+  </ba-card>
+
+  </ng-container>
+</div>

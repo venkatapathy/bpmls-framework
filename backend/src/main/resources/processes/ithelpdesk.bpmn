@@ -15,21 +15,21 @@
       <bpmn:lane id="Lane_1i8av72" name="General Support">
         <bpmn:flowNodeRef>Task_0m0ax17</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_1e1f74p</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_0c43ixa</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>caseresolution</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_10opm4b</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_00xfbjv</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:sequenceFlow id="SequenceFlow_0z4nasv" sourceRef="StartEvent_1" targetRef="opencase" />
     <bpmn:sequenceFlow id="SequenceFlow_16r1378" sourceRef="opencase" targetRef="Task_10opm4b" />
-    <bpmn:sequenceFlow id="SequenceFlow_16n2ud9" sourceRef="Task_10opm4b" targetRef="Task_0c43ixa" />
+    <bpmn:sequenceFlow id="SequenceFlow_16n2ud9" sourceRef="Task_10opm4b" targetRef="caseresolution" />
     <bpmn:userTask id="opencase" name="Open Case">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="FormField_casepriority" label="casepriority" type="enum">
-            <camunda:value id="Value_06n31bv" name="low" />
+            <camunda:value id="low" name="low" />
             <camunda:value id="medium" name="medium" />
-            <camunda:value id="Value_0jf2jsi" name="high" />
+            <camunda:value id="high" name="high" />
           </camunda:formField>
           <camunda:formField id="FormField_casedescription" label="casedescription" type="string" />
           <camunda:formField id="FormField_nameoftheuser" label="nameofuser" type="string" />
@@ -44,14 +44,22 @@
     <bpmn:startEvent id="StartEvent_1" name="Need Help?">
       <bpmn:outgoing>SequenceFlow_0z4nasv</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1qn6mzr" sourceRef="Task_0c43ixa" targetRef="Task_1e1f74p" />
+    <bpmn:sequenceFlow id="SequenceFlow_1qn6mzr" sourceRef="caseresolution" targetRef="Task_1e1f74p" />
     <bpmn:sequenceFlow id="SequenceFlow_00wp3uo" sourceRef="Task_1e1f74p" targetRef="checkresolution" />
     <bpmn:userTask id="checkresolution" name="Check Resolution">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="FormField_casedescription" label="casedescription" type="string" />
-          <camunda:formField id="FormField_caseresolution" label="caseresolution" type="string" />
-          <camunda:formField id="FormField_issolutionworking" label="Is Solution Working" type="string" />
+          <camunda:formField id="FormField_casedescription" label="casedescription" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="FormField_caseresolution" label="caseresolution" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="FormField_issolutionworking" label="Is Solution Working" type="boolean" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_00wp3uo</bpmn:incoming>
@@ -106,7 +114,7 @@
         <bpmn:targetRef>Property_18j3zha</bpmn:targetRef>
       </bpmn:dataInputAssociation>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_0c43ixa" name="Case Resolution">
+    <bpmn:userTask id="caseresolution" name="Case Resolution">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="FormField_caseresolution" label="caseresolution" type="string" />
@@ -192,7 +200,7 @@
           <dc:Bounds x="504" y="272" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_0tgbzdu_di" bpmnElement="Task_0c43ixa">
+      <bpmndi:BPMNShape id="UserTask_0tgbzdu_di" bpmnElement="caseresolution">
         <dc:Bounds x="509" y="232" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1qn6mzr_di" bpmnElement="SequenceFlow_1qn6mzr">

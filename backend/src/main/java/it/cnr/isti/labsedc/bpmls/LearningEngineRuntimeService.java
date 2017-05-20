@@ -64,10 +64,15 @@ public interface LearningEngineRuntimeService {
 	public LearningScenarioInstance getRunningLearningScenarioByIpInstId(String lpInstId)throws LearningPathException;
 	
 	/**
-	 * Start the {@link #getNextLearningScenarioByLpInstId(String)}} 
-	 * @param lpInstId the id of the lp instance for which we want to start the learning scenario
-	 * @throws LearningPathException Throws an exception if Lp not found, or if 
-	 * a Learning Scenario is already running or if there no more Learning Scenario to run
+	 * Starts the next LearningScenario in the line given a LpInstID. TODO: per
+	 * user
+	 * 
+	 * @param The
+	 *            LearningScenarioInstanceID
+	 * @throws LearningPathException
+	 *             1. LearningPathExceptionErrorCodes.LP_RUNNING_NOT_FOUND When running learningpath with the ID is not found
+	 *             2. LearningPathExceptionErrorCodes.LP_LEARNING_SCENARIO_ALREADY_RUNNING when a Learning Scenario already running
+	 *             3. LearningPathExceptionErrorCodes.LP_NO_NEXT_LEARNING_SCENARIO when no next learning scenario is found
 	 */
 	public void startNextLearningScenario(String lpInstId) throws LearningPathException;
 		
