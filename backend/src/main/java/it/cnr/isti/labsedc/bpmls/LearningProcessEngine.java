@@ -2,15 +2,11 @@ package it.cnr.isti.labsedc.bpmls;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.camunda.bpm.application.ProcessApplication;
-import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.DelegateTask;
 import org.camunda.bpm.engine.delegate.ExecutionListener;
 import org.camunda.bpm.engine.delegate.TaskListener;
-import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.extension.reactor.bus.CamundaSelector;
 import org.camunda.bpm.extension.reactor.spring.EnableCamundaReactor;
 import org.camunda.bpm.extension.reactor.spring.listener.ReactorExecutionListener;

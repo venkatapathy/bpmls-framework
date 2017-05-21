@@ -1,4 +1,4 @@
-import { OnInit,Inject, Type, Component, ViewChild, ViewContainerRef, AfterViewInit } from '@angular/core';
+import { NgZone, OnInit, Inject, Type, Component, ViewChild, ViewContainerRef, AfterViewInit } from '@angular/core';
 import { LearningEngineService } from '../learningengine.service';
 import { AdHocComponentFactoryCreator } from './adhoc-component-factory.service';
 import { ActivatedRoute } from '@angular/router';
@@ -33,12 +33,12 @@ export class LearningSimulator implements AfterViewInit {
   @ViewChild('taskFormContainer', { read: ViewContainerRef }) parent: ViewContainerRef;
   @ViewChild('bpmnDiagramContainer', { read: ViewContainerRef }) bpmnDiagramParent: ViewContainerRef;
   isChecked: boolean = false;
-  BpmnViewer: any;
+  BpmnNavigatedViewer: any;
 
   private _window: Window;
   constructor(private http: Http, windowRef: WindowRefService, private router: Router, private modalService: NgbModal, private route: ActivatedRoute, private adHocComponentFactoryCreator: AdHocComponentFactoryCreator, private learningEngineService: LearningEngineService) {
     this._window = windowRef.nativeWindow;
-    this.BpmnViewer = (<any>this._window).BpmnJS;
+    this.BpmnNavigatedViewer = (<any>this._window).BpmnJS;
 
   }
 
@@ -97,37 +97,69 @@ export class LearningSimulator implements AfterViewInit {
 
   }
 
-  createDiagramComponent(BpmnViewer: any, data: string) {
+  createDiagramComponent(BpmnNavigatedViewer: any, data: string) {
     @Component({
-      template: '<div id="canvas" style="height: 500px;"></div>'
+      template: '<div id="canvas" style="height: 600px;background-color:white;"></div>'
     })
-    class InsertedComponent implements OnInit,AfterViewInit{
+    class InsertedComponent implements OnInit, AfterViewInit {
       viewer: any;
 
-      constructor() {
-        
-        
-      }
-       ngOnInit() {
-        
-        
-    }
-    ngAfterViewInit(){
-      this.viewer = new BpmnViewer({ container: '#canvas' });
-      this.loadSampleBPMN();
-    }
-      loadSampleBPMN() {
-        
+      constructor(private ngZOne: NgZone) {
 
-        this.viewer.importXML(data, this.handleError);
+
+      }
+      ngOnInit() {
+
+
+      }
+      ngAfterViewInit() {
+        //this.viewer = new BpmnViewer({ container: '#canvas' });
+        this.loadSampleBPMN();
+      }
+      loadSampleBPMN() {
+
+        var viewer = new BpmnNavigatedViewer({ container: '#canvas' });
+        viewer.importXML(data, function () {
+          // this.ngZOne.run(() => {
+          /*console.log('rendered');
+         var canvas = viewer.get('canvas');
+
+         canvas.addMarker('_6-695', 'highlight');*/
+          // });
+
+
+          var overlays = viewer.get('overlays');
+           var elementRegistry = viewer.get('elementRegistry');
+
+          var shape = elementRegistry.get('_6-695');
+
+          var $overlayHtml = $('<div class="highlight-overlay">')
+            .css({
+              width: shape.width,
+              height: shape.height
+            });
+
+          overlays.add('_6-695', {
+            position: {
+              top: 0,
+              left: 0
+            },
+            html: $overlayHtml
+          });
+        });
       }
 
       handleError(err: any) {
+        // this.ngZOne.run(() => {
+        console.log(err);
         if (err) {
           console.log('error rendering', err);
         } else {
           console.log('rendered');
+
         }
+        // });
+
       }
     }
 
@@ -162,7 +194,7 @@ export class LearningSimulator implements AfterViewInit {
               .toPromise()
               .then(response => response.text())
               .then(data => {
-                let component = this.createDiagramComponent(this.BpmnViewer, data);
+                let component = this.createDiagramComponent(this.BpmnNavigatedViewer, data);
                 let componentFactory = this.adHocComponentFactoryCreator.getFactory(component);
                 this.bpmnDiagramParent.clear();
                 let componentRef = this.bpmnDiagramParent.createComponent(componentFactory);
