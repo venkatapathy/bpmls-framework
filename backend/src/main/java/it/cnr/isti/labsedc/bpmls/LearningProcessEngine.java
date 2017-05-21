@@ -47,6 +47,7 @@ public interface LearningProcessEngine {
 			List<DataObject> userSubmittedDOs);
 			
 	*/
+	public FlowDiagramService getFlowDiagramService();
 	
 	public LearningEngineRepositoryService getLearningEngineRepositoryService();
 	

@@ -76,6 +76,8 @@ public interface LearningEngineRuntimeService {
 	 */
 	public void startNextLearningScenario(String lpInstId) throws LearningPathException;
 		
+	
+	public void completeaLearningPath(LearningPathInstance lpInstance);
 //	/**
 //	 * Returns a learning path instance given its instance id
 //	 * @param lpInstId the id of the Learningpath instance as String

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import it.cnr.isti.labsedc.bpmls.FlowDiagramService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRepositoryService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRuntimeService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineTaskService;
@@ -27,13 +28,18 @@ public class LearningProcessEngineImpl implements LearningProcessEngine {
 	@Autowired
 	private LearningEngineTaskService learningEngineTaskService;
 	
+	@Autowired
+	private FlowDiagramService flowDiagramService;
+	
 	
 	LearningProcessEngineImpl() {
 		
 		
 	}
 
-	
+	public FlowDiagramService getFlowDiagramService(){
+		return this.flowDiagramService;
+	}
 	
 	
 	public LearningEngineRepositoryService getLearningEngineRepositoryService(){

@@ -37,4 +37,6 @@ public interface LearningProcessEngineController {
 	public String startalearningscenario(String lpid,String lpinstid);
 	
 	public String completeCurrentLearningTask(String lpid, String responseJSON)throws Exception;
+	
+	public String getLearningPathFlowDiagram(String lpid);
 }

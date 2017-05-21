@@ -117,4 +117,14 @@ export class LearningEngineService {
             });
     }
 
+    getpathflow(lpid: string) {
+        return this.http.get('http://localhost:8080/getlearningflowdiagram/'+lpid)
+
+            .map((response: Response) => {
+
+
+                return response.json();
+            });
+    }
+
 }

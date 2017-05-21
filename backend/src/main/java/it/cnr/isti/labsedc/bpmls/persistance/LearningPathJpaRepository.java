@@ -13,7 +13,7 @@ public interface LearningPathJpaRepository extends JpaRepository<LearningPathIns
 
 	LearningPathInstance findByLpInstId(int lpInstId);
 	
-	LearningPathInstance findOneByLpId(String lpId);
+	LearningPathInstance findOneByLpIdAndStatus(String lpId,String Status);
 	
 	List<LearningPathInstance> findByStatus(String status);
 	

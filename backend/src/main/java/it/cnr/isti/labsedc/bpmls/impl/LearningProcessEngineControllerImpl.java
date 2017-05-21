@@ -34,6 +34,7 @@ import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathExceptionErrorCodes;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningTaskException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
+import it.cnr.isti.labsedc.bpmls.persistance.LearningPathEvents;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathInstance;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioInstance;
 import j2html.tags.ContainerTag;
@@ -48,6 +49,21 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 	@Autowired
 	FormService formService;
 
+	@CrossOrigin(origins = "http://localhost:4200")
+	@RequestMapping(value = "/getlearningflowdiagram/{lpid}", method = RequestMethod.GET)
+	public String getLearningPathFlowDiagram(@PathVariable("lpid") String lpid){
+		//get the lpinst
+		LearningPathInstance lpInst=lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid);
+		
+		if(lpInst==null){
+			//quitely throw error status
+			JSONObject retMsg=new JSONObject();
+			return retMsg.put("status", "error").toString();
+		}
+		
+		return lpEngine.getFlowDiagramService().getLearningPathFlowDiagram(lpInst);
+	}
+	
 	/**
 	 * TODO: per user Returns a JSON. {status:error,errortype: ,htmlform:dynamic
 	 * content} 1. Status is error and errortype is 'lpnonexistant',if the given
@@ -116,6 +132,11 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 			// no more learning scenario
 			if (lsInst == null) {
+				//now before congradulating, make that learning path status to completed
+				logger.info("Chaning status of a running LP from running to completed with LPID: "+lpInst.getLpId()+" and LPInstID: "+lpInst.getLpInstId());
+				lpEngine.getLearningEngineRuntimeService().completeaLearningPath(lpInst);
+				
+				
 				ContainerTag resMsg = div()
 						.with(text("No more learning Scenario. Congrats you completed this learning path"));
 				JSONObject retJson = new JSONObject();

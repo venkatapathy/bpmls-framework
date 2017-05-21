@@ -131,7 +131,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		// when you start a learning path
 
 		// 1. make sure that the learning path is not already started
-		LearningPathInstance runnintlpInstance = lpRepository.findOneByLpId(learningPath.getId());
+		LearningPathInstance runnintlpInstance = lpRepository.findOneByLpIdAndStatus(learningPath.getId(),LearningPathEvents.LP_STATUS_RUNNING);
 
 		if (runnintlpInstance != null)
 			throw new LearningPathException(
@@ -171,6 +171,12 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		return startaLearningPath(lpRepositoryService.getDeployedLearningPath(learningPathId));
 	}
 
+	public void completeaLearningPath(LearningPathInstance lpInstance){
+		lpInstance.setStatus(LearningPathEvents.LP_STATUS_COMPLETED);
+		lpRepository.saveAndFlush(lpInstance);
+		
+	}
+	
 	/**
 	 * Get the current running Learning Paths. (Only one per deployed
 	 * LearningPaths(later per user)). TODO: find it per user
@@ -192,7 +198,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	 * @return {@link LearningPathInstance}. Null if none is present
 	 */
 	public LearningPathInstance getRunningLearningPathBylpId(String lpId) {
-		return lpRepository.findOneByLpId(lpId);
+		return lpRepository.findOneByLpIdAndStatus(lpId,LearningPathEvents.LP_STATUS_RUNNING);
 	}
 
 	/**

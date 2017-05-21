@@ -32,6 +32,7 @@ export class LearningSimulator implements AfterViewInit {
   }];
   @ViewChild('taskFormContainer', { read: ViewContainerRef }) parent: ViewContainerRef;
   @ViewChild('bpmnDiagramContainer', { read: ViewContainerRef }) bpmnDiagramParent: ViewContainerRef;
+  @ViewChild('pathFlowDiagram', { read: ViewContainerRef }) pathFlowDigram: ViewContainerRef;
   isChecked: boolean = false;
   BpmnNavigatedViewer: any;
 
@@ -97,9 +98,9 @@ export class LearningSimulator implements AfterViewInit {
 
   }
 
-  createDiagramComponent(BpmnNavigatedViewer: any, data: string) {
+  createDiagramComponent(BpmnNavigatedViewer: any, data: string,available:JSON[], running: JSON, completed: JSON[]) {
     @Component({
-      template: '<div id="canvas" style="height: 600px;background-color:white;"></div>'
+      template: '<div id="diagram" style="height: 600px;background-color:white;"></div>'
     })
     class InsertedComponent implements OnInit, AfterViewInit {
       viewer: any;
@@ -114,24 +115,29 @@ export class LearningSimulator implements AfterViewInit {
       }
       ngAfterViewInit() {
         //this.viewer = new BpmnViewer({ container: '#canvas' });
+        console.log(data);
         this.loadSampleBPMN();
       }
       loadSampleBPMN() {
 
-        var viewer = new BpmnNavigatedViewer({ container: '#canvas' });
-        viewer.importXML(data, function () {
-          // this.ngZOne.run(() => {
-          /*console.log('rendered');
-         var canvas = viewer.get('canvas');
+        var viewer = new BpmnNavigatedViewer({ container: '#diagram' });
 
-         canvas.addMarker('_6-695', 'highlight');*/
-          // });
+        viewer.importXML(data, function (err) {
+          if(err){
+            console.log(err);
+            return;
+          }
 
 
           var overlays = viewer.get('overlays');
-           var elementRegistry = viewer.get('elementRegistry');
+          var elementRegistry = viewer.get('elementRegistry');
 
-          var shape = elementRegistry.get('_6-695');
+          for (var i = 0; i < available.length; i++) {
+            var obj:any = available[i];
+
+            console.log(obj.taskid);
+          }
+         /* var shape = elementRegistry.get('_6-695');
 
           var $overlayHtml = $('<div class="highlight-overlay">')
             .css({
@@ -145,7 +151,7 @@ export class LearningSimulator implements AfterViewInit {
               left: 0
             },
             html: $overlayHtml
-          });
+          });*/
         });
       }
 
@@ -189,7 +195,20 @@ export class LearningSimulator implements AfterViewInit {
 
             componentRef.changeDetectorRef.detectChanges();
 
-            const url = 'assets/diagrams/pizza-collaboration.bpmn';
+            //get the pathflowdiagram and if successful display it
+            this.learningEngineService.getpathflow(this.lpid).subscribe(response =>{
+              //failure we gonna sink quitely
+              if(response.status=="success"){
+                
+                let component = this.createDiagramComponent(this.BpmnNavigatedViewer, response.data,response.available,response.running,response.completed);
+                let componentFactory = this.adHocComponentFactoryCreator.getFactory(component);
+                this.bpmnDiagramParent.clear();
+                let componentRef = this.pathFlowDigram.createComponent(componentFactory);
+
+                componentRef.changeDetectorRef.detectChanges();
+              }
+            });
+            /*const url = 'assets/diagrams/pizza-collaboration.bpmn';
             this.http.get(url)
               .toPromise()
               .then(response => response.text())
@@ -201,7 +220,7 @@ export class LearningSimulator implements AfterViewInit {
 
                 componentRef.changeDetectorRef.detectChanges();
 
-              });
+              });*/
 
           } else if (response.status == "error") {
             //TODO: better error handling
