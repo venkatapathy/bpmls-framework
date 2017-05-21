@@ -3,7 +3,7 @@
 
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-5">
             <div>
 
                 <tabs>
@@ -56,15 +56,15 @@
         </div>
 
         <!--diagram-->
-        <div class="col-md-6">
+        <div class="col-md-7">
             <div>
 
                 <tabs>
                     <tab [tabTitle]="'Learning Simulator'">
-                        <div style="min-height: 500px;">
+                        <div style="min-height: 500px;position:absolute" #bpmnDiagramContainer>
 
                                
-                                <div id="canvas" style="min-height: 500px;"></div>
+                                
                             </div>
                         
                     </tab>
@@ -77,10 +77,4 @@
         <!-- diagram end-->
     </div>
 
-    <div class="row">
-        <ba-card class="col-xlg-6 col-xl-6 col-lg-12 col-sm-12 col-12" title="dashboard.acquisition_channels" baCardClass="traffic-panel medium-card">
-            <lscompletion-chart></lscompletion-chart>
-        </ba-card>
-
-
-    </div>
+    

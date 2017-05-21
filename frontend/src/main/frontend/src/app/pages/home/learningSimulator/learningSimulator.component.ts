@@ -1,4 +1,4 @@
-import { Inject,Type, Component, ViewChild, ViewContainerRef, AfterViewInit } from '@angular/core';
+import { OnInit,Inject, Type, Component, ViewChild, ViewContainerRef, AfterViewInit } from '@angular/core';
 import { LearningEngineService } from '../learningengine.service';
 import { AdHocComponentFactoryCreator } from './adhoc-component-factory.service';
 import { ActivatedRoute } from '@angular/router';
@@ -31,33 +31,20 @@ export class LearningSimulator implements AfterViewInit {
     class: 'col-md-4',
   }];
   @ViewChild('taskFormContainer', { read: ViewContainerRef }) parent: ViewContainerRef;
+  @ViewChild('bpmnDiagramContainer', { read: ViewContainerRef }) bpmnDiagramParent: ViewContainerRef;
   isChecked: boolean = false;
-  BpmnViewer:any;
-  viewer:any;
+  BpmnViewer: any;
+
   private _window: Window;
-  constructor(private http:Http,windowRef: WindowRefService,private router: Router, private modalService: NgbModal, private route: ActivatedRoute, private adHocComponentFactoryCreator: AdHocComponentFactoryCreator, private learningEngineService: LearningEngineService) {
+  constructor(private http: Http, windowRef: WindowRefService, private router: Router, private modalService: NgbModal, private route: ActivatedRoute, private adHocComponentFactoryCreator: AdHocComponentFactoryCreator, private learningEngineService: LearningEngineService) {
     this._window = windowRef.nativeWindow;
-    this.BpmnViewer=(<any>this._window).BpmnJS;
-    
+    this.BpmnViewer = (<any>this._window).BpmnJS;
+
   }
 
-  handleError(err: any) {
-        if (err) {
-            console.log('error rendering', err);
-        } else {
-            console.log('rendered');
-        }
-    }
 
-    loadSampleBPMN() {
-      this.viewer = new this.BpmnViewer({ container: '#canvas' });
-        const url = 'assets/diagrams/pizza-collaboration.bpmn';
-        this.http.get(url)
-            .toPromise()
-            .then(response => response.text())
-            .then(data => this.viewer.importXML(data, this.handleError))
-            .catch(this.handleError);
-    }
+
+
 
   private createDynamicComponentwithModel(taskform: string, modelJs: JSON, prompt: JSON, simulatorComponent: LearningSimulator): Type<any> {
     @Component({
@@ -65,7 +52,7 @@ export class LearningSimulator implements AfterViewInit {
     })
     class InsertedComponent {
       learningForm = modelJs;
-      
+
       constructor() {
 
         //alert(JSON.stringify(this.learningForm));
@@ -110,7 +97,42 @@ export class LearningSimulator implements AfterViewInit {
 
   }
 
+  createDiagramComponent(BpmnViewer: any, data: string) {
+    @Component({
+      template: '<div id="canvas" style="height: 500px;"></div>'
+    })
+    class InsertedComponent implements OnInit,AfterViewInit{
+      viewer: any;
 
+      constructor() {
+        
+        
+      }
+       ngOnInit() {
+        
+        
+    }
+    ngAfterViewInit(){
+      this.viewer = new BpmnViewer({ container: '#canvas' });
+      this.loadSampleBPMN();
+    }
+      loadSampleBPMN() {
+        
+
+        this.viewer.importXML(data, this.handleError);
+      }
+
+      handleError(err: any) {
+        if (err) {
+          console.log('error rendering', err);
+        } else {
+          console.log('rendered');
+        }
+      }
+    }
+
+    return InsertedComponent;
+  }
 
   loadForm() {
     //try to get the model
@@ -118,11 +140,11 @@ export class LearningSimulator implements AfterViewInit {
       if (response.status == "success") {
         //alert(JSON.stringify(response.formmodel).length);
         //if not empty
-        let model=JSON.parse("{\"learningform\":\"empty\"}");
-        if(JSON.stringify(response.formmodel).length !=2 ){
+        let model = JSON.parse("{\"learningform\":\"empty\"}");
+        if (JSON.stringify(response.formmodel).length != 2) {
           model = JSON.parse(response.formmodel).learningform;
         }
-        
+
         this.learningEngineService.getcurrentlpstatus(this.lpid).subscribe(response => {
           if (response.status == "success") {
             //alert(JSON.stringify(model));
@@ -135,7 +157,20 @@ export class LearningSimulator implements AfterViewInit {
 
             componentRef.changeDetectorRef.detectChanges();
 
-            this.loadSampleBPMN();
+            const url = 'assets/diagrams/pizza-collaboration.bpmn';
+            this.http.get(url)
+              .toPromise()
+              .then(response => response.text())
+              .then(data => {
+                let component = this.createDiagramComponent(this.BpmnViewer, data);
+                let componentFactory = this.adHocComponentFactoryCreator.getFactory(component);
+                this.bpmnDiagramParent.clear();
+                let componentRef = this.bpmnDiagramParent.createComponent(componentFactory);
+
+                componentRef.changeDetectorRef.detectChanges();
+
+              });
+
           } else if (response.status == "error") {
             //TODO: better error handling
             if (response.errortype == "unexpected") {
