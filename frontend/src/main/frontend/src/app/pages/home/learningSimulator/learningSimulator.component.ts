@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { WindowRefService } from '../window.ref.service';
 import { Http } from '@angular/http';
 declare var introJs: any;
+declare var flowchart:any;
 
 @Component({
   selector: 'learning-simulator',
@@ -35,12 +36,12 @@ export class LearningSimulator implements AfterViewInit {
   @ViewChild('pathFlowDiagram', { read: ViewContainerRef }) pathFlowDigram: ViewContainerRef;
   isChecked: boolean = false;
   BpmnNavigatedViewer: any;
-
+  flowChart: any;
   private _window: Window;
   constructor(private http: Http, windowRef: WindowRefService, private router: Router, private modalService: NgbModal, private route: ActivatedRoute, private adHocComponentFactoryCreator: AdHocComponentFactoryCreator, private learningEngineService: LearningEngineService) {
     this._window = windowRef.nativeWindow;
     this.BpmnNavigatedViewer = (<any>this._window).BpmnJS;
-
+    
   }
 
 
@@ -98,16 +99,20 @@ export class LearningSimulator implements AfterViewInit {
 
   }
 
-  createDiagramComponent(BpmnNavigatedViewer: any, data: string,available:JSON[], running: JSON, completed: JSON[]) {
+  createDiagramComponent(BpmnNavigatedViewer: any, data: string, available: JSON[], running: JSON, completed: JSON[]) {
+    
     @Component({
-      template: '<div id="diagram" style="height: 600px;background-color:white;"></div>'
+      template: '<div id="diagram" style="height: 100px;background-color:white"></div>'
     })
     class InsertedComponent implements OnInit, AfterViewInit {
-      viewer: any;
-
-      constructor(private ngZOne: NgZone) {
-
-
+      
+      
+      _window:any;
+      
+      constructor(windowRef: WindowRefService) {
+        this._window = windowRef.nativeWindow;
+        
+        
       }
       ngOnInit() {
 
@@ -115,44 +120,60 @@ export class LearningSimulator implements AfterViewInit {
       }
       ngAfterViewInit() {
         //this.viewer = new BpmnViewer({ container: '#canvas' });
-        console.log(data);
-        this.loadSampleBPMN();
+        var flowChart = (<any>this._window).flowchart;
+        
+        var diagram = flowChart.parse('st=>start: Start:>http://www.google.com[blank]\n' +
+          'e=>end:>http://www.google.com\n' +
+          'op1=>operation: My Operation |past\n' +
+          'sub1=>subroutine: My Subroutine\n' +
+          'cond=>condition: Yes \n' +
+          'or No?\n:>http://www.google.com' +
+          'io=>inputoutput|request: catch something...\n' +
+          '' +
+          'st(right)->op1');// the other symbols too...
+        diagram.drawSVG('diagram', {
+                      // 'x': 30,
+                      // 'y': 50,
+                      'line-width': 3,
+                      'maxWidth': 3,//ensures the flowcharts fits within a certian width
+                      'line-length': 80,
+                      'text-margin': 10,
+                      'font-size': 14,
+                      'font': 'normal',
+                      'font-family': 'Helvetica',
+                      'font-weight': 'normal',
+                      'font-color': 'black',
+                      'line-color': 'black',
+                      'element-color': 'black',
+                      'fill': 'white',
+                      'yes-text': 'yes',
+                      'no-text': 'no',
+                      'arrow-end': 'block',
+                      'scale': 1,
+                      'symbols': {
+                        'start': {
+                          'font-color': 'red',
+                          'element-color': 'green',
+                          'fill': 'yellow'
+                        },
+                        'end':{
+                          'class': 'end-element'
+                        }
+                      },
+                      'flowstate' : {
+                        'past' : { 'fill' : '#CCCCCC', 'font-size' : 12},
+                        'current' : {'fill' : 'yellow', 'font-color' : 'red', 'font-weight' : 'bold'},
+                        'future' : { 'fill' : '#FFFF99'},
+                        'request' : { 'fill' : 'blue'},
+                        'invalid': {'fill' : '#444444'},
+                        'approved' : { 'fill' : '#58C4A3', 'font-size' : 12, 'yes-text' : 'APPROVED', 'no-text' : 'n/a' },
+                        'rejected' : { 'fill' : '#C45879', 'font-size' : 12, 'yes-text' : 'n/a', 'no-text' : 'REJECTED' }
+                      }
+                    });
       }
       loadSampleBPMN() {
 
-        var viewer = new BpmnNavigatedViewer({ container: '#diagram' });
 
-        viewer.importXML(data, function (err) {
-          if(err){
-            console.log(err);
-            return;
-          }
-
-
-          var overlays = viewer.get('overlays');
-          var elementRegistry = viewer.get('elementRegistry');
-
-          for (var i = 0; i < available.length; i++) {
-            var obj:any = available[i];
-
-            console.log(obj.taskid);
-          }
-         /* var shape = elementRegistry.get('_6-695');
-
-          var $overlayHtml = $('<div class="highlight-overlay">')
-            .css({
-              width: shape.width,
-              height: shape.height
-            });
-
-          overlays.add('_6-695', {
-            position: {
-              top: 0,
-              left: 0
-            },
-            html: $overlayHtml
-          });*/
-        });
       }
 
       handleError(err: any) {
@@ -196,11 +217,11 @@ export class LearningSimulator implements AfterViewInit {
             componentRef.changeDetectorRef.detectChanges();
 
             //get the pathflowdiagram and if successful display it
-            this.learningEngineService.getpathflow(this.lpid).subscribe(response =>{
+            this.learningEngineService.getpathflow(this.lpid).subscribe(response => {
               //failure we gonna sink quitely
-              if(response.status=="success"){
-                
-                let component = this.createDiagramComponent(this.BpmnNavigatedViewer, response.data,response.available,response.running,response.completed);
+              if (response.status == "success") {
+
+                let component = this.createDiagramComponent(this.BpmnNavigatedViewer, response.data, response.available, response.running, response.completed);
                 let componentFactory = this.adHocComponentFactoryCreator.getFactory(component);
                 this.bpmnDiagramParent.clear();
                 let componentRef = this.pathFlowDigram.createComponent(componentFactory);

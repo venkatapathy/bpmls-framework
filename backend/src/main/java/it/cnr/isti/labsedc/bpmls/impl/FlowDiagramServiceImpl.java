@@ -7,6 +7,7 @@ import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.camunda.bpm.model.bpmn.builder.ManualTaskBuilder;
 import org.camunda.bpm.model.bpmn.builder.ProcessBuilder;
 import org.camunda.bpm.model.bpmn.builder.StartEventBuilder;
+import org.camunda.bpm.model.bpmn.impl.instance.bpmndi.BpmnDiagramImpl;
 import org.camunda.bpm.model.bpmn.instance.Definitions;
 import org.camunda.bpm.model.bpmn.instance.Process;
 import org.camunda.bpm.model.bpmn.instance.bpmndi.BpmnDiagram;
@@ -66,6 +67,7 @@ public class FlowDiagramServiceImpl implements FlowDiagramService {
 		//create a bpmn model
 		StartEventBuilder modelInstance = Bpmn.createProcess().name(lpModel.getName()).startEvent();
 		
+		
 		//get all the learning scenarios
 		List<LearningScenarioInstance> lsInsts=lpInstance.getLearningScenarioInstances();
 		
@@ -106,12 +108,14 @@ public class FlowDiagramServiceImpl implements FlowDiagramService {
 		
 		BpmnDiagram diagram=completedPathFlow.newInstance(BpmnDiagram.class);
 		
+		
 		BpmnPlane plane = completedPathFlow.newInstance(BpmnPlane.class);
 		
 		org.camunda.bpm.model.bpmn.instance.Process process= completedPathFlow.getDefinitions().getChildElementsByType(Process.class).iterator().next();
 		plane.setBpmnElement(process);
 		diagram.setBpmnPlane(plane);
 		
+		//start, all manual tasks
 	
 		
 		completedPathFlow.getDefinitions().addChildElement(diagram);
