@@ -2,8 +2,26 @@
   fill: green !important; /* color elements as green */
 }
 
-.highlight-overlay {
+.highlight-completed-overlay {
   background-color: green; /* color elements as green */
+  opacity: 0.4;
+  pointer-events: none; /* no pointer events, allows clicking through onto the element */
+}
+
+.highlight-available-overlay {
+  background-color: white; /* color elements as green */
+  opacity: 0.4;
+  pointer-events: none; /* no pointer events, allows clicking through onto the element */
+}
+
+.highlight-trace-overlay {
+  background-color: grey; /* color elements as green */
+  opacity: 0.4;
+  pointer-events: none; /* no pointer events, allows clicking through onto the element */
+}
+
+.highlight-running-overlay {
+  background-color: yellow; /* color elements as green */
   opacity: 0.4;
   pointer-events: none; /* no pointer events, allows clicking through onto the element */
 }

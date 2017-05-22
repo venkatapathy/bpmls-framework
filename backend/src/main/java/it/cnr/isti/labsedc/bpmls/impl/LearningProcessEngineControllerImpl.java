@@ -64,6 +64,36 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 		return lpEngine.getFlowDiagramService().getLearningPathFlowDiagram(lpInst);
 	}
 	
+	@CrossOrigin(origins = "http://localhost:4200")
+	@RequestMapping(value = "/getprocessdiagramdetails/{lpid}", method = RequestMethod.GET)
+	public String getProcessDiagramDetails(@PathVariable("lpid") String lpid){
+		//get the lpinst
+		LearningPathInstance lpInst=lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid);
+		
+		if(lpInst==null){
+			//quitely throw error status
+			JSONObject retMsg=new JSONObject();
+			return retMsg.put("status", "error").toString();
+		}
+		
+		LearningScenarioInstance lsInstance=null;
+		try {
+			lsInstance=lpEngine.getLearningEngineRuntimeService().getRunningLearningScenarioByIpInstId(Integer.toString(lpInst.getLpInstId()));
+		} catch (LearningPathException e) {
+			// TODO Auto-generated catch block
+			JSONObject retMsg=new JSONObject();
+			return retMsg.put("status", "error").toString();
+		}
+		
+		if(lsInstance==null){
+			//quitely throw error status
+			JSONObject retMsg=new JSONObject();
+			return retMsg.put("status", "error").toString();
+		}
+		
+		return lpEngine.getFlowDiagramService().getProcessDiagramDetails(lsInstance);
+	}
+	
 	/**
 	 * TODO: per user Returns a JSON. {status:error,errortype: ,htmlform:dynamic
 	 * content} 1. Status is error and errortype is 'lpnonexistant',if the given

@@ -1,11 +1,11 @@
 <LearningScenario id="learningscenario1" name="Learning Scenario1" bpmn_processlabel="" bpmn_processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
 <Trace>
 <vertex id="opencase" bpmn_activityid="opencase" bpmn_activitylabel=""></vertex>
-<vertex id="analyzecase" bpmn_activityid="" bpmn_activitylabel=""></vertex>
-<vertex id="caseresolution" bpmn_activityid="" bpmn_activitylabel=""></vertex>
-<vertex id="notifyuser" bpmn_activityid="" bpmn_activitylabel=""></vertex>
-<vertex id="checkresolution" bpmn_activityid="" bpmn_activitylabel=""></vertex>
-<vertex id="closecase" bpmn_activityid="" bpmn_activitylabel=""></vertex>  
+<vertex id="analyzecase" bpmn_activityid="analyzecase" bpmn_activitylabel=""></vertex>
+<vertex id="caseresolution" bpmn_activityid="caseresolution" bpmn_activitylabel=""></vertex>
+<vertex id="notifyuser" bpmn_activityid="notifyuser" bpmn_activitylabel=""></vertex>
+<vertex id="checkresolution" bpmn_activityid="checkresolution" bpmn_activitylabel=""></vertex>
+<vertex id="closecase" bpmn_activityid="closecase" bpmn_activitylabel=""></vertex>  
 </Trace>
 <TargetVertexes>
 

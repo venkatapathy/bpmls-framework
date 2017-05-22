@@ -127,4 +127,14 @@ export class LearningEngineService {
             });
     }
 
+    getprocessdigramdetails(lpid: string) {
+        return this.http.get('http://localhost:8080/getprocessdiagramdetails/'+lpid)
+
+            .map((response: Response) => {
+
+
+                return response.json();
+            });
+    }
+
 }

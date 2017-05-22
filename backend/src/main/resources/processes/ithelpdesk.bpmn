@@ -13,16 +13,16 @@
         <bpmn:flowNodeRef>Task_0t4et4e</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1i8av72" name="General Support">
-        <bpmn:flowNodeRef>Task_0m0ax17</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_1e1f74p</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>closecase</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>notifyuser</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>caseresolution</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_10opm4b</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>analyzecase</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_00xfbjv</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:sequenceFlow id="SequenceFlow_0z4nasv" sourceRef="StartEvent_1" targetRef="opencase" />
-    <bpmn:sequenceFlow id="SequenceFlow_16r1378" sourceRef="opencase" targetRef="Task_10opm4b" />
-    <bpmn:sequenceFlow id="SequenceFlow_16n2ud9" sourceRef="Task_10opm4b" targetRef="caseresolution" />
+    <bpmn:sequenceFlow id="SequenceFlow_16r1378" sourceRef="opencase" targetRef="analyzecase" />
+    <bpmn:sequenceFlow id="SequenceFlow_16n2ud9" sourceRef="analyzecase" targetRef="caseresolution" />
     <bpmn:userTask id="opencase" name="Open Case">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -44,8 +44,8 @@
     <bpmn:startEvent id="StartEvent_1" name="Need Help?">
       <bpmn:outgoing>SequenceFlow_0z4nasv</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1qn6mzr" sourceRef="caseresolution" targetRef="Task_1e1f74p" />
-    <bpmn:sequenceFlow id="SequenceFlow_00wp3uo" sourceRef="Task_1e1f74p" targetRef="checkresolution" />
+    <bpmn:sequenceFlow id="SequenceFlow_1qn6mzr" sourceRef="caseresolution" targetRef="notifyuser" />
+    <bpmn:sequenceFlow id="SequenceFlow_00wp3uo" sourceRef="notifyuser" targetRef="checkresolution" />
     <bpmn:userTask id="checkresolution" name="Check Resolution">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -77,11 +77,11 @@
     <bpmn:sequenceFlow id="SequenceFlow_1dr9by2" name="Solution does not work" sourceRef="ExclusiveGateway_1maqy15" targetRef="Task_0t4et4e">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${FormField_issolutionworking=='false'}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_0icyup8" sourceRef="Task_0t4et4e" targetRef="Task_10opm4b" />
-    <bpmn:sequenceFlow id="SequenceFlow_0wxg60d" name="Solution works" sourceRef="ExclusiveGateway_1maqy15" targetRef="Task_0m0ax17">
+    <bpmn:sequenceFlow id="SequenceFlow_0icyup8" sourceRef="Task_0t4et4e" targetRef="analyzecase" />
+    <bpmn:sequenceFlow id="SequenceFlow_0wxg60d" name="Solution works" sourceRef="ExclusiveGateway_1maqy15" targetRef="closecase">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${FormField_issolutionworking=='true'}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:userTask id="Task_0m0ax17" name="Close Case">
+    <bpmn:userTask id="closecase" name="Close Case">
       <bpmn:incoming>SequenceFlow_0wxg60d</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_099at73</bpmn:outgoing>
       <bpmn:dataOutputAssociation id="DataOutputAssociation_0exovea">
@@ -105,7 +105,7 @@
         <bpmn:targetRef>DataObjectReference_03puo8f</bpmn:targetRef>
       </bpmn:dataOutputAssociation>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_1e1f74p" name="Notify User">
+    <bpmn:userTask id="notifyuser" name="Notify User">
       <bpmn:incoming>SequenceFlow_1qn6mzr</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_00wp3uo</bpmn:outgoing>
       <bpmn:property id="Property_18j3zha" name="__targetRef_placeholder" />
@@ -126,7 +126,7 @@
         <bpmn:targetRef>DataObjectReference_1xh2qjv</bpmn:targetRef>
       </bpmn:dataOutputAssociation>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_10opm4b" name="Analyze Case">
+    <bpmn:userTask id="analyzecase" name="Analyze Case">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="FormField_1kl39d2" label="sample" type="string" />
@@ -144,7 +144,7 @@
     <bpmn:endEvent id="EndEvent_00xfbjv" name="End">
       <bpmn:incoming>SequenceFlow_099at73</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_099at73" sourceRef="Task_0m0ax17" targetRef="EndEvent_00xfbjv" />
+    <bpmn:sequenceFlow id="SequenceFlow_099at73" sourceRef="closecase" targetRef="EndEvent_00xfbjv" />
     <bpmn:dataObjectReference id="DataObjectReference_0tp08ox" name="Case Details" dataObjectRef="DataObject_182t9e0" />
     <bpmn:dataObject id="DataObject_182t9e0" />
     <bpmn:dataObjectReference id="DataObjectReference_1xh2qjv" name="Case Resolution" dataObjectRef="DataObject_14eqpd2" />
@@ -188,7 +188,7 @@
           <dc:Bounds x="374" y="174" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_1sx8u0t_di" bpmnElement="Task_10opm4b">
+      <bpmndi:BPMNShape id="UserTask_1sx8u0t_di" bpmnElement="analyzecase">
         <dc:Bounds x="368" y="232" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_16n2ud9_di" bpmnElement="SequenceFlow_16n2ud9">
@@ -212,7 +212,7 @@
           <dc:Bounds x="664" y="272" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_15xvgy9_di" bpmnElement="Task_1e1f74p">
+      <bpmndi:BPMNShape id="UserTask_15xvgy9_di" bpmnElement="notifyuser">
         <dc:Bounds x="688" y="232" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_00wp3uo_di" bpmnElement="SequenceFlow_00wp3uo">
@@ -265,7 +265,7 @@
           <dc:Bounds x="858" y="183" width="72" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_1b9194i_di" bpmnElement="Task_0m0ax17">
+      <bpmndi:BPMNShape id="UserTask_1b9194i_di" bpmnElement="closecase">
         <dc:Bounds x="829" y="232" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_00xfbjv_di" bpmnElement="EndEvent_00xfbjv">

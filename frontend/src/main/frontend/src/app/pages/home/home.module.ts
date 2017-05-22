@@ -15,10 +15,11 @@ import { RunningLearningPathsComponent } from './runninglearningpaths/runninglea
 import { LearningSimulator } from './learningSimulator/learningSimulator.component';
 import { LsCompletionChart } from './learningSimulator/lsCompletionChart';
 import { LsCompletionChartService } from './learningSimulator/lsCompletionChart/lsCompletionChart.service';
-import { AdHocComponentFactoryCreator } from './learningSimulator/adhoc-component-factory.service';
+import { AdHocComponentFactoryCreator } from './adhoc-component-factory.service';
 import { LearningEngineService } from './learningengine.service';
 import { DefaultModal } from '../components/default-modal/default-modal.component';
 import { WindowRefService } from './window.ref.service';
+import { DynamicComponentService } from './dynamiccomponent.service';
 
 @NgModule({
   imports: [
@@ -47,6 +48,7 @@ import { WindowRefService } from './window.ref.service';
     AdHocComponentFactoryCreator,
     LearningEngineService,
     WindowRefService,
+    DynamicComponentService
   ]
 })
 export class HomeModule { }

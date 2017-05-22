@@ -6,15 +6,11 @@ import { RunningLearningPathsComponent } from './runninglearningpaths/runninglea
 import { LearningSimulator } from './learningSimulator/learningSimulator.component';
 // noinspection TypeScriptValidateTypes
 const routes: Routes = [
-  {
-    path: '',
-    component: Home,
-    children: [
+  
       { path: 'availablelearningpaths', component: AvailableLearningPathsComponent },
       { path: 'runninglearningpaths', component: RunningLearningPathsComponent },
       { path: 'learningsimulator/:id', component: LearningSimulator },
-    ],
-  },
+    
 ];
 
 export const routing = RouterModule.forChild(routes);
