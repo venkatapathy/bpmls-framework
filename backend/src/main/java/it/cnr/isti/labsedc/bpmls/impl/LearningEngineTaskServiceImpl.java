@@ -24,6 +24,7 @@ import it.cnr.isti.labsedc.bpmls.Exceptions.LearningTaskExceptionErrorCodes;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath.LearningGoals.LearningGoal.LearningScenarios.LearningScenario;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.TargetVertexes.Vertex;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathInstance;
+import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioEvents;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioInstance;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioJpaRepository;
 
@@ -140,6 +141,10 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 		}
 		// if the errlist is empty that is all is well
 		if (errMsgList == null) {
+			//TODO error handling
+			/*if(! (lsInst.getStatus().equals(LearningScenarioEvents.LS_STATUS_RUNNING))){
+				throw new LearningTaskException("Learning Scenario is not running anymore");
+			}*/
 			Task task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
 					.singleResult();
 
@@ -210,7 +215,15 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 					.singleResult();
 			while (task != null) {
 				System.out.println("Simulating: "+task.getTaskDefinitionKey());
-				taskServiceCamunda.complete(task.getId(), oracleService.getOracleValues(lsInst));
+				
+				Map<String,Object> map=oracleService.getOracleValues(lsInst);
+				//loop through map to typecase boolean values from string
+				for(Map.Entry<String, Object> entry:map.entrySet()){
+					if(entry.getValue().equals("true") || entry.getValue().equals("false")){
+						entry.setValue(Boolean.parseBoolean((String)entry.getValue()));
+					}
+				}
+				taskServiceCamunda.complete(task.getId(), map);
 				task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
 						.singleResult();
 			}

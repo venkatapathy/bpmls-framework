@@ -295,6 +295,14 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		for (DataObject sinDo : dos) {
 			map.put(sinDo.getBpmnCamundaid(), sinDo.getValue());
 		}
+		
+		//loop through map to typecase boolean values from string
+		for(Map.Entry<String, Object> entry:map.entrySet()){
+			if(entry.getValue().equals("true") || entry.getValue().equals("false")){
+				entry.setValue(Boolean.parseBoolean((String)entry.getValue()));
+			}
+		}
+		
 		String processInstId = camundaRuntimeService.startProcessInstanceByKey(processId, map).getProcessInstanceId();
 		// 2. change the status in LSI
 		lsInst.setStatus("running");

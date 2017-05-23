@@ -35,9 +35,7 @@ Change the DNS
 </DataObject>
 </ValuationFunction>
 <ValuationFunction id="checkresolution" bpmn_activityid="checkresolution" bpmn_activitylabel="">
-<DataObject id="" bpmn_camundaid="FormField_issolutionworking" bpmn_dolabel="FormField_issolutionworking">
-true
-</DataObject>
+<DataObject id="" bpmn_camundaid="FormField_issolutionworking" bpmn_dolabel="FormField_issolutionworking">true</DataObject>
 </ValuationFunction>
 </ValuationOracle>
 </LearningScenario>

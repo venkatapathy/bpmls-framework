@@ -8,7 +8,8 @@ import { Router } from '@angular/router';
 import { WindowRefService } from '../window.ref.service';
 import { Http } from '@angular/http';
 import { DynamicComponentService } from '../dynamiccomponent.service'
-
+declare var introJs: any;
+var intro = introJs();
 
 @Component({
   selector: 'learning-simulator',
@@ -35,13 +36,13 @@ export class LearningSimulator implements AfterViewInit {
   @ViewChild('pathFlowDiagram', { read: ViewContainerRef }) pathFlowContainer: ViewContainerRef;
 
   isChecked: boolean = false;
- 
+
 
   private _window: Window;
   constructor(private router: Router, private modalService: NgbModal, private route: ActivatedRoute,
     private learningEngineService: LearningEngineService, private dynamicComponentService: DynamicComponentService) {
 
-    
+
 
   }
 
@@ -57,9 +58,19 @@ export class LearningSimulator implements AfterViewInit {
 
     this.loadForm();
 
+    
+    /*const prompt = JSON.parse('{\"steps\": [{ \"element\": \"#input01\",\"intro\": \"welcome to case \"},' +
+              '{ \"intro\": \"In this scenario you will open a case \"}],\"disableInteraction\":false}');
+
+    intro.setOptions(prompt);
+    
+
+
+    intro.start();*/
   }
 
 
+ 
 
   loadForm() {
     // try to get the model
@@ -98,7 +109,7 @@ export class LearningSimulator implements AfterViewInit {
               if (pfresponse.status == 'success') {
 
                 this.dynamicComponentService.createProcessDiagramComponent(this.bpmnDiagramContainer,
-                  pfresponse.xmldata, pfresponse.available, pfresponse.running, pfresponse.completed,pfresponse.trace);
+                  pfresponse.xmldata, pfresponse.available, pfresponse.running, pfresponse.completed, pfresponse.trace);
               }
             });
 

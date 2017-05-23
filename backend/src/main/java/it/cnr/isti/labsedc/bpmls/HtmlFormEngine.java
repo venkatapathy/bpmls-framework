@@ -166,29 +166,27 @@ public class HtmlFormEngine implements FormEngine {
 
 	public String getFormModel(FormData formData) {
 		StringBuilder retMsg = new StringBuilder("{\"learningform\":");
-        if(formData.getFormFields().size()>0){
-        	retMsg.append("{");
-        }
+		if (formData.getFormFields().size() > 0) {
+			retMsg.append("{");
+		}
 		for (FormField formField : formData.getFormFields()) {
-			
+
 			Object defaultValue = formField.getValue().getValue();
-			if (defaultValue != null) {
+			if (defaultValue != null && isReadOnly(formField)) {
 				retMsg.append("\"" + formField.getId() + "\":\"" + defaultValue.toString() + "\",");
 
 			} else {
 				retMsg.append("\"" + formField.getId() + "\":\"\",");
 			}
 		}
-		if(formData.getFormFields().size()>0){
-			retMsg.deleteCharAt(retMsg.length()-1);
-        	retMsg.append("}}");
-        	
-        }else{
-        	retMsg.append("{}}");
-        }
-		
-		
-		
+		if (formData.getFormFields().size() > 0) {
+			retMsg.deleteCharAt(retMsg.length() - 1);
+			retMsg.append("}}");
+
+		} else {
+			retMsg.append("{}}");
+		}
+
 		return retMsg.toString();
 	}
 
@@ -199,7 +197,7 @@ public class HtmlFormEngine implements FormEngine {
 			// when no fields are there just return forms with a complete
 			// learning button
 			HtmlElementWriter formElement = new HtmlElementWriter(FORM_ELEMENT).attribute(FORM_ID_ATTRIBUTE,
-					"#"+FORM_ID_ATTRIBUTE_VALUE);
+					"#" + FORM_ID_ATTRIBUTE_VALUE);
 			HtmlElementWriter divElement = new HtmlElementWriter("button").attribute("type", "button")
 					.textContent("Complete Learning");
 			// end document element
@@ -209,8 +207,8 @@ public class HtmlFormEngine implements FormEngine {
 			return documentBuilder.getHtmlString();
 
 		} else {
-			HtmlElementWriter formElement = new HtmlElementWriter(FORM_ELEMENT).attribute("#f", "ngForm").attribute("novalidate", null)
-					;
+			HtmlElementWriter formElement = new HtmlElementWriter(FORM_ELEMENT).attribute("#f", "ngForm")
+					.attribute("novalidate", null);
 
 			HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(formElement);
 
@@ -225,8 +223,9 @@ public class HtmlFormEngine implements FormEngine {
 			// documentBuilder);
 			// }
 			// submitbutton
-			HtmlElementWriter divElement = new HtmlElementWriter("button").attribute("type", "submit").attribute("(click)", "completeLearning(f)")
-					.attribute("class", "btn btn-primary").textContent("Complete Task");
+			HtmlElementWriter divElement = new HtmlElementWriter("button").attribute("type", "submit")
+					.attribute("(click)", "completeLearning(f)").attribute("class", "btn btn-primary")
+					.textContent("Complete Task");
 			// end document element
 
 			documentBuilder.startElement(divElement).endElement();
@@ -258,6 +257,19 @@ public class HtmlFormEngine implements FormEngine {
 				renderInputField(formField, documentBuilder);
 				HtmlElementWriter spanElement = new HtmlElementWriter(SPAN_ELEMENT).textContent(formFieldLabel);
 				documentBuilder.startElement(spanElement).endElement();
+				//
+				// add a hint
+				// format: <span class="help-block regular-text" >Expected Value:
+				// Xys</span><br/>
+				Object defaultValue = formField.getValue().getValue();
+				if (defaultValue != null && !isReadOnly(formField)) {
+					HtmlElementWriter hintSpan = new HtmlElementWriter(SPAN_ELEMENT).attribute("class",
+							"help-block regular-text").attribute("style", "color:#dfb81c");
+					hintSpan.textContent("Expected Value: &nbsp; &nbsp;" + defaultValue);
+					documentBuilder.startElement(hintSpan).endElement();
+
+				}
+				
 				documentBuilder.endElement();
 				documentBuilder.endElement();
 				return;
@@ -393,31 +405,43 @@ public class HtmlFormEngine implements FormEngine {
 		inputField.attribute(TYPE_ATTRIBUTE, inputType);
 
 		// diff for check box and text
-		
-			addCommonFormFieldAttributes(formField, inputField);
-		
+
+		addCommonFormFieldAttributes(formField, inputField);
 
 		// add current value for the text box
 
-//		if (inputType == TEXT_INPUT_TYPE) {
-//			Object defaultValue = formField.getValue().getValue();
-//			if (defaultValue != null) {
-//				inputField.attribute("placeholder", defaultValue.toString()).attribute("value",
-//						defaultValue.toString());
-//			}
-//		} else {
-//			// TODO: checked if the value has true or false
-//			Boolean defaultValue = (Boolean) formField.getValue().getValue();
-//			if (defaultValue != null && defaultValue) {
-//				inputField.attribute("checked", null);
-//			}
-//		}
+		// if (inputType == TEXT_INPUT_TYPE) {
+		// Object defaultValue = formField.getValue().getValue();
+		// if (defaultValue != null) {
+		// inputField.attribute("placeholder",
+		// defaultValue.toString()).attribute("value",
+		// defaultValue.toString());
+		// }
+		// } else {
+		// // TODO: checked if the value has true or false
+		// Boolean defaultValue = (Boolean) formField.getValue().getValue();
+		// if (defaultValue != null && defaultValue) {
+		// inputField.attribute("checked", null);
+		// }
+		// }
 
-		// TODO: make it readonly if needed
 		if (isReadOnly(formField)) {
 			inputField.attribute("readonly", "readonly");
 		}
 		// <input ... />
+
+		// add a hint
+		// format: <span class="help-block regular-text" style="color:#dfb81c">Expected Value:
+		// Xys</span><br/>
+		Object defaultValue = formField.getValue().getValue();
+		if (defaultValue != null && !isReadOnly(formField)) {
+			HtmlElementWriter hintSpan = new HtmlElementWriter(SPAN_ELEMENT).attribute("class",
+					"help-block regular-text").attribute("style", "color:#dfb81c");
+			hintSpan.textContent("Expected Value: &nbsp; &nbsp;" + defaultValue);
+			documentBuilder.startElement(inputField).startElement(hintSpan).endElement().endElement();
+			return;
+		}
+
 		documentBuilder.startElement(inputField).endElement();
 	}
 
@@ -434,6 +458,19 @@ public class HtmlFormEngine implements FormEngine {
 
 		// </select>
 		documentBuilder.endElement();
+
+		// add a hint
+		// format: <span class="help-block regular-text" >Expected Value:
+		// Xys</span><br/>
+		Object defaultValue = formField.getValue().getValue();
+		if (defaultValue != null && !isReadOnly(formField)) {
+			HtmlElementWriter hintSpan = new HtmlElementWriter(SPAN_ELEMENT).attribute("class",
+					"help-block regular-text").attribute("style", "color:#dfb81c");
+			hintSpan.textContent("Expected Value: &nbsp; &nbsp;" + defaultValue);
+			documentBuilder.startElement(hintSpan).endElement();
+
+		}
+
 	}
 
 	protected void renderSelectOptions(FormField formField, HtmlDocumentBuilder documentBuilder) {
@@ -454,6 +491,7 @@ public class HtmlFormEngine implements FormEngine {
 			}
 
 			documentBuilder.startElement(option).endElement();
+
 		}
 	}
 
@@ -559,8 +597,9 @@ public class HtmlFormEngine implements FormEngine {
 
 		String formFieldId = formField.getId();
 
-		formControl.attribute(CLASS_ATTRIBUTE, FORM_CONTROL_CLASS).attribute("[(ngModel)]", FORM_ID_ATTRIBUTE+"."+formFieldId)
-				.attribute("ngControl", formFieldId).attribute("name", formFieldId);
+		formControl.attribute(CLASS_ATTRIBUTE, FORM_CONTROL_CLASS)
+				.attribute("[(ngModel)]", FORM_ID_ATTRIBUTE + "." + formFieldId).attribute("ngControl", formFieldId)
+				.attribute("name", formFieldId);
 
 		// add validation constraints
 		for (FormFieldValidationConstraint constraint : formField.getValidationConstraints()) {

@@ -116,7 +116,13 @@ public class OracleServiceImpl implements OracleService {
 		List<OracleValue> ovL = oracleRepo.findAllByLsInstance(lsInst);
 		Map<String, Object> map = new HashMap<String, Object>();
 		for (OracleValue i : ovL) {
-			map.put(i.getBpmnCamId(), i.getCurrentExpectedValue());
+			//if boolean return a boolean
+			if(i.getCurrentExpectedValue().equals("true") || i.getCurrentExpectedValue().equals("false")){
+				map.put(i.getBpmnCamId(), Boolean.parseBoolean(i.getCurrentExpectedValue()));
+			}else{
+				map.put(i.getBpmnCamId(), i.getCurrentExpectedValue());
+			}
+			
 		}
 
 		return map;
