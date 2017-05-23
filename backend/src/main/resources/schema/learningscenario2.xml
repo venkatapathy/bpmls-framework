@@ -15,6 +15,7 @@
 <InitialValuation>
 <DataObject id="FormField_casedescription" bpmn_camundaid="FormField_casedescription" bpmn_dolabel="FormField_casedescription">Internet is not working</DataObject>
 <DataObject id="" bpmn_camundaid="FormField_casepriority" bpmn_dolabel="FormField_casepriority">medium</DataObject>
+<DataObject id="" bpmn_camundaid="FormField_issolutionworking" bpmn_dolabel="FormField_issolutionworking">true</DataObject>
 </InitialValuation>
 
 <ValuationOracle>

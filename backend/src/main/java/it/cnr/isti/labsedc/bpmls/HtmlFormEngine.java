@@ -257,22 +257,7 @@ public class HtmlFormEngine implements FormEngine {
 				renderInputField(formField, documentBuilder);
 				HtmlElementWriter spanElement = new HtmlElementWriter(SPAN_ELEMENT).textContent(formFieldLabel);
 				documentBuilder.startElement(spanElement).endElement();
-				//
-				// add a hint
-				// format: <span class="help-block regular-text" >Expected Value:
-				// Xys</span><br/>
-				Object defaultValue = formField.getValue().getValue();
-				if (defaultValue != null && !isReadOnly(formField)) {
-					HtmlElementWriter hintSpan = new HtmlElementWriter(SPAN_ELEMENT).attribute("class",
-							"help-block regular-text").attribute("style", "color:#dfb81c");
-					hintSpan.textContent("Expected Value: &nbsp; &nbsp;" + defaultValue);
-					documentBuilder.startElement(hintSpan).endElement();
 
-				}
-				
-				documentBuilder.endElement();
-				documentBuilder.endElement();
-				return;
 			} else {
 				labelElement = new HtmlElementWriter(LABEL_ELEMENT).attribute(FOR_ATTRIBUTE, formFieldId)
 						.textContent(formFieldLabel);
@@ -298,6 +283,18 @@ public class HtmlFormEngine implements FormEngine {
 
 		}
 
+		// add a hint
+		// format: <span class="help-block regular-text"
+		// style="color:#dfb81c">Expected Value:
+		// Xys</span><br/>
+		Object defaultValue = formField.getValue().getValue();
+		if (defaultValue != null && !isReadOnly(formField)) {
+			HtmlElementWriter hintSpan = new HtmlElementWriter(SPAN_ELEMENT)
+					.attribute("class", "help-block regular-text").attribute("style", "color:#dfb81c");
+			hintSpan.textContent("Expected Value: &nbsp; &nbsp;" + defaultValue);
+			documentBuilder.startElement(hintSpan).endElement();
+
+		}
 		// renderInvalidMessageElement(formField, documentBuilder);
 
 		// end group
@@ -430,18 +427,6 @@ public class HtmlFormEngine implements FormEngine {
 		}
 		// <input ... />
 
-		// add a hint
-		// format: <span class="help-block regular-text" style="color:#dfb81c">Expected Value:
-		// Xys</span><br/>
-		Object defaultValue = formField.getValue().getValue();
-		if (defaultValue != null && !isReadOnly(formField)) {
-			HtmlElementWriter hintSpan = new HtmlElementWriter(SPAN_ELEMENT).attribute("class",
-					"help-block regular-text").attribute("style", "color:#dfb81c");
-			hintSpan.textContent("Expected Value: &nbsp; &nbsp;" + defaultValue);
-			documentBuilder.startElement(inputField).startElement(hintSpan).endElement().endElement();
-			return;
-		}
-
 		documentBuilder.startElement(inputField).endElement();
 	}
 
@@ -458,18 +443,6 @@ public class HtmlFormEngine implements FormEngine {
 
 		// </select>
 		documentBuilder.endElement();
-
-		// add a hint
-		// format: <span class="help-block regular-text" >Expected Value:
-		// Xys</span><br/>
-		Object defaultValue = formField.getValue().getValue();
-		if (defaultValue != null && !isReadOnly(formField)) {
-			HtmlElementWriter hintSpan = new HtmlElementWriter(SPAN_ELEMENT).attribute("class",
-					"help-block regular-text").attribute("style", "color:#dfb81c");
-			hintSpan.textContent("Expected Value: &nbsp; &nbsp;" + defaultValue);
-			documentBuilder.startElement(hintSpan).endElement();
-
-		}
 
 	}
 
