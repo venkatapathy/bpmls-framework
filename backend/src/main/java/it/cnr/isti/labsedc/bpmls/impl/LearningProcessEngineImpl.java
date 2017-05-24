@@ -12,6 +12,7 @@ import it.cnr.isti.labsedc.bpmls.LearningEngineRepositoryService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRuntimeService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineTaskService;
 import it.cnr.isti.labsedc.bpmls.LearningProcessEngine;
+import it.cnr.isti.labsedc.bpmls.OracleService;
 
 @Component
 
@@ -31,6 +32,12 @@ public class LearningProcessEngineImpl implements LearningProcessEngine {
 	@Autowired
 	private FlowDiagramService flowDiagramService;
 	
+	@Autowired
+	private OracleService oracleService;
+	
+	public OracleService getOracleService(){
+		return this.oracleService;
+	}
 	
 	LearningProcessEngineImpl() {
 		

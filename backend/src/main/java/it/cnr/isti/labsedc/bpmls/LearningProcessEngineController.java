@@ -41,4 +41,6 @@ public interface LearningProcessEngineController {
 	public String getLearningPathFlowDiagram(String lpid);
 	
 	public String getProcessDiagramDetails(String lpid);
+	
+	public String gerOracleValues(String lpid);
 }

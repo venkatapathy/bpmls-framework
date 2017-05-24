@@ -20,17 +20,18 @@ import java.util.Map.Entry;
 import org.camunda.bpm.engine.form.FormData;
 import org.camunda.bpm.engine.form.FormField;
 import org.camunda.bpm.engine.form.FormFieldValidationConstraint;
-import org.camunda.bpm.engine.form.FormProperty;
 import org.camunda.bpm.engine.form.StartFormData;
 import org.camunda.bpm.engine.form.TaskFormData;
 import org.camunda.bpm.engine.impl.form.engine.FormEngine;
-import org.camunda.bpm.engine.impl.form.engine.FormPropertyAdapter;
 import org.camunda.bpm.engine.impl.form.engine.HtmlDocumentBuilder;
 import org.camunda.bpm.engine.impl.form.engine.HtmlElementWriter;
 import org.camunda.bpm.engine.impl.form.type.BooleanFormType;
 import org.camunda.bpm.engine.impl.form.type.DateFormType;
 import org.camunda.bpm.engine.impl.form.type.EnumFormType;
 import org.camunda.bpm.engine.impl.form.type.StringFormType;
+
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction.DataObject;
 
 /**
  * <p>
@@ -41,7 +42,7 @@ import org.camunda.bpm.engine.impl.form.type.StringFormType;
  * @author Daniel Meyer
  *
  */
-public class HtmlFormEngine implements FormEngine {
+public class HtmlFormEngine {
 
 	/* elements */
 	protected static final String FORM_ELEMENT = "form";
@@ -157,11 +158,11 @@ public class HtmlFormEngine implements FormEngine {
 	}
 
 	public Object renderStartForm(StartFormData startForm) {
-		return renderFormData(startForm);
+		return renderFormData(startForm, null);
 	}
 
-	public Object renderTaskForm(TaskFormData taskForm) {
-		return renderFormData(taskForm);
+	public Object renderTaskForm(TaskFormData taskForm, ValuationFunction ls) {
+		return renderFormData(taskForm, ls);
 	}
 
 	public String getFormModel(FormData formData) {
@@ -190,7 +191,41 @@ public class HtmlFormEngine implements FormEngine {
 		return retMsg.toString();
 	}
 
-	public String renderFormData(FormData formData) {
+	private void getFormFieldHint(HtmlDocumentBuilder documentBuilder, ValuationFunction ls, FormField formField) {
+		if (ls == null) {
+			return;
+		}
+
+		String defaultValue=null;
+		String hint=null;
+		for (DataObject dov : ls.getDataObject()) {
+			if (dov.getBpmnCamundaid().equals(formField.getId())) {
+				//expected value is mandatory
+				defaultValue=dov.getExpectedValue().getValue();
+				if(dov.getDoHint()!=null){
+					hint=dov.getDoHint().getValue();
+				}
+				
+			}
+		}
+		if (defaultValue != null && !isReadOnly(formField)) {
+			HtmlElementWriter hintSpan = new HtmlElementWriter(SPAN_ELEMENT)
+					.attribute("class", "help-block regular-text").attribute("style", "color:#dfb81c");
+			hintSpan.textContent("Expected Value: &nbsp; &nbsp;" + defaultValue);
+			documentBuilder.startElement(hintSpan).endElement();
+
+		}
+		
+		if (hint != null && !isReadOnly(formField)) {
+			HtmlElementWriter hintSpan = new HtmlElementWriter(SPAN_ELEMENT)
+					.attribute("class", "help-block regular-text").attribute("style", "color:#dfb81c");
+			hintSpan.textContent("Hint: &nbsp; &nbsp;" + hint);
+			documentBuilder.startElement(new HtmlElementWriter("br",true)).startElement(hintSpan).endElement().startElement(new HtmlElementWriter("br",true));
+
+		}
+	}
+
+	public String renderFormData(FormData formData, ValuationFunction ls) {
 
 		if (formData == null || (formData.getFormFields() == null || formData.getFormFields().isEmpty())
 				&& (formData.getFormProperties() == null || formData.getFormProperties().isEmpty())) {
@@ -214,7 +249,7 @@ public class HtmlFormEngine implements FormEngine {
 
 			// render fields
 			for (FormField formField : formData.getFormFields()) {
-				renderFormField(formField, documentBuilder);
+				renderFormField(formField, documentBuilder, ls);
 			}
 
 			// render deprecated form properties
@@ -236,7 +271,7 @@ public class HtmlFormEngine implements FormEngine {
 		}
 	}
 
-	protected void renderFormField(FormField formField, HtmlDocumentBuilder documentBuilder) {
+	protected void renderFormField(FormField formField, HtmlDocumentBuilder documentBuilder, ValuationFunction ls) {
 		// start group
 		HtmlElementWriter divElement = new HtmlElementWriter(DIV_ELEMENT).attribute(CLASS_ATTRIBUTE, FORM_GROUP_CLASS);
 
@@ -256,8 +291,10 @@ public class HtmlFormEngine implements FormEngine {
 				documentBuilder.startElement(labelElement);
 				renderInputField(formField, documentBuilder);
 				HtmlElementWriter spanElement = new HtmlElementWriter(SPAN_ELEMENT).textContent(formFieldLabel);
-				documentBuilder.startElement(spanElement).endElement();
-
+				documentBuilder.startElement(spanElement).endElement().endElement().endElement();
+				getFormFieldHint(documentBuilder, ls, formField);
+				
+				return;
 			} else {
 				labelElement = new HtmlElementWriter(LABEL_ELEMENT).attribute(FOR_ATTRIBUTE, formFieldId)
 						.textContent(formFieldLabel);
@@ -277,7 +314,7 @@ public class HtmlFormEngine implements FormEngine {
 		// renderDatePicker(formField, documentBuilder);
 
 		// }
-		else {
+		else if(!isBoolean(formField)) {
 			// <input ...>
 			renderInputField(formField, documentBuilder);
 
@@ -287,14 +324,8 @@ public class HtmlFormEngine implements FormEngine {
 		// format: <span class="help-block regular-text"
 		// style="color:#dfb81c">Expected Value:
 		// Xys</span><br/>
-		Object defaultValue = formField.getValue().getValue();
-		if (defaultValue != null && !isReadOnly(formField)) {
-			HtmlElementWriter hintSpan = new HtmlElementWriter(SPAN_ELEMENT)
-					.attribute("class", "help-block regular-text").attribute("style", "color:#dfb81c");
-			hintSpan.textContent("Expected Value: &nbsp; &nbsp;" + defaultValue);
-			documentBuilder.startElement(hintSpan).endElement();
+		getFormFieldHint(documentBuilder, ls, formField);
 
-		}
 		// renderInvalidMessageElement(formField, documentBuilder);
 
 		// end group

@@ -1,5 +1,12 @@
 <LearningPath competencyid="" id="learningpath1" name="Learning Path1" processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
-
+<learningcontexthint>
+<![CDATA[<html>
+        <div class="section-block yellow-text">
+        Hint for the LearningPath
+        </div>
+        
+     ]]>
+</learningcontexthint>
 <Prerequesties>
 <PreLearningPath refid=""/>
 <PreLearningPath refid=""/>

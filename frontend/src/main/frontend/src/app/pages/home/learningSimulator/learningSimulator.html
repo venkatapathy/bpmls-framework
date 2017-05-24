@@ -1,94 +1,97 @@
 <div class="widgets">
-<div class="row">
-    <div class="col-md-12">
-         <ba-card>
-             
-                 <div style="min-height: 70px;position:absolute" #pathFlowDiagram></div>
-         </ba-card>
-             </div>
-            
-         
+    <div class="row">
+        <div class="col-md-12">
+            <ba-card>
+
+                <div style="min-height: 70px;position:absolute" #pathFlowDiagram></div>
+            </ba-card>
+        </div>
+
+
     </div>
 </div>
 
 
-    <div class="row">
-        <div class="col-md-5">
-            <div>
+<div class="row">
+    <div class="col-md-5">
+        <div>
 
-                <tabs>
-                    <tab [tabTitle]="'Learning Simulator'">
+            <tabs>
+                <tab [tabTitle]="'Learning Simulator'">
 
-                        <ba-card title="Task Form" baCardClass="with-scroll">
-                            <div style="min-height: 500px;">
+                    <ba-card baCardClass="with-scroll">
+                        <div style="min-height: 500px;">
 
-                                <!--<form #learningForm="ngForm" (ngSubmit)="completeLearning(learningForm)">
-                                    <div class="form-group">
-                                        <label for="input01">Text</label>
-                                        <input type="text" class="form-control" id="input01" placeholder="Text">
-                                        <span class="help-block regular-text" >Expected Value: Xys</span><br/>
-                                        <span class="help-block regular-text" style="color:#dfb81c">HINT: Curabitur bibendum ornare dolor, quis ullamcorper ligula dfgz`zzsodales at. Nullam quis risus eget
+                           <!-- <form #learningForm="ngForm" (ngSubmit)="completeLearning(learningForm)">
+                                <div class="form-group">
+                                    <label for="input01">Text</label>
+                                    <input type="text" class="form-control" id="input01" placeholder="Text">
+                                    <span class="help-block regular-text">Expected Value: Xys</span><br/>
+                                    <span class="help-block regular-text" style="color:#dfb81c">HINT: Curabitur bibendum ornare dolor, quis ullamcorper ligula dfgz`zzsodales at. Nullam quis risus eget
             urna
             mollis ornare vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur
             ridiculus
             mus. Nullam id dolor id nibh ultricies vehicula ut id elit. In sed ornare nulla.</span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="input05">Disabled Input</label>
-                                        <input type="text" class="form-control" id="input05" placeholder="Disabled Input" disabled>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleSelect1">Example selects</label>
-                                        <select class="form-control" id="exampleSelect1">
+                                </div>
+                                <div class="form-group">
+                                    <label for="input05">Disabled Input</label>
+                                    <input type="text" class="form-control" id="input05" placeholder="Disabled Input" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleSelect1">Example selects</label>
+                                    <select class="form-control" id="exampleSelect1">
                                             <option>1</option>
                                             <option>2</option>
                                             <option>3</option>
                                             <option selected>4</option>
                                             <option>5</option>
                                         </select>
-                                        <span class="help-block sub-little-text">A block of help text that breaks onto a new line and may extend beyond one line.</span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="checkbox-inline custom-checkbox nowrap">
-                                        <input type="checkbox" checked disabled>
-                                        <span class="help-block sub-little-text">A block of help text that breaks onto a new line and may extend beyond one line.</span>
+                                    <span class="help-block sub-little-text">A block of help text that breaks onto a new line and may extend beyond one line.</span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="checkbox-inline custom-checkbox nowrap">
+                                        <input type="checkbox" > <span class="checkbox-inline custom-checkbox nowrap">Is it working?</span>
+                                        
                                     </label>
-                                    </div>
-                                </form>-->
-                                <div #taskFormContainer></div>
-                            </div>
-                        </ba-card>
-                    </tab>
-                    <tab tabTitle="Task Help">
-                        <ba-card title="Basic Form" baCardClass="with-scroll">
-                            <div style="min-height: 800px;">
-                                <lscompletion-chart></lscompletion-chart>
-                            </div>
-                        </ba-card>
-                    </tab>
+                                    <br/><span class="help-block sub-little-text">
+                                        <div style="color:#dfb81c">
+                                        Learning Object Hint
+                                    </div></span>
+                                </div>
+                            </form> -->
+                            
+                            <div #taskFormContainer></div>
+                        </div>
+                    </ba-card>
+                </tab>
+                <tab tabTitle="Advansced Viewing">
+                    <ba-card title="Business Keys and Values" baCardClass="with-scroll table-panel">
+                        <div style="min-height: 800px;">
+                            <condensed-table></condensed-table>
+                        </div>
+                    </ba-card>
+                </tab>
 
-                </tabs>
+            </tabs>
 
-            </div>
         </div>
-
-        <!--diagram-->
-        <div class="col-md-7">
-            <div>
-                <ba-card>
-               
-                    
-                        <div style="min-height: 500px;position:absolute" #bpmnDiagramContainer>
-
-                               
-                                
-                            </div>
-                </ba-card>   
-                   
-
-            </div>
-        </div>
-        <!-- diagram end-->
     </div>
 
-    
+    <!--diagram-->
+    <div class="col-md-7">
+        <div>
+            <ba-card>
+
+
+                <div style="min-height: 500px;position:absolute" #bpmnDiagramContainer>
+
+
+
+                </div>
+            </ba-card>
+
+
+        </div>
+    </div>
+    <!-- diagram end-->
+</div>

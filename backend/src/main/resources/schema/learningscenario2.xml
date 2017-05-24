@@ -1,44 +1,71 @@
 <LearningScenario id="learningscenario2" name="Learning Scenario2" bpmn_processlabel="" bpmn_processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<scenariocontexthint>
+<![CDATA[
+        <div style="color:#dfb81c">
+        In this learning scenario we will see how to close a case. Imagine we got a problem with our computer, the internet was not working.
+        You open a ticket to the general support providing them with the information. Later they provide you with a solution. You tried their solution.
+        (all this are automated in this scenario): Now after finding that the solution they provided was working, you need to close the ticket.
+        
+       
+        
+        </div>
+        
+     ]]>
+</scenariocontexthint>
+
 <Trace>
 <vertex id="opencase" bpmn_activityid="opencase" bpmn_activitylabel=""></vertex>
 <vertex id="analyzecase" bpmn_activityid="analyzecase" bpmn_activitylabel=""></vertex>
 <vertex id="caseresolution" bpmn_activityid="caseresolution" bpmn_activitylabel=""></vertex>
 <vertex id="notifyuser" bpmn_activityid="notifyuser" bpmn_activitylabel=""></vertex>
 <vertex id="checkresolution" bpmn_activityid="checkresolution" bpmn_activitylabel=""></vertex>
-<vertex id="closecase" bpmn_activityid="closecase" bpmn_activitylabel=""></vertex> 
+<vertex id="closecase" bpmn_activityid="closecase" bpmn_activitylabel=""></vertex>  
 </Trace>
 <TargetVertexes>
-<vertex id="opencase" bpmn_activityid="opencase" bpmn_activitylabel=""></vertex>
-<vertex id="checkresolution" bpmn_activityid="checkresolution" bpmn_activitylabel="caseresolution"></vertex>
+
+<vertex id="checkresolution" bpmn_activityid="checkresolution" bpmn_activitylabel="caseresolution">
+<activitycontexthint>
+<![CDATA[
+        <div style="color:#dfb81c">
+        <br/>
+        How do you close? By simply checking the option yes in the task form that will be provided below.
+        </div>
+        
+     ]]>
+</activitycontexthint>
+</vertex>
+
 </TargetVertexes>
 
 <InitialValuation>
 <DataObject id="FormField_casedescription" bpmn_camundaid="FormField_casedescription" bpmn_dolabel="FormField_casedescription">Internet is not working</DataObject>
 <DataObject id="" bpmn_camundaid="FormField_casepriority" bpmn_dolabel="FormField_casepriority">medium</DataObject>
-<DataObject id="" bpmn_camundaid="FormField_issolutionworking" bpmn_dolabel="FormField_issolutionworking">true</DataObject>
 </InitialValuation>
 
 <ValuationOracle>
-<ValuationFunction id="opencase" bpmn_activityid="opencase" bpmn_activitylabel="">
-<DataObject id="" bpmn_camundaid="FormField_casepriority" bpmn_dolabel="FormField_casepriority">
-medium
-</DataObject>
-</ValuationFunction>
-<ValuationFunction id="Task_10opm4b" bpmn_activityid="Task_10opm4b" bpmn_activitylabel="">
-<DataObject id="" bpmn_camundaid="FormField_1kl39d2" bpmn_dolabel="FormField_1kl39d2">
-Internet
-</DataObject>
-
-</ValuationFunction>
 <ValuationFunction id="caseresolution" bpmn_activityid="caseresolution" bpmn_activitylabel="">
 <DataObject id="" bpmn_camundaid="FormField_caseresolution" bpmn_dolabel="FormField_caseresolution">
-Change the DNS
+<ExpectedValue id="">Change the DNS</ExpectedValue>
+<DoHint id=""><![CDATA[
+        <div style="color:#dfb81c">
+        Learning Object Hint
+        </div>
+        
+     ]]></DoHint>
+
 </DataObject>
 </ValuationFunction>
 <ValuationFunction id="checkresolution" bpmn_activityid="checkresolution" bpmn_activitylabel="">
 <DataObject id="" bpmn_camundaid="FormField_issolutionworking" bpmn_dolabel="FormField_issolutionworking">
-true
+<ExpectedValue id="">true</ExpectedValue>
+<DoHint id=""><![CDATA[
+        <div style="color:#dfb81c">
+        Just check the box to make complete the task with mentioning that the solution work (for this mock scenario)
+        </div>
+        
+     ]]></DoHint>
 </DataObject>
 </ValuationFunction>
+
 </ValuationOracle>
 </LearningScenario>

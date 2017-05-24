@@ -56,6 +56,7 @@ public interface LearningProcessEngine {
 	
 	public LearningEngineTaskService getLearningEngineTaskService();
 	
+	public OracleService getOracleService();
 	
 //	/**
 //	 * This will get the current learning task of the current learning scenario

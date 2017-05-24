@@ -49,4 +49,6 @@ public interface LearningEngineRepositoryService {
 	
 	public List<DataObject> getCurrentOracleValuesFromRepo(String lsId,String cur_bpmn_activityid)throws LearningPathException;
 	
+	
+	
 }

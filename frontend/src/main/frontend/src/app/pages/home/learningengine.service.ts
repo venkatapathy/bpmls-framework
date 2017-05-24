@@ -138,4 +138,14 @@ export class LearningEngineService {
             });
     }
 
+    getoraclevalues(lpid: string) {
+        return this.http.get(hostaddress.host+'/getoraclevalues/'+lpid)
+
+            .map((response: Response) => {
+
+
+                return response.json();
+            });
+    }
+
 }

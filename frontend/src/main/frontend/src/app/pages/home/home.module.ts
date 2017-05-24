@@ -20,7 +20,7 @@ import { LearningEngineService } from './learningengine.service';
 import { DefaultModal } from '../components/default-modal/default-modal.component';
 import { WindowRefService } from './window.ref.service';
 import { DynamicComponentService } from './dynamiccomponent.service';
-
+import { CondensedTable } from './learningSimulator/condensedTable/condensedTable.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -39,6 +39,7 @@ import { DynamicComponentService } from './dynamiccomponent.service';
     Tabs,
     Tab,
     DefaultModal,
+    CondensedTable
   ],
  entryComponents: [
     DefaultModal

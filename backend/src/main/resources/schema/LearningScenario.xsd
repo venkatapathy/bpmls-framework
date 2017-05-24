@@ -2,6 +2,7 @@
   <xs:element name="LearningScenario">
     <xs:complexType>
       <xs:sequence>
+        <xs:element type="xs:string" name="scenariocontexthint"/>
         <xs:element name="Trace">
           <xs:complexType>
             <xs:sequence>
@@ -24,13 +25,12 @@
             <xs:sequence>
               <xs:element name="vertex" maxOccurs="unbounded" minOccurs="0">
                 <xs:complexType>
-                  <xs:simpleContent>
-                    <xs:extension base="xs:string">
-                      <xs:attribute type="xs:string" name="id" use="optional"/>
-                      <xs:attribute type="xs:string" name="bpmn_activityid" use="optional"/>
-                      <xs:attribute type="xs:string" name="bpmn_activitylabel" use="optional"/>
-                    </xs:extension>
-                  </xs:simpleContent>
+                  <xs:sequence>
+                    <xs:element type="xs:string" name="activitycontexthint"/>
+                  </xs:sequence>
+                  <xs:attribute type="xs:string" name="id" use="optional"/>
+                  <xs:attribute type="xs:string" name="bpmn_activityid" use="optional"/>
+                  <xs:attribute type="xs:string" name="bpmn_activitylabel" use="optional"/>
                 </xs:complexType>
               </xs:element>
             </xs:sequence>
@@ -53,27 +53,43 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="ValuationOracle">
+        <xs:element name="ValuationOracle" maxOccurs="1" minOccurs="0">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="ValuationFunction" maxOccurs="unbounded" minOccurs="0">
+              <xs:element name="ValuationFunction" maxOccurs="unbounded" minOccurs="1">
                 <xs:complexType>
                   <xs:sequence>
-                    <xs:element name="DataObject" maxOccurs="unbounded" minOccurs="0">
+                    <xs:element name="DataObject" maxOccurs="unbounded" minOccurs="1">
                       <xs:complexType>
-                        <xs:simpleContent>
-                          <xs:extension base="xs:string">
-                            <xs:attribute type="xs:string" name="id" use="optional"/>
-                            <xs:attribute type="xs:string" name="bpmn_camundaid" use="optional"/>
-                            <xs:attribute type="xs:string" name="bpmn_dolabel" use="optional"/>
-                          </xs:extension>
-                        </xs:simpleContent>
+                        <xs:sequence>
+                          <xs:element name="ExpectedValue">
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                  <xs:attribute type="xs:string" name="id"/>
+                                </xs:extension>
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="DoHint">
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                  <xs:attribute type="xs:string" name="id"/>
+                                </xs:extension>
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute type="xs:string" name="id"/>
+                        <xs:attribute type="xs:string" name="bpmn_camundaid"/>
+                        <xs:attribute type="xs:string" name="bpmn_dolabel"/>
                       </xs:complexType>
                     </xs:element>
                   </xs:sequence>
-                  <xs:attribute type="xs:string" name="id" use="optional"/>
-                  <xs:attribute type="xs:string" name="bpmn_activityid" use="optional"/>
-                  <xs:attribute type="xs:string" name="bpmn_activitylabel" use="optional"/>
+                  <xs:attribute type="xs:string" name="id"/>
+                  <xs:attribute type="xs:string" name="bpmn_activityid"/>
+                  <xs:attribute type="xs:string" name="bpmn_activitylabel"/>
                 </xs:complexType>
               </xs:element>
             </xs:sequence>

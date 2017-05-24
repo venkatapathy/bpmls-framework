@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.camunda.bpm.engine.FormService;
+import org.camunda.bpm.engine.impl.form.engine.HtmlDocumentBuilder;
+import org.camunda.bpm.engine.impl.form.engine.HtmlElementWriter;
 import org.camunda.bpm.engine.task.Task;
 import org.dom4j.Branch;
 import org.h2.util.New;
@@ -34,6 +36,9 @@ import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathExceptionErrorCodes;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningTaskException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.TargetVertexes.Vertex;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathEvents;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathInstance;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioInstance;
@@ -51,49 +56,97 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/getlearningflowdiagram/{lpid}", method = RequestMethod.GET)
-	public String getLearningPathFlowDiagram(@PathVariable("lpid") String lpid){
-		//get the lpinst
-		LearningPathInstance lpInst=lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid);
-		
-		if(lpInst==null){
-			//quitely throw error status
-			JSONObject retMsg=new JSONObject();
+	public String getLearningPathFlowDiagram(@PathVariable("lpid") String lpid) {
+		// get the lpinst
+		LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid);
+
+		if (lpInst == null) {
+			// quitely throw error status
+			JSONObject retMsg = new JSONObject();
 			return retMsg.put("status", "error").toString();
 		}
-		
+
 		return lpEngine.getFlowDiagramService().getLearningPathFlowDiagram(lpInst);
+	}
+
+	@CrossOrigin(origins = "http://localhost:4200")
+	@RequestMapping(value = "/getoraclevalues/{lpid}", method = RequestMethod.GET)
+	public String gerOracleValues(@PathVariable("lpid") String lpid){
+		// get the lpinst
+				LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid);
+
+				if (lpInst == null) {
+					// quitely throw error status
+					JSONObject retMsg = new JSONObject();
+					return retMsg.put("status", "error").toString();
+				}
+
+				LearningScenarioInstance lsInstance = null;
+				try {
+					lsInstance = lpEngine.getLearningEngineRuntimeService()
+							.getRunningLearningScenarioByIpInstId(Integer.toString(lpInst.getLpInstId()));
+				} catch (LearningPathException e) {
+					// TODO Auto-generated catch block
+					JSONObject retMsg = new JSONObject();
+					return retMsg.put("status", "error").toString();
+				}
+
+				if (lsInstance == null) {
+					// quitely throw error status
+					JSONObject retMsg = new JSONObject();
+					return retMsg.put("status", "error").toString();
+				}
+				
+				Map<String, Object> oValues=lpEngine.getOracleService().getOracleValues(lsInstance);
+				
+				if(oValues==null){
+					// quitely throw error status
+					JSONObject retMsg = new JSONObject();
+					return retMsg.put("status", "error").toString();
+				}
+				
+				JSONArray row=new JSONArray();
+				for (Map.Entry<String, Object> entry : oValues.entrySet())
+				{
+					row.put(new JSONObject().put("Business Id", entry.getKey()).put("Current Values", entry.getValue()));
+				    
+				}
+				
+				JSONObject retMsg = new JSONObject();
+				return retMsg.put("status", "success").put("oracledata",row).toString();
 	}
 	
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/getprocessdiagramdetails/{lpid}", method = RequestMethod.GET)
-	public String getProcessDiagramDetails(@PathVariable("lpid") String lpid){
-		//get the lpinst
-		LearningPathInstance lpInst=lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid);
-		
-		if(lpInst==null){
-			//quitely throw error status
-			JSONObject retMsg=new JSONObject();
+	public String getProcessDiagramDetails(@PathVariable("lpid") String lpid) {
+		// get the lpinst
+		LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid);
+
+		if (lpInst == null) {
+			// quitely throw error status
+			JSONObject retMsg = new JSONObject();
 			return retMsg.put("status", "error").toString();
 		}
-		
-		LearningScenarioInstance lsInstance=null;
+
+		LearningScenarioInstance lsInstance = null;
 		try {
-			lsInstance=lpEngine.getLearningEngineRuntimeService().getRunningLearningScenarioByIpInstId(Integer.toString(lpInst.getLpInstId()));
+			lsInstance = lpEngine.getLearningEngineRuntimeService()
+					.getRunningLearningScenarioByIpInstId(Integer.toString(lpInst.getLpInstId()));
 		} catch (LearningPathException e) {
 			// TODO Auto-generated catch block
-			JSONObject retMsg=new JSONObject();
+			JSONObject retMsg = new JSONObject();
 			return retMsg.put("status", "error").toString();
 		}
-		
-		if(lsInstance==null){
-			//quitely throw error status
-			JSONObject retMsg=new JSONObject();
+
+		if (lsInstance == null) {
+			// quitely throw error status
+			JSONObject retMsg = new JSONObject();
 			return retMsg.put("status", "error").toString();
 		}
-		
+
 		return lpEngine.getFlowDiagramService().getProcessDiagramDetails(lsInstance);
 	}
-	
+
 	/**
 	 * TODO: per user Returns a JSON. {status:error,errortype: ,htmlform:dynamic
 	 * content} 1. Status is error and errortype is 'lpnonexistant',if the given
@@ -162,11 +215,12 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 			// no more learning scenario
 			if (lsInst == null) {
-				//now before congradulating, make that learning path status to completed
-				logger.info("Chaning status of a running LP from running to completed with LPID: "+lpInst.getLpId()+" and LPInstID: "+lpInst.getLpInstId());
+				// now before congradulating, make that learning path status to
+				// completed
+				logger.info("Chaning status of a running LP from running to completed with LPID: " + lpInst.getLpId()
+						+ " and LPInstID: " + lpInst.getLpInstId());
 				lpEngine.getLearningEngineRuntimeService().completeaLearningPath(lpInst);
-				
-				
+
 				ContainerTag resMsg = div()
 						.with(text("No more learning Scenario. Congrats you completed this learning path"));
 				JSONObject retJson = new JSONObject();
@@ -213,7 +267,55 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 			JSONObject retJson = new JSONObject();
 			retJson.put("status", "success");
 			retJson.put("errortype", "");
-			retJson.put("htmlform", new HtmlFormEngine().renderFormData(formService.getTaskFormData(task.getId())));
+			// html form should have scenario hint, task hint and then form with
+			// do hints
+			// get the ls
+			StringBuilder htmlRet = new StringBuilder();
+			LearningScenario ls = lpEngine.getLearningEngineRepositoryService()
+					.getDeployedLearningScenario(lsInst.getLsId());
+			// if null quitely sink
+			if (ls != null) {
+				// <div class="typography-widget" style="color:#dfb81c"
+				String hint = ls.getScenariocontexthint();
+				if (hint != null) {
+					HtmlElementWriter pElement = new HtmlElementWriter("br",true);
+
+					HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(pElement).startElement(new HtmlElementWriter("h1").textContent("Task Name:"+task.getName())).endElement().startElement(new HtmlElementWriter("br",true));
+					HtmlElementWriter hintDivElement = new HtmlElementWriter("div");
+					hintDivElement.attribute("style", "color:#dfb81c");
+					hintDivElement.textContent(hint);
+					documentBuilder.startElement(hintDivElement).endElement();
+					htmlRet.append(documentBuilder.getHtmlString());
+				}
+
+				hint = getTaskHint(ls, task.getTaskDefinitionKey());
+				if (hint != null) {
+					HtmlElementWriter pElement = new HtmlElementWriter("br",true);
+
+					HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(pElement);
+					HtmlElementWriter hintDivElement = new HtmlElementWriter("div");
+					hintDivElement.attribute("style", "color:#dfb81c");
+					hintDivElement.textContent(hint);
+					documentBuilder.startElement(hintDivElement).endElement().endElement();
+					htmlRet.append(documentBuilder.startElement(new HtmlElementWriter("br",true)).startElement(new HtmlElementWriter("h1").textContent("Task Form")).endElement().getHtmlString());
+				}
+
+			}
+
+			// get the valuation function
+			ValuationFunction tVfuc = null;
+			for (ValuationFunction vF : ls.getValuationOracle().getValuationFunction()) {
+				if (vF.getBpmnActivityid().equals(task.getTaskDefinitionKey())) {
+					tVfuc = vF;
+					break;
+				}
+			}
+			
+			retJson.put("htmlform",
+					htmlRet.append(
+							new HtmlFormEngine().renderFormData(formService.getTaskFormData(task.getId()), tVfuc))
+							.toString());
+			System.out.println(htmlRet.toString());
 			return retJson.toString();
 
 		} catch (LearningPathException e) {
@@ -228,6 +330,15 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 			return retJson.toString();
 		}
 
+	}
+
+	private String getTaskHint(LearningScenario ls, String taskId) {
+		for (Vertex v : ls.getTargetVertexes().getVertex()) {
+			if (v.getBpmnActivityid().equals(taskId)) {
+				return v.getActivitycontexthint();
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -274,7 +385,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 		// if lsinst null then null
 		if (lsInst == null) {
-			
+
 			retJson.put("status", "success");
 			retJson.put("formmodel", "");
 			return retJson.toString();
@@ -302,9 +413,10 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 		// return tthe model
 		retJson = new JSONObject();
-		
-		
-		return retJson.put("status", "success").put("formmodel", new HtmlFormEngine().getFormModel(formService.getTaskFormData(task.getId()))).toString();
+
+		return retJson.put("status", "success")
+				.put("formmodel", new HtmlFormEngine().getFormModel(formService.getTaskFormData(task.getId())))
+				.toString();
 
 	}
 
@@ -324,7 +436,8 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 				// if not already running
 				if (lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lp.getId()) == null) {
-					lparray.put(new JSONObject().put("lpid", lp.getId()).put("lpname", lp.getName()));
+					lparray.put(new JSONObject().put("lpid", lp.getId()).put("lpname", lp.getName()).put("lphint",
+							lp.getLearningcontexthint()));
 
 					/*
 					 * availLPs.append("{"); availLPs.append("\"lpid\":\"");
@@ -417,11 +530,12 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 		try {
 			lpEngine.getLearningEngineRuntimeService().startNextLearningScenario(lpinstid);
-			logger.info("Starting next Learning Scenario with lpid:"+lpid+" and lpinstid: "+lpinstid);
+			logger.info("Starting next Learning Scenario with lpid:" + lpid + " and lpinstid: " + lpinstid);
 			return new JSONObject().put("status", "success").put("lpid", lpid).toString();
 		} catch (LearningPathException e) {
 			// TODO Auto-generated catch block
-			logger.error("Unexpected error while starting next Learning Scenario with lpid:"+lpid+" and lpinstid: "+lpinstid);
+			logger.error("Unexpected error while starting next Learning Scenario with lpid:" + lpid + " and lpinstid: "
+					+ lpinstid);
 			JSONObject retJson = new JSONObject();
 			retJson.put("status", "error");
 			return retJson.put("errMsg", new JSONObject().put("message", e.getMessage())).toString();

@@ -41,11 +41,11 @@ public class OracleServiceImpl implements OracleService {
 
 			// if not present create a new one
 			if (oV == null) {
-				oV = new OracleValue(lsInst, sinDo.getBpmnCamundaid(), sinDo.getValue().trim());
+				oV = new OracleValue(lsInst, sinDo.getBpmnCamundaid(), sinDo.getExpectedValue().getValue().trim());
 			}
 			// else update
 			else {
-				oV.setCurrentExpectedValue(sinDo.getValue().trim());
+				oV.setCurrentExpectedValue(sinDo.getExpectedValue().getValue().trim());
 			}
 
 			// saveOracleValue

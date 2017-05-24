@@ -2,6 +2,7 @@
   <xs:element name="LearningPath">
     <xs:complexType>
       <xs:sequence>
+        <xs:element type="xs:string" name="learningcontexthint" maxOccurs="1" minOccurs="0"/>
         <xs:element name="Prerequesties">
           <xs:complexType>
             <xs:sequence>
