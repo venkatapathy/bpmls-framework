@@ -53,16 +53,16 @@ export class DynamicComponentService {
                         'start': {
                             'font-color': 'red',
                             'element-color': 'green',
-                            'fill': 'yellow'
+                            'fill': 'white'
                         },
                         'end': {
                             'class': 'end-element'
                         }
                     },
                     'flowstate': {
-                        'past': { 'fill': '#CCCCCC', 'font-size': 12 },
+                        'past': { 'fill': 'green', 'font-size': 12 },
                         'current': { 'fill': 'yellow', 'font-color': 'red', 'font-weight': 'bold' },
-                        'future': { 'fill': '#FFFF99' },
+                        'future': { 'fill': 'white' },
                         'request': { 'fill': 'blue' },
                         'invalid': { 'fill': '#444444' },
                         'approved': { 'fill': '#58C4A3', 'font-size': 12, 'yes-text': 'APPROVED', 'no-text': 'n/a' },

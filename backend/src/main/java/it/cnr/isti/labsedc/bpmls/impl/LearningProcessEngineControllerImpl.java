@@ -108,7 +108,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 				JSONArray row=new JSONArray();
 				for (Map.Entry<String, Object> entry : oValues.entrySet())
 				{
-					row.put(new JSONObject().put("Business Id", entry.getKey()).put("Current Values", entry.getValue()));
+					row.put(new JSONObject().put("id", entry.getKey()).put("value", entry.getValue()));
 				    
 				}
 				

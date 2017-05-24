@@ -8,7 +8,7 @@ import { LearningEngineService } from '../../learningengine.service';
 })
 export class CondensedTable implements AfterViewInit {
 
-  peopleTableData: Array<any>;
+  peopleTableData: Array<JSON>;
   lpid: any;
 
   constructor(private route: ActivatedRoute, private learningEngineService: LearningEngineService) {
@@ -21,7 +21,7 @@ export class CondensedTable implements AfterViewInit {
       .subscribe(params => {
         // Defaults to 0 if no query param provided.
         this.lpid = params['id'] || '0';
-         console.log("initalized lpinstids: " + this.lpid)
+         //console.log("initalized lpinstids: " + this.lpid)
       });
     this.learningEngineService.getoraclevalues(this.lpid).subscribe(response => {
       if (response.status == 'success') {
