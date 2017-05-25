@@ -1,0 +1,60 @@
+<LearningScenario id="demolearningscenario1" name="Demo Learning Scenario1" bpmn_processlabel="demoprocess" bpmn_processid="demoprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<scenariocontexthint>
+<![CDATA[
+        <div id="demosenariohint">
+        This is a demo Learning Scenario. With this you can get a short tour on how to use our Process-Driven Learning Simulator. In this section, you will find an introduction to the current Learning Scenario.       
+        
+        </div>
+        
+     ]]>
+</scenariocontexthint>
+
+<Trace>
+<vertex id="demotask1" bpmn_activityid="demotask1" bpmn_activitylabel="demotask1"></vertex>
+</Trace>
+<TargetVertexes>
+
+<vertex id="demotask1" bpmn_activityid="demotask1" bpmn_activitylabel="demotask1">
+<activitycontexthint>
+<![CDATA[
+        <div >
+        <br/>
+        Congrats! You have started the learning scenario. Now you are in its first learning activitiy! Look around and see how the states have changed based on the current learning activity.
+        </div>
+        
+     ]]>
+</activitycontexthint>
+</vertex>
+
+</TargetVertexes>
+
+<InitialValuation>
+<DataObject id="demofield1" bpmn_camundaid="demofield1" bpmn_dolabel="demofield1">This field contains prefilled value that you can edit</DataObject>
+
+</InitialValuation>
+
+<ValuationOracle>
+<ValuationFunction id="demotask1" bpmn_activityid="demotask1" bpmn_activitylabel="demotask1">
+<DataObject id="demofield2" bpmn_camundaid="demofield2" bpmn_dolabel="demofield2">
+<ExpectedValue id="demofield2">i typed this sentence</ExpectedValue>
+<DoHint id=""><![CDATA[
+        
+        You can find hints on about the form field here! Now type the expected value above
+        
+        
+     ]]></DoHint>
+
+</DataObject>
+<DataObject id="demofield3" bpmn_camundaid="demofield3" bpmn_dolabel="demofield3">
+<ExpectedValue id="demofield3">false</ExpectedValue>
+<DoHint id=""><![CDATA[
+        
+        As the label say! DONT SELECT THIS FORM FIELD!!
+        
+        
+     ]]></DoHint>
+
+</DataObject>
+</ValuationFunction>
+</ValuationOracle>
+</LearningScenario>

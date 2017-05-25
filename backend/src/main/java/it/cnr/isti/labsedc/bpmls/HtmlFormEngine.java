@@ -170,6 +170,8 @@ public class HtmlFormEngine {
 		if (formData.getFormFields().size() > 0) {
 			retMsg.append("{");
 		}
+		
+		
 		for (FormField formField : formData.getFormFields()) {
 
 			Object defaultValue = formField.getValue().getValue();
@@ -210,15 +212,15 @@ public class HtmlFormEngine {
 		}
 		if (defaultValue != null && !isReadOnly(formField)) {
 			HtmlElementWriter hintSpan = new HtmlElementWriter(SPAN_ELEMENT)
-					.attribute("class", "help-block regular-text").attribute("style", "color:#dfb81c");
+					.attribute("class", "help-block regular-text").attribute("style", "color:#FFFFFF; background-color: #008080").attribute("[hidden]", "helpHidden");
 			hintSpan.textContent("Expected Value: &nbsp; &nbsp;" + defaultValue);
 			documentBuilder.startElement(hintSpan).endElement();
 
 		}
 		
 		if (hint != null && !isReadOnly(formField)) {
-			HtmlElementWriter hintSpan = new HtmlElementWriter(SPAN_ELEMENT)
-					.attribute("class", "help-block regular-text").attribute("style", "color:#dfb81c");
+			HtmlElementWriter hintSpan = new HtmlElementWriter(DIV_ELEMENT)
+					.attribute("class", "help-block regular-text").attribute("style", "color:#FFFFFF; background-color: #008080").attribute("[hidden]", "helpHidden");
 			hintSpan.textContent("Hint: &nbsp; &nbsp;" + hint);
 			documentBuilder.startElement(new HtmlElementWriter("br",true)).startElement(hintSpan).endElement().startElement(new HtmlElementWriter("br",true));
 

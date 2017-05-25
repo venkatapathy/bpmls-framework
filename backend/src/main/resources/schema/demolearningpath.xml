@@ -1,0 +1,35 @@
+<LearningPath competencyid="" id="demoprocess" name="Demo Learning Path" processid="demoprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<learningcontexthint>
+<![CDATA[<html>
+        <div id="demopathhint">
+        This learning path is for demo purpose. Through this you can have a guided tour of our Learning Simulator tool. Click start learning to begin the demo tour.
+        </div>
+        
+     ]]>
+</learningcontexthint>
+<Prerequesties>
+<PreLearningPath refid=""/>
+<PreLearningPath refid=""/>
+</Prerequesties>
+
+<Competencies>
+<Competency id="" name="" url=""/>
+<Competency id="" name="" url=""/>
+</Competencies>
+
+<LearningActivities>
+<LearningActivity id="" bpmn_activityid="" competencyid="" bpmn_activitylabel=""/>
+<LearningActivity id="" bpmn_activityid="" competencyid="" bpmn_activitylabel=""/>
+</LearningActivities>
+
+<LearningGoals>
+<LearningGoal id="">
+<LearningScenarios>
+<LearningScenario lsid="demolearningscenario1"/>
+
+</LearningScenarios>
+<KPIs>
+</KPIs>
+</LearningGoal>
+</LearningGoals>
+</LearningPath>

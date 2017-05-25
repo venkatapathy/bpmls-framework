@@ -8,11 +8,15 @@ import {hostaddress} from './hostaddress';
 @Injectable()
 export class LearningEngineService {
     public currentTaskHtml: any;
-    public alertMessage: string;
-    private alertMsg = new Subject<string>();
+    
+    public alertMsg = new Subject<boolean>();
+   
+
     alertMsg$ = this.alertMsg.asObservable();
 
-    constructor(private http: Http) { }
+    constructor(private http: Http) { 
+        
+    }
 
     getavailablelearningpaths() {
         //console.log('http://localhost:8080/getavailablelearningpaths');
@@ -38,8 +42,8 @@ export class LearningEngineService {
             });
     }
 
-    publishAlertMsg(textToPublish: string) {
-        this.alertMsg.next(textToPublish);
+    isDemo(setAsDemo: boolean) {
+        this.alertMsg.next(setAsDemo);
     }
 
     getcurrenttaskmodel(lpintid: string) {

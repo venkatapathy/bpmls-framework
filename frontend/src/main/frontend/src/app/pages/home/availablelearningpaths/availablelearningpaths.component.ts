@@ -67,6 +67,7 @@ export class AvailableLearningPathsComponent implements AfterViewInit {
   startaLearningPath(lpid: string) {
     this.learningEngineService.startaLearningPath(lpid).subscribe(response => {
 
+
       if (response.status == 'error') {
 
         const activeModal = this.modalService.open(DefaultModal, {
@@ -82,6 +83,9 @@ export class AvailableLearningPathsComponent implements AfterViewInit {
         });
       }
       if (response.status == 'success') {
+
+        
+
         this.router.navigate(['/pages', 'home', 'learningsimulator', response.lpid]);
 
 

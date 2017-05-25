@@ -25,7 +25,7 @@ export class CondensedTable implements AfterViewInit {
       });
     this.learningEngineService.getoraclevalues(this.lpid).subscribe(response => {
       if (response.status == 'success') {
-        alert(JSON.stringify(response.oracledata));
+        //alert(JSON.stringify(response.oracledata));
 
         this.peopleTableData = response.oracledata;
       }

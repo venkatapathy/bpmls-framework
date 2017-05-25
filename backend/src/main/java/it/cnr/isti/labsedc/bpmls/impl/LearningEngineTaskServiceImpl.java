@@ -214,7 +214,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 			task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
 					.singleResult();
 			while (task != null) {
-				System.out.println("Simulating: "+task.getTaskDefinitionKey());
+				logger.info("Simulating: "+task.getTaskDefinitionKey()+" for the LearningScenario with id: "+lsInst.getLsId()+" and Instid: "+lsInst.getLsInstId());
 				
 				Map<String,Object> map=oracleService.getOracleValues(lsInst);
 				//loop through map to typecase boolean values from string

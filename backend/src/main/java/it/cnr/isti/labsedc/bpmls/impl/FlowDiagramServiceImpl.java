@@ -20,6 +20,8 @@ import org.camunda.bpm.model.bpmn.instance.bpmndi.BpmnDiagram;
 import org.camunda.bpm.model.bpmn.instance.bpmndi.BpmnPlane;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
@@ -41,6 +43,8 @@ import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioInstance;
 @Component
 public class FlowDiagramServiceImpl implements FlowDiagramService {
 
+	private final Logger logger = LoggerFactory.getLogger(FlowDiagramServiceImpl.class);
+	
 	@Autowired
 	LearningEngineRepositoryService lpRepositoryService;
 
@@ -78,8 +82,9 @@ public class FlowDiagramServiceImpl implements FlowDiagramService {
 		try {
 			lpModel = lpRepositoryService.getDeployedLearningPath(lpInstance.getLpId());
 		} catch (LearningPathException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			logger.error("Unexpected error encountered when trying to get lp model for the lpinstance with id: "+lpInstance.getLpId()+" and lpinstid: "+lpInstance.getLpInstId()+". Error Message is: "+e.getMessage());
+			return retMsg.put("status", "error").toString();
 		}
 
 		// var and flows
@@ -135,7 +140,7 @@ public class FlowDiagramServiceImpl implements FlowDiagramService {
 		flowData.append(fromNodeId);
 		varDeclarations.append(fromNodeId + "=>" + "end" + ": ").append(fromNodeName).append("\n");
 
-		return retMsg.put("status", "success").put("flowdata", varDeclarations.toString() + flowData.toString())
+		return retMsg.put("status", "success").put("flowdata", varDeclarations.toString() + flowData.toString()).put("lpname", lpModel.getName())
 				.toString();
 
 	}

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.camunda.bpm.engine.FormService;
+import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.impl.form.engine.HtmlDocumentBuilder;
 import org.camunda.bpm.engine.impl.form.engine.HtmlElementWriter;
 import org.camunda.bpm.engine.task.Task;
@@ -54,6 +55,9 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 	@Autowired
 	FormService formService;
 
+	@Autowired
+	TaskService taskService;
+
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/getlearningflowdiagram/{lpid}", method = RequestMethod.GET)
 	public String getLearningPathFlowDiagram(@PathVariable("lpid") String lpid) {
@@ -71,51 +75,50 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/getoraclevalues/{lpid}", method = RequestMethod.GET)
-	public String gerOracleValues(@PathVariable("lpid") String lpid){
+	public String gerOracleValues(@PathVariable("lpid") String lpid) {
 		// get the lpinst
-				LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid);
+		LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid);
 
-				if (lpInst == null) {
-					// quitely throw error status
-					JSONObject retMsg = new JSONObject();
-					return retMsg.put("status", "error").toString();
-				}
+		if (lpInst == null) {
+			// quitely throw error status
+			JSONObject retMsg = new JSONObject();
+			return retMsg.put("status", "error").toString();
+		}
 
-				LearningScenarioInstance lsInstance = null;
-				try {
-					lsInstance = lpEngine.getLearningEngineRuntimeService()
-							.getRunningLearningScenarioByIpInstId(Integer.toString(lpInst.getLpInstId()));
-				} catch (LearningPathException e) {
-					// TODO Auto-generated catch block
-					JSONObject retMsg = new JSONObject();
-					return retMsg.put("status", "error").toString();
-				}
+		LearningScenarioInstance lsInstance = null;
+		try {
+			lsInstance = lpEngine.getLearningEngineRuntimeService()
+					.getRunningLearningScenarioByIpInstId(Integer.toString(lpInst.getLpInstId()));
+		} catch (LearningPathException e) {
+			// TODO Auto-generated catch block
+			JSONObject retMsg = new JSONObject();
+			return retMsg.put("status", "error").toString();
+		}
 
-				if (lsInstance == null) {
-					// quitely throw error status
-					JSONObject retMsg = new JSONObject();
-					return retMsg.put("status", "error").toString();
-				}
-				
-				Map<String, Object> oValues=lpEngine.getOracleService().getOracleValues(lsInstance);
-				
-				if(oValues==null){
-					// quitely throw error status
-					JSONObject retMsg = new JSONObject();
-					return retMsg.put("status", "error").toString();
-				}
-				
-				JSONArray row=new JSONArray();
-				for (Map.Entry<String, Object> entry : oValues.entrySet())
-				{
-					row.put(new JSONObject().put("id", entry.getKey()).put("value", entry.getValue()));
-				    
-				}
-				
-				JSONObject retMsg = new JSONObject();
-				return retMsg.put("status", "success").put("oracledata",row).toString();
+		if (lsInstance == null) {
+			// quitely throw error status
+			JSONObject retMsg = new JSONObject();
+			return retMsg.put("status", "error").toString();
+		}
+
+		Map<String, Object> oValues = lpEngine.getOracleService().getOracleValues(lsInstance);
+
+		if (oValues == null) {
+			// quitely throw error status
+			JSONObject retMsg = new JSONObject();
+			return retMsg.put("status", "error").toString();
+		}
+
+		JSONArray row = new JSONArray();
+		for (Map.Entry<String, Object> entry : oValues.entrySet()) {
+			row.put(new JSONObject().put("id", entry.getKey()).put("value", entry.getValue()));
+
+		}
+
+		JSONObject retMsg = new JSONObject();
+		return retMsg.put("status", "success").put("oracledata", row).toString();
 	}
-	
+
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/getprocessdiagramdetails/{lpid}", method = RequestMethod.GET)
 	public String getProcessDiagramDetails(@PathVariable("lpid") String lpid) {
@@ -201,7 +204,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 				lsInst = lpEngine.getLearningEngineRuntimeService()
 						.getNextLearningScenarioByLpInstId(Integer.toString(lpInst.getLpInstId()));
 			} catch (LearningPathException e) {
-				// TODO Auto-generated catch block
+				
 				logger.error("Unexcepted error when trying to get next learning scenario with lpinstid: "
 						+ Integer.toString(lpInst.getLpInstId()) + ". Exception message is: " + e.getMessage());
 				JSONObject retJson = new JSONObject();
@@ -244,6 +247,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 			retJson.put("status", "success");
 			retJson.put("errortype", "nols");
 			retJson.put("htmlform", lsText.render());
+			retJson.put("demostage", "freshSimulator");
 
 			return retJson.toString();
 
@@ -278,11 +282,18 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 				// <div class="typography-widget" style="color:#dfb81c"
 				String hint = ls.getScenariocontexthint();
 				if (hint != null) {
-					HtmlElementWriter pElement = new HtmlElementWriter("br",true);
-
-					HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(pElement).startElement(new HtmlElementWriter("h1").textContent("Task Name:"+task.getName())).endElement().startElement(new HtmlElementWriter("br",true));
+					HtmlElementWriter pElement = new HtmlElementWriter("br", true);
+					HtmlElementWriter helpToggleButtonElement=new HtmlElementWriter("button").attribute("(click)", "toggleHelp()")
+							.attribute("type", "button").attribute("class", "btn btn-with-icon").attribute("style", "color:#FFFFFF; background-color: #008080");
+					
+					HtmlElementWriter iIconForHelpButton=new HtmlElementWriter("i").attribute("class", "ion-information").textContent("Toggle Help");
+					
+					HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(pElement)
+							.startElement(helpToggleButtonElement).startElement(iIconForHelpButton).endElement().endElement()
+							.startElement(new HtmlElementWriter("h1").textContent("Task Name:" + task.getName()))
+							.endElement().startElement(new HtmlElementWriter("br", true));
 					HtmlElementWriter hintDivElement = new HtmlElementWriter("div");
-					hintDivElement.attribute("style", "color:#dfb81c");
+					hintDivElement.attribute("style", "color:#FFFFFF; background-color: #008080").attribute("[hidden]", "helpHidden");
 					hintDivElement.textContent(hint);
 					documentBuilder.startElement(hintDivElement).endElement();
 					htmlRet.append(documentBuilder.getHtmlString());
@@ -290,14 +301,16 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 				hint = getTaskHint(ls, task.getTaskDefinitionKey());
 				if (hint != null) {
-					HtmlElementWriter pElement = new HtmlElementWriter("br",true);
+					HtmlElementWriter pElement = new HtmlElementWriter("br", true);
 
 					HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(pElement);
 					HtmlElementWriter hintDivElement = new HtmlElementWriter("div");
-					hintDivElement.attribute("style", "color:#dfb81c");
+					hintDivElement.attribute("style", "color:#FFFFFF; background-color: #008080").attribute("[hidden]", "helpHidden");
 					hintDivElement.textContent(hint);
 					documentBuilder.startElement(hintDivElement).endElement().endElement();
-					htmlRet.append(documentBuilder.startElement(new HtmlElementWriter("br",true)).startElement(new HtmlElementWriter("h1").textContent("Task Form")).endElement().getHtmlString());
+					htmlRet.append(documentBuilder.startElement(new HtmlElementWriter("br", true))
+							.startElement(new HtmlElementWriter("h1").textContent("Task Form")).endElement()
+							.getHtmlString());
 				}
 
 			}
@@ -310,12 +323,12 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 					break;
 				}
 			}
-			
+
 			retJson.put("htmlform",
 					htmlRet.append(
 							new HtmlFormEngine().renderFormData(formService.getTaskFormData(task.getId()), tVfuc))
 							.toString());
-			System.out.println(htmlRet.toString());
+			//System.out.println(htmlRet.toString());
 			return retJson.toString();
 
 		} catch (LearningPathException e) {
@@ -414,9 +427,29 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 		// return tthe model
 		retJson = new JSONObject();
 
-		return retJson.put("status", "success")
+		//change of plan get the task variables and send them
+		Map<String,Object> map=taskService.getVariables(task.getId());
+		
+		if(map!=null){
+			for (Map.Entry<String, Object> entry : map.entrySet())
+			{
+			    //System.out.println(entry.getKey() + "/" + entry.getValue());
+			    retJson.put(entry.getKey(), entry.getValue());
+			    
+			}
+			JSONObject newretJson=new JSONObject();
+		    newretJson.put("status", "success").put("formmodel", (new JSONObject().put("learningform",retJson)));
+		    return newretJson.toString();
+			
+		}else{
+			retJson.put("status", "success");
+			retJson.put("formmodel", "");
+			return retJson.toString();
+		}
+		
+		/*return retJson.put("status", "success")
 				.put("formmodel", new HtmlFormEngine().getFormModel(formService.getTaskFormData(task.getId())))
-				.toString();
+				.toString();*/
 
 	}
 
@@ -563,6 +596,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 		try {
 			lpEngine.getLearningEngineTaskService().completeCurrentLearningTask(lsInst, formMap);
 			// if all is well return
+			logger.info("Completing a Learning Task for learning instance: "+lsInst.getLsId()+" with Inst ID: "+lsInst.getLsInstId());
 		} catch (LearningTaskException e) {
 			JSONArray errArr = new JSONArray();
 			for (TaskIncompleteErrorMessage errTask : e.userInputErrorMsgs) {

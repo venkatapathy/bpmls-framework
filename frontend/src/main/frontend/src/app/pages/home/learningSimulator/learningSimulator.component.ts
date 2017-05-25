@@ -7,41 +7,43 @@ import { DefaultModal } from '../../components/default-modal/default-modal.compo
 import { Router } from '@angular/router';
 import { WindowRefService } from '../window.ref.service';
 import { Http } from '@angular/http';
-import { DynamicComponentService } from '../dynamiccomponent.service'
+import { DynamicComponentService } from '../dynamiccomponent.service';
+
+
+//for demo tour
+import { DemoStages } from './demofiles/demostages';
+import { freshSimulator } from './demofiles/freshSimulator';
+import { simulatorIntroduction } from './demofiles/simulatorIntro';
+
 declare var introJs: any;
-var intro = introJs();
+
 
 @Component({
   selector: 'learning-simulator',
   templateUrl: './learningSimulator.html',
 })
 export class LearningSimulator implements AfterViewInit {
-  private lpid: string;
 
-  public checkboxModel = [{
-    name: 'Check 1',
-    checked: false,
-    class: 'col-md-4',
-  }, {
-    name: 'Check 2',
-    checked: true,
-    class: 'col-md-4',
-  }, {
-    name: 'Check 3',
-    checked: false,
-    class: 'col-md-4',
-  }];
+  private lpid: string;
+  public lpname: string;
+  //for demo purpose
+  private currentDemoStage: any;
+  isDemo: boolean = false;
+  private demoComplete: boolean = false;
   @ViewChild('taskFormContainer', { read: ViewContainerRef }) formContainer: ViewContainerRef;
   @ViewChild('bpmnDiagramContainer', { read: ViewContainerRef }) bpmnDiagramContainer: ViewContainerRef;
   @ViewChild('pathFlowDiagram', { read: ViewContainerRef }) pathFlowContainer: ViewContainerRef;
 
-  isChecked: boolean = false;
 
+
+  helpHidden: boolean = false;
 
   private _window: Window;
   constructor(private router: Router, private modalService: NgbModal, private route: ActivatedRoute,
     private learningEngineService: LearningEngineService, private dynamicComponentService: DynamicComponentService) {
-
+    this.learningEngineService.alertMsg$.subscribe((demoFlag) => {
+      this.isDemo = demoFlag;
+    })
 
 
   }
@@ -56,9 +58,17 @@ export class LearningSimulator implements AfterViewInit {
       });
 
 
+    //before loading, if its a demo set the demo flag
+    if (this.lpid == 'demoprocess') {
+      this.learningEngineService.alertMsg.next(true);
+      this.demoComplete = true;
+    } else {
+      this.learningEngineService.alertMsg.next(false);
+    }
+
     this.loadForm();
 
-    
+
     /*const prompt = JSON.parse('{\"steps\": [{ \"element\": \"#input01\",\"intro\": \"welcome to case \"},' +
               '{ \"intro\": \"In this scenario you will open a case \"}],\"disableInteraction\":false}');
 
@@ -70,9 +80,12 @@ export class LearningSimulator implements AfterViewInit {
   }
 
 
- 
+
 
   loadForm() {
+
+
+
     // try to get the model
     this.learningEngineService.getcurrenttaskmodel(this.lpid).subscribe(response => {
       if (response.status == 'success') {
@@ -80,25 +93,31 @@ export class LearningSimulator implements AfterViewInit {
         // if not empty
         let model = JSON.parse('{\"learningform\":\"empty\"}');
         if (JSON.stringify(response.formmodel).length != 2) {
-          model = JSON.parse(response.formmodel).learningform;
+          model = response.formmodel.learningform;
         }
 
         this.learningEngineService.getcurrentlpstatus(this.lpid).subscribe(lpresponse => {
           if (lpresponse.status == 'success') {
+            // for demo purpose
+
+            const tempStage: string = lpresponse.demostage;
+            // console.log(tempStage);
+            this.currentDemoStage = DemoStages[tempStage];
+
+
             // get the prompt
-            const prompt = JSON.parse('{\"steps\": [{ \"intro\": \"welcome to case \"},' +
-              '{ \"intro\": \"In this scenario you will open a case \"}]}');
+
 
 
             this.dynamicComponentService.createDynamicFormComponentwithModel(this.formContainer,
-              lpresponse.htmlform, model, prompt, this);
+              lpresponse.htmlform, model, this);
 
 
             // get the pathflowdiagram and if successful display it
             this.learningEngineService.getpathflow(this.lpid).subscribe(pfresponse => {
               // failure we gonna sink quitely
               if (pfresponse.status == 'success') {
-
+                this.lpname = pfresponse.lpname;
                 this.dynamicComponentService.createFlowDiagramComponent(this.pathFlowContainer, pfresponse.flowdata);
               }
             });
@@ -112,6 +131,12 @@ export class LearningSimulator implements AfterViewInit {
                   pfresponse.xmldata, pfresponse.available, pfresponse.running, pfresponse.completed, pfresponse.trace);
               }
             });
+
+            //for demo purpose
+            if (this.isDemo) {
+              //call demoTour
+              this.demotour();
+            }
 
           } else if (response.status == 'error') {
 
@@ -175,6 +200,13 @@ export class LearningSimulator implements AfterViewInit {
       }
 
     });
+    //for demo purposes
+
+    //if (this.learningEngineService.freshDemo) {
+
+
+    //}
+
 
   }
 
@@ -183,10 +215,11 @@ export class LearningSimulator implements AfterViewInit {
     // submit the form
     this.learningEngineService.completeLearningTask(this.lpid, "1", learningForm).subscribe(response => {
       // get the response after submitting the task
-      console.log(response.status);
+      // console.log(response.status);
+
       if (response.status == 'success') {
         // console.log("'Setting alter mesage'");
-        this.learningEngineService.publishAlertMsg('Completed task');
+
         this.loadForm();
 
       } else if (response.status == 'error') {
@@ -234,5 +267,58 @@ export class LearningSimulator implements AfterViewInit {
         /*Modal*/
       }
     });
+  }
+
+  //for demo purposes
+  demotour() {
+
+    //only when the prev demo is complete or its a fresh demo in which case the demoComplete flag is set to true
+    if (this.demoComplete) {
+      //console.log(this.currentDemoStage);
+      this.demoComplete = false;
+
+      if (this.currentDemoStage == DemoStages.freshSimulator) {
+        var intro = introJs();
+        const prompt = freshSimulator;
+        intro.setOptions(prompt);
+
+        intro.oncomplete(() => {
+          this.demoComplete = true;
+        });
+
+        intro.onexit(() => {
+          this.demotour();
+        });
+        intro.start();
+
+        //next stage
+        this.currentDemoStage = DemoStages.simulatorIntroduction;
+      }
+
+      if (this.currentDemoStage == DemoStages.simulatorIntroduction) {
+        var intro = introJs();
+        const prompt = simulatorIntroduction;
+        intro.setOptions(prompt);
+        intro.oncomplete(function () {
+          //console.log("hi");
+          this.demoComplete = true;
+
+        });
+        intro.start();
+
+
+      }
+    }
+  }
+
+
+
+  toggleHelp() {
+    if (this.helpHidden) {
+      this.helpHidden = false;
+    } else {
+      this.helpHidden = true;
+    }
+
   }
 }

@@ -87,14 +87,24 @@ export class DynamicComponentService {
 
     }
 
-    private getDynamicFormComponentwithModel(taskform: string, modelJs: JSON, prompt: JSON,
+    private getDynamicFormComponentwithModel(taskform: string, modelJs: JSON,
         simulatorComponent: LearningSimulator): Type<any> {
         @Component({
             template: taskform
         })
         class InsertedComponent {
             learningForm = modelJs;
+            helpHidden: boolean = false;
             _window: any;
+
+            public toggleHelp() {
+                if (this.helpHidden) {
+                    this.helpHidden = false;
+                } else {
+                    this.helpHidden = true;
+                }
+
+            }
             constructor() {
 
                 //alert(JSON.stringify(this.learningForm));
@@ -124,8 +134,8 @@ export class DynamicComponentService {
     }
 
     public createDynamicFormComponentwithModel(viewContainer: ViewContainerRef, taskform: string,
-        modelJs: JSON, prompt: JSON, simulatorComponent: LearningSimulator) {
-        const component = this.getDynamicFormComponentwithModel(taskform, modelJs, prompt, simulatorComponent);
+        modelJs: JSON, simulatorComponent: LearningSimulator) {
+        const component = this.getDynamicFormComponentwithModel(taskform, modelJs, simulatorComponent);
         const componentFactory = this.adHocComponentFactoryCreator.getFactory(component);
         viewContainer.clear();
         const componentRef = viewContainer.createComponent(componentFactory);
