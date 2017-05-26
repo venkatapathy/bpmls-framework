@@ -4,12 +4,14 @@ import { Home } from './home.component';
 import { AvailableLearningPathsComponent } from './availablelearningpaths/availablelearningpaths.component';
 import { RunningLearningPathsComponent } from './runninglearningpaths/runninglearningpaths.component';
 import { LearningSimulator } from './learningSimulator/learningSimulator.component';
+import {AuthGuard} from '../../_guards/auth.guard';
+
 // noinspection TypeScriptValidateTypes
 const routes: Routes = [
   
-      { path: 'availablelearningpaths', component: AvailableLearningPathsComponent },
-      { path: 'runninglearningpaths', component: RunningLearningPathsComponent },
-      { path: 'learningsimulator/:id', component: LearningSimulator },
+      { path: 'availablelearningpaths', component: AvailableLearningPathsComponent,canActivate: [AuthGuard] },
+      { path: 'runninglearningpaths', component: RunningLearningPathsComponent,canActivate: [AuthGuard] },
+      { path: 'learningsimulator/:id', component: LearningSimulator,canActivate: [AuthGuard] },
     
 ];
 

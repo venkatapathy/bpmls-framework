@@ -1,17 +1,15 @@
 package it.cnr.isti.labsedc.bpmls;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.RequestBody;
 
 public interface LearningProcessEngineController {
 	
+	public String registerNewUser(@RequestBody String responseJSON);
+	
+	public String authenticateUser(@RequestBody String responseJSON);
+	
 	/**
-	 * TODO: per user Returns a JSON. {status:error,errortype: ,htmlform:dynamic
+	 * {status:error,errortype: ,htmlform:dynamic
 	 * content} 1. Status is error and errortype is 'lpnonexistant',if the given
 	 * Learning Path if not running, in which case the client app needs to
 	 * redirect the page <br>
@@ -25,22 +23,22 @@ public interface LearningProcessEngineController {
 	 * 5. Learning Scenario task and task present, status is success and the
 	 * htmlform is the task form
 	 */
-	public String getCurrentLPStatus(String lpid);
+	public String getCurrentLPStatus(String lpid, String responseJSON);
 	
 	
-	public String getAvailableLearningPaths();
+	public String getAvailableLearningPaths(String responseJSON);
 	
-	public String getRunningPaths();
+	public String getRunningPaths(String responseJSON);
 	
-	public String startalearningpath( String lpid);
+	public String startalearningpath( String lpid, String responseJSON);
 	
-	public String startalearningscenario(String lpid,String lpinstid);
+	public String startalearningscenario(String lpid,String responseJSON);
 	
 	public String completeCurrentLearningTask(String lpid, String responseJSON)throws Exception;
 	
-	public String getLearningPathFlowDiagram(String lpid);
+	public String getLearningPathFlowDiagram(String lpid, String responseJSON);
 	
-	public String getProcessDiagramDetails(String lpid);
+	public String getProcessDiagramDetails(String lpid, String responseJSON);
 	
-	public String gerOracleValues(String lpid);
+	public String gerOracleValues(String lpid, String responseJSON);
 }

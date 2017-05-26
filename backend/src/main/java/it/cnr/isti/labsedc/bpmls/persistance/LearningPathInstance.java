@@ -2,11 +2,17 @@ package it.cnr.isti.labsedc.bpmls.persistance;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 @Entity
@@ -26,16 +32,40 @@ public class LearningPathInstance {
 
 	@OneToMany(mappedBy="lpInstance")
 	private List<LearningScenarioInstance> learningScenarioInstances;
-	public LearningPathInstance(){
+	
+	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="learnerId")
+	private LearnerDetails ldInstance;
+	
+	
+	public LearningPathInstance(String lpId, List<LearningScenarioInstance> learningScenarioInstances, String status, String result,
+			 LearnerDetails ldInstance) {
+		super();
+		this.lpId = lpId;
+		this.status = status;
+		this.result = result;
+		this.learningScenarioInstances = learningScenarioInstances;
+		this.ldInstance = ldInstance;
+	}
+
+
+
+	
+	
+	
+	
+	public LearningPathInstance() {
+		super();
 		
 	}
-	
-	public LearningPathInstance(String lpId,List<LearningScenarioInstance> lsinstlists,String status,String result){
-		this.lpId=lpId;
-		this.learningScenarioInstances=lsinstlists;
-		this.status=status;
-		this.result=result;
-	}
+
+
+
+
+
+
+
 	public int getLpInstId() {
 		return lpInstId;
 	}
@@ -83,4 +113,27 @@ public class LearningPathInstance {
 	public void setLearningScenarioInstances(List<LearningScenarioInstance> learningScenarioInstaces) {
 		this.learningScenarioInstances = learningScenarioInstaces;
 	}
+
+
+
+	public LearnerDetails getLdInstance() {
+		return ldInstance;
+	}
+
+
+
+	public void setLdInstance(LearnerDetails ldInstance) {
+		this.ldInstance = ldInstance;
+	}
+
+
+	
+
+
+
+	
+
+
+	
+	
 }

@@ -20,8 +20,9 @@ export class LearningEngineService {
 
     getavailablelearningpaths() {
         //console.log('http://localhost:8080/getavailablelearningpaths');
+         let responseJson = "{\"username\":" + localStorage.getItem('currentUser') + "}";
 
-        return this.http.get(hostaddress.host+'/getavailablelearningpaths')
+        return this.http.post(hostaddress.host+'/getavailablelearningpaths',responseJson)
 
             .map((response: Response) => {
 
@@ -32,8 +33,8 @@ export class LearningEngineService {
 
     getrunninglearningpaths() {
         //console.log('http://localhost:8080/getavailablelearningpaths');
-
-        return this.http.get(hostaddress.host+'/getrunningpaths')
+        let responseJson = "{\"username\":" + localStorage.getItem('currentUser') + "}";
+        return this.http.post(hostaddress.host+'/getrunningpaths',responseJson)
 
             .map((response: Response) => {
 
@@ -48,9 +49,11 @@ export class LearningEngineService {
 
     getcurrenttaskmodel(lpintid: string) {
         //console.log('http://localhost:8080/getcurrentlearningtask');
+         let responseJson = "{\"username\":" + localStorage.getItem('currentUser') + "}";
+
         let params = new URLSearchParams();
         params.set('lpinstid', lpintid);
-        return this.http.get(hostaddress.host+'/getcurrentlearningtaskmodel/' + lpintid, { search: params })
+        return this.http.post(hostaddress.host+'/getcurrentlearningtaskmodel/' + lpintid, responseJson)
 
             .map((response: Response) => {
 
@@ -60,11 +63,17 @@ export class LearningEngineService {
     }
 
 
-    getcurrentlpstatus(lpintid: string) {
+    getcurrentlpstatus(lpid: string) {
         //console.log('http://localhost:8080/getcurrentlearningpathstatus/'+lpintid);
+        let responseJson = "{\"username\":" + localStorage.getItem('currentUser') + "}";
+
+
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+       
         let params = new URLSearchParams();
-        params.set('lpinstid', lpintid);
-        return this.http.get(hostaddress.host+'/getcurrentlearningpathstatus/' + lpintid, { search: params })
+
+        params.set('lpinstid', lpid);
+        return this.http.post(hostaddress.host+'/getcurrentlearningpathstatus/' + lpid, responseJson)
 
             .map((response: Response) => {
                 // login successful if there's a jwt token in the response
@@ -74,7 +83,7 @@ export class LearningEngineService {
     }
 
     completeLearningTask(lpid: string, lsintid: string, learningForm: string) {
-        let responseJson = "{\"lsinstid\":" + lsintid + ",\"learningform\":" + learningForm + "}";
+        let responseJson = "{\"lsinstid\":" + lsintid + ",\"username\":" + localStorage.getItem('currentUser') + ",\"learningform\":" + learningForm + "}";
 
 
         let headers = new Headers({ 'Content-Type': 'application/json' }); // ... Set content type to JSON
@@ -87,13 +96,13 @@ export class LearningEngineService {
     }
 
     startaLearningPath(lpid: string) {
-        let responseJson = "{\"lpid\":\"" + lpid + "\"}";
+        let responseJson = "{\"username\":" + localStorage.getItem('currentUser') + "}";
 
 
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let params = new URLSearchParams();
 
-        console.log("Starting a learning path for: " + lpid);
+       // console.log("Starting a learning path for: " + lpid);
 
         return this.http.post(hostaddress.host+'/startalearningpath/' + lpid, responseJson)
 
@@ -105,7 +114,7 @@ export class LearningEngineService {
     }
 
     startalearningscenario(lpid: string, lpinstd: string) {
-        let responseJson = "{\"lpid\":\"" + lpid + "\"}";
+        let responseJson = "{\"username\":" + localStorage.getItem('currentUser') + "}";
 
 
         let headers = new Headers({ 'Content-Type': 'application/json' });
@@ -123,7 +132,13 @@ export class LearningEngineService {
     }
 
     getpathflow(lpid: string) {
-        return this.http.get(hostaddress.host+'/getlearningflowdiagram/'+lpid)
+        let responseJson = "{\"username\":" + localStorage.getItem('currentUser') + "}";
+
+
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let params = new URLSearchParams();
+
+        return this.http.post(hostaddress.host+'/getlearningflowdiagram/'+lpid,responseJson)
 
             .map((response: Response) => {
 
@@ -133,7 +148,13 @@ export class LearningEngineService {
     }
 
     getprocessdigramdetails(lpid: string) {
-        return this.http.get(hostaddress.host+'/getprocessdiagramdetails/'+lpid)
+        let responseJson = "{\"username\":" + localStorage.getItem('currentUser') + "}";
+
+
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let params = new URLSearchParams();
+
+        return this.http.post(hostaddress.host+'/getprocessdiagramdetails/'+lpid,responseJson)
 
             .map((response: Response) => {
 
@@ -143,7 +164,13 @@ export class LearningEngineService {
     }
 
     getoraclevalues(lpid: string) {
-        return this.http.get(hostaddress.host+'/getoraclevalues/'+lpid)
+        let responseJson = "{\"username\":" + localStorage.getItem('currentUser') + "}";
+
+
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let params = new URLSearchParams();
+
+        return this.http.post(hostaddress.host+'/getoraclevalues/'+lpid,responseJson)
 
             .map((response: Response) => {
 

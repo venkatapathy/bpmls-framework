@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Http, Headers, Response,RequestOptions } from '@angular/http';
 
 export type InternalStateType = {
   [key: string]: any
@@ -8,7 +9,7 @@ export type InternalStateType = {
 export class AppState {
   _state: InternalStateType = {};
 
-  constructor() {
+  constructor(private http: Http) {
   }
 
   // already return a clone of the current state
@@ -37,5 +38,62 @@ export class AppState {
   private _clone(object: InternalStateType) {
     // simple object clone
     return JSON.parse(JSON.stringify(object));
+  }
+
+  login(username: string, password: string) {
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers });
+    console.log('http://localhost:8080/login', JSON.stringify({ username: username, password: password }), options);
+
+    return this.http.post('http://localhost:8080/login', JSON.stringify({ username: username, password: password }), options)
+
+      .map((response: Response) => {
+        // login successful if there's a jwt token in the response
+        console.log("mapping response");
+        let user = response.json();
+        if (user) {
+          // store user details and jwt token in local storage to keep user logged in between page refreshes
+          localStorage.setItem('currentUser', JSON.stringify(user));
+        }
+      });
+  }
+
+  logout() {
+    // remove user from local storage to log user out
+    localStorage.removeItem('currentUser');
+  }
+
+  registeruser(username: string, password: string){
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers });
+    //console.log('http://localhost:8080/login', JSON.stringify({ username: username, password: password }), options);
+
+    return this.http.post('http://localhost:8080/registernewuser', JSON.stringify({ username: username, password: password }), options)
+
+      .map((response: Response) => {
+        // login successful if there's a jwt token in the response
+        
+        
+        return response.json();
+      });
+  }
+
+  authenticateuser(username: string, password: string){
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers });
+    //console.log('http://localhost:8080/login', JSON.stringify({ username: username, password: password }), options);
+
+    return this.http.post('http://localhost:8080/authenticateuser', JSON.stringify({ username: username, password: password }), options)
+
+      .map((response: Response) => {
+        // login successful if there's a jwt token in the response
+        
+        let user = response.json();
+        if (user.status == 'success') {
+          // store user details and jwt token in local storage to keep user logged in between page refreshes
+          localStorage.setItem('currentUser', JSON.stringify(user.username));
+        }
+        return response.json();
+      });
   }
 }

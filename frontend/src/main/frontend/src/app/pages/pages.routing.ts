@@ -1,6 +1,7 @@
 import { Routes, RouterModule }  from '@angular/router';
 import { Pages } from './pages.component';
 import { ModuleWithProviders } from '@angular/core';
+import {AuthGuard} from '../_guards/auth.guard';
 // noinspection TypeScriptValidateTypes
 
 // export function loadChildren(path) { return System.import(path); };
@@ -8,14 +9,23 @@ import { ModuleWithProviders } from '@angular/core';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'pages', pathMatch: 'full'
+    loadChildren: 'app/pages/login/login.module#LoginModule'
+  },
+  {
+    path: 'login',
+    loadChildren: 'app/pages/login/login.module#LoginModule'
+  },
+  {
+    path: 'register',
+    loadChildren: 'app/pages/register/register.module#RegisterModule'
   },
   {
     path: 'pages',
     component: Pages,
+    canActivate: [AuthGuard],
     children: [
-      { path: '', redirectTo: 'home', pathMatch: 'full' },
-      { path: 'home', loadChildren: './home/home.module#HomeModule' },
+      { path: '', redirectTo: 'home', pathMatch: 'full',canActivate: [AuthGuard] },
+      { path: 'home', loadChildren: './home/home.module#HomeModule',canActivate: [AuthGuard] },
       
     ]
   }

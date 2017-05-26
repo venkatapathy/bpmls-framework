@@ -1,18 +1,23 @@
 package it.cnr.isti.labsedc.bpmls.impl;
 
-import static j2html.TagCreator.*;
+import static j2html.TagCreator.br;
+import static j2html.TagCreator.button;
+import static j2html.TagCreator.div;
+import static j2html.TagCreator.p;
+import static j2html.TagCreator.text;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import javax.security.sasl.AuthenticationException;
+import javax.transaction.Transactional;
 
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.impl.form.engine.HtmlDocumentBuilder;
 import org.camunda.bpm.engine.impl.form.engine.HtmlElementWriter;
 import org.camunda.bpm.engine.task.Task;
-import org.dom4j.Branch;
-import org.h2.util.New;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -26,8 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.cnr.isti.labsedc.bpmls.HtmlFormEngine;
@@ -36,11 +39,13 @@ import it.cnr.isti.labsedc.bpmls.LearningProcessEngineController;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathExceptionErrorCodes;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningTaskException;
+import it.cnr.isti.labsedc.bpmls.Exceptions.UserAuthenticationException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.TargetVertexes.Vertex;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction;
-import it.cnr.isti.labsedc.bpmls.persistance.LearningPathEvents;
+import it.cnr.isti.labsedc.bpmls.persistance.LearnerDetails;
+import it.cnr.isti.labsedc.bpmls.persistance.LearnerDetailsJpaRepository;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathInstance;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioInstance;
 import j2html.tags.ContainerTag;
@@ -58,11 +63,132 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 	@Autowired
 	TaskService taskService;
 
+	@Autowired
+	LearnerDetailsJpaRepository userJpaDBRepo;
+
+	private LearnerDetails authenticateUserInternally(String userName) throws UserAuthenticationException {
+		LearnerDetails user = userJpaDBRepo.findByUsername(userName);
+
+		if (user == null) {
+			throw new UserAuthenticationException("User not authenticated. This incident will be logged!!");
+		}
+		return user;
+	}
+
 	@CrossOrigin(origins = "http://localhost:4200")
-	@RequestMapping(value = "/getlearningflowdiagram/{lpid}", method = RequestMethod.GET)
-	public String getLearningPathFlowDiagram(@PathVariable("lpid") String lpid) {
+	@RequestMapping(value = "/authenticateuser", method = RequestMethod.POST)
+	public String authenticateUser(@RequestBody String responseJSON) {
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = null;
+		String username = null;
+		String password = null;
+		LearnerDetails user = null;
+
+		try {
+			map = mapper.readValue(responseJSON, Map.class);
+			username = (String) map.get("username");
+			password = (String) map.get("password");
+
+			// check if the user is already present
+			user = userJpaDBRepo.findByUsername(username);
+			if (user == null) {
+				throw new UserAuthenticationException("Username or Password not valid!!");
+			}
+			logger.info("Loggedin User: " + username);
+			JSONObject retMsg = new JSONObject();
+			return retMsg.put("status", "success").put("username", username).toString();
+
+		} catch (IOException e1) {
+
+			logger.error("IOException while authenticating user: " + username + ". Exception is: " + e1.getMessage());
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "unexpectederror");
+			return retJson.put("errMsg", new JSONObject().put("message", e1.getMessage())).toString();
+		} catch (UserAuthenticationException e) {
+
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "error");
+			return retJson.put("errMsg", e.getMessage()).toString();
+		}
+	}
+
+	@CrossOrigin(origins = "http://localhost:4200")
+	@RequestMapping(value = "/registernewuser", method = RequestMethod.POST)
+	@Transactional
+	public String registerNewUser(@RequestBody String responseJSON) {
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = null;
+		String username = null;
+		String password = null;
+		LearnerDetails user = null;
+
+		try {
+			map = mapper.readValue(responseJSON, Map.class);
+			username = (String) map.get("username");
+			password = (String) map.get("password");
+
+			// check if the user is already present
+			user = userJpaDBRepo.findByUsername(username);
+			if (user != null) {
+				throw new UserAuthenticationException("Username already present. Please choose another username!!");
+			}
+			
+			LearnerDetails newuser = new LearnerDetails(username, password);
+
+			userJpaDBRepo.save(newuser);
+
+			logger.info("Registered new user: " + username);
+			JSONObject retMsg = new JSONObject();
+			return retMsg.put("status", "success").toString();
+
+		} catch (IOException e1) {
+
+			logger.error("IOException while registering user: " + username + ". Exception is: " + e1.getMessage());
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "unexpectederror");
+			return retJson.put("errMsg", new JSONObject().put("message", e1.getMessage())).toString();
+		} catch (UserAuthenticationException e) {
+
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "error");
+			return retJson.put("errMsg", e.getMessage()).toString();
+		}
+	}
+
+	@CrossOrigin(origins = "http://localhost:4200")
+	@RequestMapping(value = "/getlearningflowdiagram/{lpid}", method = RequestMethod.POST)
+	public String getLearningPathFlowDiagram(@PathVariable("lpid") String lpid, @RequestBody String responseJSON) {
+		// userauthentication
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = null;
+		String username = null;
+		LearnerDetails user = null;
+
+		try {
+			map = mapper.readValue(responseJSON, Map.class);
+			username = (String) map.get("username");
+			user = authenticateUserInternally(username);
+
+			if (user == null) {
+				throw new UserAuthenticationException("User Authetication failed! Please login again!!");
+			}
+		} catch (IOException e1) {
+
+			logger.error("IOException while reading responseJSON to getRunningPaths for user: " + username
+					+ ". Exception is: " + e1.getMessage());
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "unexpectederror");
+			return retJson.put("errMsg", new JSONObject().put("message", e1.getMessage())).toString();
+		} catch (UserAuthenticationException e) {
+			logger.error("User Authentication Failed for user: " + username);
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "error");
+			return retJson.put("errMsg", e.getMessage()).toString();
+		}
+
 		// get the lpinst
-		LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid);
+		LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid,
+				user);
 
 		if (lpInst == null) {
 			// quitely throw error status
@@ -74,10 +200,39 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 	}
 
 	@CrossOrigin(origins = "http://localhost:4200")
-	@RequestMapping(value = "/getoraclevalues/{lpid}", method = RequestMethod.GET)
-	public String gerOracleValues(@PathVariable("lpid") String lpid) {
+	@RequestMapping(value = "/getoraclevalues/{lpid}", method = RequestMethod.POST)
+	public String gerOracleValues(@PathVariable("lpid") String lpid, @RequestBody String responseJSON) {
+		// userauthentication
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = null;
+		String username = null;
+		LearnerDetails user = null;
+
+		try {
+			map = mapper.readValue(responseJSON, Map.class);
+			username = (String) map.get("username");
+			user = authenticateUserInternally(username);
+
+			if (user == null) {
+				throw new UserAuthenticationException("User Authetication failed! Please login again!!");
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			logger.error("IOException while reading responseJSON to getRunningPaths for user: " + username
+					+ ". Exception is: " + e1.getMessage());
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "unexpectederror");
+			return retJson.put("errMsg", new JSONObject().put("message", e1.getMessage())).toString();
+		} catch (UserAuthenticationException e) {
+			logger.error("User Authentication Failed for user: " + username);
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "error");
+			return retJson.put("errMsg", e.getMessage()).toString();
+		}
+
 		// get the lpinst
-		LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid);
+		LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid,
+				user);
 
 		if (lpInst == null) {
 			// quitely throw error status
@@ -120,10 +275,40 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 	}
 
 	@CrossOrigin(origins = "http://localhost:4200")
-	@RequestMapping(value = "/getprocessdiagramdetails/{lpid}", method = RequestMethod.GET)
-	public String getProcessDiagramDetails(@PathVariable("lpid") String lpid) {
+	@RequestMapping(value = "/getprocessdiagramdetails/{lpid}", method = RequestMethod.POST)
+	public String getProcessDiagramDetails(@PathVariable("lpid") String lpid, @RequestBody String responseJSON) {
+
+		// userauthentication
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = null;
+		String username = null;
+		LearnerDetails user = null;
+
+		try {
+			map = mapper.readValue(responseJSON, Map.class);
+			username = (String) map.get("username");
+			user = authenticateUserInternally(username);
+
+			if (user == null) {
+				throw new UserAuthenticationException("User Authetication failed! Please login again!!");
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			logger.error("IOException while reading responseJSON to getRunningPaths for user: " + username
+					+ ". Exception is: " + e1.getMessage());
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "unexpectederror");
+			return retJson.put("errMsg", new JSONObject().put("message", e1.getMessage())).toString();
+		} catch (UserAuthenticationException e) {
+			logger.error("User Authentication Failed for user: " + username);
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "error");
+			return retJson.put("errMsg", e.getMessage()).toString();
+		}
+
 		// get the lpinst
-		LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid);
+		LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid,
+				user);
 
 		if (lpInst == null) {
 			// quitely throw error status
@@ -166,10 +351,39 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 	 * htmlform is the task form
 	 */
 	@CrossOrigin(origins = "http://localhost:4200")
-	@RequestMapping(value = "/getcurrentlearningpathstatus/{lpid}", method = RequestMethod.GET)
-	public String getCurrentLPStatus(@PathVariable("lpid") String lpId) {
+	@RequestMapping(value = "/getcurrentlearningpathstatus/{lpid}", method = RequestMethod.POST)
+	public String getCurrentLPStatus(@PathVariable("lpid") String lpId, @RequestBody String responseJSON) {
+		// userauthentication
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = null;
+		String username = null;
+		LearnerDetails user = null;
+
+		try {
+			map = mapper.readValue(responseJSON, Map.class);
+			username = (String) map.get("username");
+			user = authenticateUserInternally(username);
+
+			if (user == null) {
+				throw new UserAuthenticationException("User Authetication failed! Please login again!!");
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			logger.error("IOException while reading responseJSON to getRunningPaths for user: " + username
+					+ ". Exception is: " + e1.getMessage());
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "unexpectederror");
+			return retJson.put("errMsg", new JSONObject().put("message", e1.getMessage())).toString();
+		} catch (UserAuthenticationException e) {
+			logger.error("User Authentication Failed for user: " + username);
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "error");
+			return retJson.put("errMsg", e.getMessage()).toString();
+		}
+
 		// check if there any learning path engine for that
-		LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpId);
+		LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpId,
+				user);
 
 		// {status:error,errortype: lpnonexistant,htmlform:null}
 		if (lpInst == null) {
@@ -190,7 +404,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 					+ Integer.toString(lpInst.getLpInstId()) + ". Exception message is: " + e.getMessage());
 			// you shouldnt be coming here mate!!
 			JSONObject retJson = new JSONObject();
-			retJson.put("status", "error");
+			retJson.put("status", "unexpectederror");
 			retJson.put("errortype", "unexpected");
 			retJson.put("errMsg", "Unexcepted error when trying to get running learning scenario with lpinstid: "
 					+ Integer.toString(lpInst.getLpInstId()) + ". Contact Administrator with this error message!");
@@ -204,11 +418,11 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 				lsInst = lpEngine.getLearningEngineRuntimeService()
 						.getNextLearningScenarioByLpInstId(Integer.toString(lpInst.getLpInstId()));
 			} catch (LearningPathException e) {
-				
+
 				logger.error("Unexcepted error when trying to get next learning scenario with lpinstid: "
 						+ Integer.toString(lpInst.getLpInstId()) + ". Exception message is: " + e.getMessage());
 				JSONObject retJson = new JSONObject();
-				retJson.put("status", "error");
+				retJson.put("status", "unexpectederror");
 				retJson.put("errortype", "unexpected");
 				retJson.put("errMsg", "Unexcepted error when trying to get running learning scenario with lpinstid: "
 						+ Integer.toString(lpInst.getLpInstId()) + ". Contact Administrator with this error message!");
@@ -283,17 +497,22 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 				String hint = ls.getScenariocontexthint();
 				if (hint != null) {
 					HtmlElementWriter pElement = new HtmlElementWriter("br", true);
-					HtmlElementWriter helpToggleButtonElement=new HtmlElementWriter("button").attribute("(click)", "toggleHelp()")
-							.attribute("type", "button").attribute("class", "btn btn-with-icon").attribute("style", "color:#FFFFFF; background-color: #008080");
-					
-					HtmlElementWriter iIconForHelpButton=new HtmlElementWriter("i").attribute("class", "ion-information").textContent("Toggle Help");
-					
+					HtmlElementWriter helpToggleButtonElement = new HtmlElementWriter("button")
+							.attribute("(click)", "toggleHelp()").attribute("type", "button")
+							.attribute("class", "btn btn-with-icon")
+							.attribute("style", "color:#FFFFFF; background-color: #008080");
+
+					HtmlElementWriter iIconForHelpButton = new HtmlElementWriter("i")
+							.attribute("class", "ion-information").textContent("Toggle Help");
+
 					HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(pElement)
-							.startElement(helpToggleButtonElement).startElement(iIconForHelpButton).endElement().endElement()
+							.startElement(helpToggleButtonElement).startElement(iIconForHelpButton).endElement()
+							.endElement()
 							.startElement(new HtmlElementWriter("h1").textContent("Task Name:" + task.getName()))
 							.endElement().startElement(new HtmlElementWriter("br", true));
 					HtmlElementWriter hintDivElement = new HtmlElementWriter("div");
-					hintDivElement.attribute("style", "color:#FFFFFF; background-color: #008080").attribute("[hidden]", "helpHidden");
+					hintDivElement.attribute("style", "color:#FFFFFF; background-color: #008080").attribute("[hidden]",
+							"helpHidden");
 					hintDivElement.textContent(hint);
 					documentBuilder.startElement(hintDivElement).endElement();
 					htmlRet.append(documentBuilder.getHtmlString());
@@ -305,7 +524,8 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 					HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(pElement);
 					HtmlElementWriter hintDivElement = new HtmlElementWriter("div");
-					hintDivElement.attribute("style", "color:#FFFFFF; background-color: #008080").attribute("[hidden]", "helpHidden");
+					hintDivElement.attribute("style", "color:#FFFFFF; background-color: #008080").attribute("[hidden]",
+							"helpHidden");
 					hintDivElement.textContent(hint);
 					documentBuilder.startElement(hintDivElement).endElement().endElement();
 					htmlRet.append(documentBuilder.startElement(new HtmlElementWriter("br", true))
@@ -328,7 +548,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 					htmlRet.append(
 							new HtmlFormEngine().renderFormData(formService.getTaskFormData(task.getId()), tVfuc))
 							.toString());
-			//System.out.println(htmlRet.toString());
+			// System.out.println(htmlRet.toString());
 			return retJson.toString();
 
 		} catch (LearningPathException e) {
@@ -336,7 +556,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 			logger.error("Unexcepted error when trying to get current learning task with lpinstid: "
 					+ Integer.toString(lpInst.getLpInstId()) + ". Exception message is: " + e.getMessage());
 			JSONObject retJson = new JSONObject();
-			retJson.put("status", "error");
+			retJson.put("status", "unexpectederror");
 			retJson.put("errortype", "unexpected");
 			retJson.put("errMsg", "Unexcepted error when trying to get current learning task with lpinstid: "
 					+ Integer.toString(lpInst.getLpInstId()) + ". Contact Administrator with this error message!");
@@ -370,12 +590,41 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 	 * htmlform is the task form
 	 */
 	@CrossOrigin(origins = "http://localhost:4200")
-	@RequestMapping(value = "/getcurrentlearningtaskmodel/{lpid}", method = RequestMethod.GET)
-	public String getCurrentLearningTaskModel(@PathVariable("lpid") String lpId) {
+	@RequestMapping(value = "/getcurrentlearningtaskmodel/{lpid}", method = RequestMethod.POST)
+	public String getCurrentLearningTaskModel(@PathVariable("lpid") String lpId, @RequestBody String responseJSON) {
+		// userauthentication
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = null;
+		String username = null;
+		LearnerDetails user = null;
+
+		try {
+			map = mapper.readValue(responseJSON, Map.class);
+			username = (String) map.get("username");
+			user = authenticateUserInternally(username);
+
+			if (user == null) {
+				throw new UserAuthenticationException("User Authetication failed! Please login again!!");
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			logger.error("IOException while reading responseJSON to getRunningPaths for user: " + username
+					+ ". Exception is: " + e1.getMessage());
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "unexpectederror");
+			return retJson.put("errMsg", new JSONObject().put("message", e1.getMessage())).toString();
+		} catch (UserAuthenticationException e) {
+			logger.error("User Authentication Failed for user: " + username);
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "error");
+			return retJson.put("errMsg", e.getMessage()).toString();
+		}
+
 		JSONObject retJson = new JSONObject();
 
 		// check if there any learning path engine for that
-		LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpId);
+		LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpId,
+				user);
 
 		if (lpInst == null) {
 			retJson.put("status", "error");
@@ -391,7 +640,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 			// TODO Auto-generated catch block
 			logger.error("Unexcepted error when trying to get getRunningLearningScenarioByIpInstId with lpinstid: "
 					+ Integer.toString(lpInst.getLpInstId()) + ". Exception message is: " + e.getMessage());
-			retJson.put("status", "error");
+			retJson.put("status", "unexpectederror");
 			retJson.put("errorMsg", "Unexpected error. Contact Administrator");
 			return retJson.toString();
 		}
@@ -413,7 +662,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 			// TODO Auto-generated catch block
 			logger.error("Unexcepted error when trying to get getRunningLearningScenarioByIpInstId with lpinstid: "
 					+ Integer.toString(lpInst.getLpInstId()) + ". Exception message is: " + e.getMessage());
-			retJson.put("status", "error");
+			retJson.put("status", "unexpectederror");
 			retJson.put("errorMsg", "Unexpected error. Contact Administrator");
 			return retJson.toString();
 		}
@@ -427,48 +676,74 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 		// return tthe model
 		retJson = new JSONObject();
 
-		//change of plan get the task variables and send them
-		Map<String,Object> map=taskService.getVariables(task.getId());
-		
-		if(map!=null){
-			for (Map.Entry<String, Object> entry : map.entrySet())
-			{
-			    //System.out.println(entry.getKey() + "/" + entry.getValue());
-			    retJson.put(entry.getKey(), entry.getValue());
-			    
+		// change of plan get the task variables and send them
+		Map<String, Object> mapT = taskService.getVariables(task.getId());
+
+		if (mapT != null) {
+			for (Map.Entry<String, Object> entry : mapT.entrySet()) {
+				// System.out.println(entry.getKey() + "/" + entry.getValue());
+				retJson.put(entry.getKey(), entry.getValue());
+
 			}
-			JSONObject newretJson=new JSONObject();
-		    newretJson.put("status", "success").put("formmodel", (new JSONObject().put("learningform",retJson)));
-		    return newretJson.toString();
-			
-		}else{
+			JSONObject newretJson = new JSONObject();
+			newretJson.put("status", "success").put("formmodel", (new JSONObject().put("learningform", retJson)));
+			return newretJson.toString();
+
+		} else {
 			retJson.put("status", "success");
 			retJson.put("formmodel", "");
 			return retJson.toString();
 		}
-		
-		/*return retJson.put("status", "success")
-				.put("formmodel", new HtmlFormEngine().getFormModel(formService.getTaskFormData(task.getId())))
-				.toString();*/
+
+		/*
+		 * return retJson.put("status", "success") .put("formmodel", new
+		 * HtmlFormEngine().getFormModel(formService.getTaskFormData(task.getId(
+		 * )))) .toString();
+		 */
 
 	}
 
 	@CrossOrigin(origins = "http://localhost:4200")
-	@RequestMapping(value = "/getavailablelearningpaths", method = RequestMethod.GET)
-	public String getAvailableLearningPaths() {
+	@RequestMapping(value = "/getavailablelearningpaths", method = RequestMethod.POST)
+	public String getAvailableLearningPaths(@RequestBody String responseJSON) {
+		// userauthentication
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = null;
+		String username = null;
+		LearnerDetails user = null;
+
+		try {
+			map = mapper.readValue(responseJSON, Map.class);
+			username = (String) map.get("username");
+			user = authenticateUserInternally(username);
+
+			if (user == null) {
+				throw new UserAuthenticationException("User Authetication failed! Please login again!!");
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			logger.error("IOException while reading responseJSON to getRunningPaths for user: " + username
+					+ ". Exception is: " + e1.getMessage());
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "unexpectederror");
+			return retJson.put("errMsg", new JSONObject().put("message", e1.getMessage())).toString();
+		} catch (UserAuthenticationException e) {
+			logger.error("User Authentication Failed for user: " + username);
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "error");
+			return retJson.put("errMsg", e.getMessage()).toString();
+		}
+
 		// first get the deployed learning paths
 		JSONArray lparray = new JSONArray();
 
-		StringBuilder availLPs = new StringBuilder("{\"alps\": [");
 		List<LearningPath> lps = lpEngine.getLearningEngineRepositoryService().getDeployedLearningPaths();
-
-		List<LearningPathInstance> lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPaths();
 
 		if (lps != null) {
 			for (LearningPath lp : lps) {
 
 				// if not already running
-				if (lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lp.getId()) == null) {
+				if (lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lp.getId(), user) == null) {
 					lparray.put(new JSONObject().put("lpid", lp.getId()).put("lpname", lp.getName()).put("lphint",
 							lp.getLearningcontexthint()));
 
@@ -493,12 +768,40 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 	}
 
 	@CrossOrigin(origins = "http://localhost:4200")
-	@RequestMapping(value = "/getrunningpaths", method = RequestMethod.GET)
-	public String getRunningPaths() {
+	@RequestMapping(value = "/getrunningpaths", method = RequestMethod.POST)
+	public String getRunningPaths(@RequestBody String responseJSON) {
+		// userauthentication
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = null;
+		String username = null;
+		LearnerDetails user = null;
+
+		try {
+			map = mapper.readValue(responseJSON, Map.class);
+			username = (String) map.get("username");
+			user = authenticateUserInternally(username);
+
+			if (user == null) {
+				throw new UserAuthenticationException("User Authetication failed! Please login again!!");
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			logger.error("IOException while reading responseJSON to getRunningPaths for user: " + username
+					+ ". Exception is: " + e1.getMessage());
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "unexpectederror");
+			return retJson.put("errMsg", new JSONObject().put("message", e1.getMessage())).toString();
+		} catch (UserAuthenticationException e) {
+			logger.error("User Authentication Failed for user: " + username);
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "error");
+			return retJson.put("errMsg", e.getMessage()).toString();
+		}
+
 		// first get the deployed learning paths
 		JSONArray lparray = new JSONArray();
 
-		List<LearningPathInstance> lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPaths();
+		List<LearningPathInstance> lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPaths(user);
 
 		if (lpInst != null) {
 			for (LearningPathInstance lp : lpInst) {
@@ -527,10 +830,40 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/startalearningpath/{lpid}", method = RequestMethod.POST)
-	public String startalearningpath(@PathVariable("lpid") String lpid) {
-		// start the learning path
+	public String startalearningpath(@PathVariable("lpid") String lpid, @RequestBody String responseJSON) {
+
+		// userauthentication
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = null;
+		String username = null;
+		LearnerDetails user = null;
+
 		try {
-			lpEngine.getLearningEngineRuntimeService().startaLearningPathById(lpid);
+			map = mapper.readValue(responseJSON, Map.class);
+			username = (String) map.get("username");
+			user = authenticateUserInternally(username);
+
+			if (user == null) {
+				throw new UserAuthenticationException("User Authetication failed! Please login again!!");
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			logger.error("IOException while reading responseJSON to startalearningpath for user: " + username
+					+ " for with LP ID: " + lpid + ". Exception is: " + e1.getMessage());
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "unexpectederror");
+			return retJson.put("errMsg", new JSONObject().put("message", e1.getMessage())).toString();
+		} catch (UserAuthenticationException e) {
+			logger.error("User Authentication Failed for user: " + username + " for with LP ID: " + lpid);
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "error");
+			return retJson.put("errMsg", e.getMessage()).toString();
+		}
+
+		// start the learning path
+
+		try {
+			lpEngine.getLearningEngineRuntimeService().startaLearningPathById(lpid, user);
 
 			logger.info("Starting a Learning path with LP ID: " + lpid);
 			JSONObject retJson = new JSONObject();
@@ -549,7 +882,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 			logger.error("Error starting a Learning path with LP ID: " + lpid + "Error is: " + e.getMessage());
 			JSONObject retJson = new JSONObject();
 			retJson.put("status", "error");
-			return retJson.put("errMsg", new JSONObject().put("message", e.getMessage())).toString();
+			return retJson.put("errMsg", e.getMessage()).toString();
 
 			//
 
@@ -571,32 +904,90 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 					+ lpinstid);
 			JSONObject retJson = new JSONObject();
 			retJson.put("status", "error");
-			return retJson.put("errMsg", new JSONObject().put("message", e.getMessage())).toString();
+			return retJson.put("errMsg", e.getMessage()).toString();
 		}
 	}
 
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/completelearningtask/{lpid}", method = RequestMethod.POST)
-	public String completeCurrentLearningTask(@PathVariable("lpid") String lpid, @RequestBody String responseJSON)
-			throws LearningPathException, JsonParseException, JsonMappingException, IOException {
+	public String completeCurrentLearningTask(@PathVariable("lpid") String lpid, @RequestBody String responseJSON) {
+		// userauthentication
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = null;
+		String username = null;
+		LearnerDetails user = null;
+
+		try {
+			map = mapper.readValue(responseJSON, Map.class);
+			username = (String) map.get("username");
+			user = authenticateUserInternally(username);
+
+			if (user == null) {
+				throw new UserAuthenticationException("User Authetication failed! Please login again!!");
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			logger.error("IOException while reading responseJSON to getRunningPaths for user: " + username
+					+ ". Exception is: " + e1.getMessage());
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "unexpectederror");
+			return retJson.put("errMsg", new JSONObject().put("message", e1.getMessage())).toString();
+		} catch (UserAuthenticationException e) {
+			logger.error("User Authentication Failed for user: " + username);
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "error");
+			return retJson.put("errMsg", e.getMessage()).toString();
+		}
+
 		// get the learning instance
-		LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid);
+		LearningPathInstance lpInst = lpEngine.getLearningEngineRuntimeService().getRunningLearningPathBylpId(lpid,
+				user);
 
 		// if no lpinst with that id
 		if (lpInst == null) {
-			throw new LearningPathException("Running Learning Path with instance id: " + lpid + " not found",
-					LearningPathExceptionErrorCodes.LP_RUNNING_NOT_FOUND);
+			try {
+				throw new LearningPathException("Running Learning Path with instance id: " + lpid + " not found",
+						LearningPathExceptionErrorCodes.LP_RUNNING_NOT_FOUND);
+			} catch (LearningPathException e) {
+
+				JSONObject retJson = new JSONObject();
+				retJson.put("status", "error");
+				return retJson.put("errMsg", e.getMessage()).toString();
+			}
 		}
-		LearningScenarioInstance lsInst = lpEngine.getLearningEngineRuntimeService()
-				.getRunningLearningScenarioByIpInstId(Integer.toString(lpInst.getLpInstId()));
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String, Object> map = mapper.readValue(responseJSON, Map.class);
+		LearningScenarioInstance lsInst = null;
+		try {
+			lsInst = lpEngine.getLearningEngineRuntimeService()
+					.getRunningLearningScenarioByIpInstId(Integer.toString(lpInst.getLpInstId()));
+		} catch (LearningPathException e1) {
+			logger.error(
+					"Unexpected error while completing a task. First LPinst found then when trying to gets its LsInst its not found"
+							+ "for LPInstId: " + lpInst.getLpInstId());
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "unexpectederror");
+			return retJson.put("errMsg", new JSONObject().put("message", e1.getMessage())).toString();
+		}
+
+		// if no lpinst with that id
+		if (lsInst == null) {
+			try {
+				throw new LearningPathException(
+						"Running Learning Scenario for instance with id: " + lpid + " not found",
+						LearningPathExceptionErrorCodes.LP_LEARNING_SCENARIO_NOT_FOUND);
+			} catch (LearningPathException e) {
+
+				JSONObject retJson = new JSONObject();
+				retJson.put("status", "error");
+				return retJson.put("errMsg", e.getMessage()).toString();
+			}
+		}
 
 		Map<String, Object> formMap = (Map) map.get("learningform");
 		try {
 			lpEngine.getLearningEngineTaskService().completeCurrentLearningTask(lsInst, formMap);
 			// if all is well return
-			logger.info("Completing a Learning Task for learning instance: "+lsInst.getLsId()+" with Inst ID: "+lsInst.getLsInstId());
+			logger.info("Completing a Learning Task for learning instance: " + lsInst.getLsId() + " with Inst ID: "
+					+ lsInst.getLsInstId());
 		} catch (LearningTaskException e) {
 			JSONArray errArr = new JSONArray();
 			for (TaskIncompleteErrorMessage errTask : e.userInputErrorMsgs) {

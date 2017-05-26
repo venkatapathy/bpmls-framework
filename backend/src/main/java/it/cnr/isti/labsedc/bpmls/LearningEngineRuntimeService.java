@@ -6,6 +6,7 @@ import org.camunda.bpm.engine.task.Task;
 
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningPathException;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
+import it.cnr.isti.labsedc.bpmls.persistance.LearnerDetails;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathInstance;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioInstance;
 
@@ -19,14 +20,14 @@ public interface LearningEngineRuntimeService {
 	 * @param learningPathId ID of the learning path we wanted to start
 	 * @throws LearningPathException If ID is not found or if a Learning path already running
 	 */
-	public LearningPathInstance startaLearningPathById(String learningPathId)throws LearningPathException;
+	public LearningPathInstance startaLearningPathById(String learningPathId, LearnerDetails user)throws LearningPathException;
 	
 	
 	/**
 	 * gets the current running learning path as Learningpath instances
 	 * @return A {@link List} of {@link LearningPathInstance} or null if there is none
 	 */
-	public List<LearningPathInstance> getRunningLearningPaths();
+	public List<LearningPathInstance> getRunningLearningPaths(LearnerDetails user);
 	
 	
 	/**
@@ -34,7 +35,7 @@ public interface LearningEngineRuntimeService {
 	 * @param lpInstId the id of the lp instance that we want
 	 * @return the corresponding {@link LearningPathInstance} or null if there is none
 	 */
-	public LearningPathInstance getRunningLearningPathBylpId(String lpInstId);
+	public LearningPathInstance getRunningLearningPathBylpId(String lpId,LearnerDetails user);
 	
 	/**
 	 * Gets the next learning scenario that we need to run given by the lpInstId

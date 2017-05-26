@@ -22,7 +22,7 @@ public class OracleServiceImpl implements OracleService {
 	@Autowired
 	OracleValuesJpaRepository oracleRepo;
 
-	// TODO logger
+	
 
 	private void saveOracleValue(OracleValue oVa) {
 		//System.out.println("saving oracle values for " + oVa.getBpmnCamId());

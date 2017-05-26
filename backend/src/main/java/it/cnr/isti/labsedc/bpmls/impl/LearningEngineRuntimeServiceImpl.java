@@ -24,6 +24,7 @@ import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath.LearningGoals;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath.LearningGoals.LearningGoal;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.InitialValuation.DataObject;
+import it.cnr.isti.labsedc.bpmls.persistance.LearnerDetails;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathEvents;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathInstance;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathJpaRepository;
@@ -56,9 +57,6 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	@Autowired
 	private RuntimeService camundaRuntimeService;
 
-	@Autowired
-	private TaskService camundaTaskService;
-	
 	@Autowired
 	private OracleService oracleService;
 
@@ -110,7 +108,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		}
 	}
 
-	private LearningPathInstance createaLPInst(LearningPath lp) throws LearningPathException {
+	private LearningPathInstance createaLPInst(LearningPath lp, LearnerDetails user) throws LearningPathException {
 		// first get the LSInstances
 		List<LearningScenarioInstance> lsInstLists = createLSInstanceList(lp.getLearningGoals());
 
@@ -123,15 +121,22 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		}
 
 		return new LearningPathInstance(lp.getId(), lsInstLists, LearningPathEvents.LP_STATUS_RUNNING,
-				LearningPathEvents.LP_RESULT_NA);
+				LearningPathEvents.LP_RESULT_NA, user);
 	}
 
+	/**
+	 * This will start a learning path for a given user. Note Assumption is the user is validated already and called here without null.
+	 * @param learningPath
+	 * @param user
+	 * @return
+	 * @throws LearningPathException
+	 */
 	@Transactional
-	private LearningPathInstance startaLearningPath(LearningPath learningPath) throws LearningPathException {
+	private LearningPathInstance startaLearningPath(LearningPath learningPath, LearnerDetails user) throws LearningPathException {
 		// when you start a learning path
 
 		// 1. make sure that the learning path is not already started
-		LearningPathInstance runnintlpInstance = lpRepository.findOneByLpIdAndStatus(learningPath.getId(),LearningPathEvents.LP_STATUS_RUNNING);
+		LearningPathInstance runnintlpInstance = lpRepository.findOneByLpIdAndLdInstanceAndStatus(learningPath.getId(),user,LearningPathEvents.LP_STATUS_RUNNING);
 
 		if (runnintlpInstance != null)
 			throw new LearningPathException(
@@ -139,7 +144,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 					LearningPathExceptionErrorCodes.LP_ALREADY_RUNNING);
 
 		// 2. save to LPInstance
-		LearningPathInstance lpInst = createaLPInst(learningPath);
+		LearningPathInstance lpInst = createaLPInst(learningPath,user);
 
 		lpInst = lpRepository.save(lpInst);
 
@@ -167,8 +172,8 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	 *             Learning path 3. If one instance of Learning path is already
 	 *             running
 	 */
-	public LearningPathInstance startaLearningPathById(String learningPathId) throws LearningPathException {
-		return startaLearningPath(lpRepositoryService.getDeployedLearningPath(learningPathId));
+	public LearningPathInstance startaLearningPathById(String learningPathId,LearnerDetails user) throws LearningPathException {
+		return startaLearningPath(lpRepositoryService.getDeployedLearningPath(learningPathId),user);
 	}
 
 	public void completeaLearningPath(LearningPathInstance lpInstance){
@@ -184,8 +189,8 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	 * @return {@link List} of {@link LearningPathInstance}. Null if none is
 	 *         present
 	 */
-	public List<LearningPathInstance> getRunningLearningPaths() {
-		return lpRepository.findByStatus(LearningPathEvents.LP_STATUS_RUNNING);
+	public List<LearningPathInstance> getRunningLearningPaths(LearnerDetails owner) {
+		return lpRepository.findByldInstanceAndStatus(owner,LearningPathEvents.LP_STATUS_RUNNING);
 	}
 
 	/**
@@ -197,10 +202,13 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	 *            learning path id
 	 * @return {@link LearningPathInstance}. Null if none is present
 	 */
-	public LearningPathInstance getRunningLearningPathBylpId(String lpId) {
-		return lpRepository.findOneByLpIdAndStatus(lpId,LearningPathEvents.LP_STATUS_RUNNING);
+	public LearningPathInstance getRunningLearningPathBylpId(String lpId, LearnerDetails user) {
+		return lpRepository.findOneByLpIdAndLdInstanceAndStatus(lpId,user,LearningPathEvents.LP_STATUS_RUNNING);
 	}
 
+	private LearningPathInstance getRunningLearningPathBylpInstId(String lpInstId){
+		return lpRepository.findByLpInstId(Integer.parseInt(lpInstId));
+	}
 	/**
 	 * Gets the next learning scenario that we need to run given by the lpInstId
 	 * TODO: find it per user
@@ -276,7 +284,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		lsInst = getNextLearningScenarioByLpInstId(lpInstId);
 		// no next LS available throw exception
 		if (lsInst == null) {
-			LearningPathInstance lp = getRunningLearningPathBylpId(lpInstId);
+			LearningPathInstance lp = getRunningLearningPathBylpInstId(lpInstId);
 
 			throw new LearningPathException(
 					"There are no next learningscenarios available for Learning path: " + lp.getLpId(),

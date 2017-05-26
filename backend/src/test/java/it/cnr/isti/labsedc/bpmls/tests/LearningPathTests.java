@@ -19,15 +19,15 @@ import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathInstance;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioInstance;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+/*@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BpmlsApp.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)*/
 public class LearningPathTests {
 
-	@Autowired
-	private LearningProcessEngine learningProcessEngine;
+/*	@Autowired
+	private LearningProcessEngine learningProcessEngine;*/
 
-	@Test
+	/*@Test
 	public void t1learningPathtest() throws LearningPathException {
 		// there should be only one deployed learning process
 		List<LearningPath> deployedLps = learningProcessEngine.getLearningEngineRepositoryService()
@@ -45,7 +45,7 @@ public class LearningPathTests {
 		Assert.assertEquals(deployedLps.get(0).getId(),
 				learningProcessEngine.getLearningEngineRuntimeService().getRunningLearningPaths().get(0).getLpId());
 
-	}
+	}*/
 
 	/*@Test(expected = LearningPathException.class)
 	public void t2startAnotherLearningProcessInstance() throws LearningPathException {

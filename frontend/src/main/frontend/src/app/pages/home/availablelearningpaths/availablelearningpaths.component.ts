@@ -34,6 +34,7 @@ export class AvailableLearningPathsComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+    //alert(localStorage.getItem('currentUser'));
     this.loadAvailableLearningPaths();
   }
 
@@ -41,20 +42,23 @@ export class AvailableLearningPathsComponent implements AfterViewInit {
     this.learningEngineService.getavailablelearningpaths().subscribe(response => {
       this.zone.run(() => {
         if (response.status == 'error') {
+         
 
-          const activeModal = this.modalService.open(DefaultModal, {
-            size: 'sm',
-            backdrop: 'static',
-          });
-          activeModal.componentInstance.modalHeader = 'Static modal';
-          activeModal.componentInstance.modalContent = response.status.error.errMsg;
-          activeModal.result.then((result) => {
-            // do nothing so return function
-            return;
-          }, (reason) => {
-            // do nothing
-            return;
-          });
+
+            const activeModal = this.modalService.open(DefaultModal, {
+              size: 'sm',
+              backdrop: 'static',
+            });
+            activeModal.componentInstance.modalHeader = 'Static modal';
+            activeModal.componentInstance.modalContent = response.errMsg;
+            activeModal.result.then((result) => {
+              // do nothing so return function
+              return;
+            }, (reason) => {
+              // do nothing
+              return;
+            });
+          
         }
         this.availableLPS = response;
 
@@ -75,7 +79,7 @@ export class AvailableLearningPathsComponent implements AfterViewInit {
           backdrop: 'static',
         });
         activeModal.componentInstance.modalHeader = 'Static modal';
-        activeModal.componentInstance.modalContent = response.status.error.errMsg;
+        activeModal.componentInstance.modalContent = response.errMsg;
         activeModal.result.then((result) => {
           // do nothing
         }, (reason) => {
@@ -84,7 +88,7 @@ export class AvailableLearningPathsComponent implements AfterViewInit {
       }
       if (response.status == 'success') {
 
-        
+
 
         this.router.navigate(['/pages', 'home', 'learningsimulator', response.lpid]);
 
