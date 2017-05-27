@@ -21,6 +21,8 @@ import { DefaultModal } from '../components/default-modal/default-modal.componen
 import { WindowRefService } from './window.ref.service';
 import { DynamicComponentService } from './dynamiccomponent.service';
 import { CondensedTable } from './learningSimulator/condensedTable/condensedTable.component';
+import { DatepickerModule } from 'angular2-material-datepicker';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -29,6 +31,7 @@ import { CondensedTable } from './learningSimulator/condensedTable/condensedTabl
     TreeModule,
     routing,
     NgbModalModule,
+    DatepickerModule,
   ],
   declarations: [
     Home,

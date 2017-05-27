@@ -37,6 +37,8 @@ public interface LearningEngineRuntimeService {
 	 */
 	public LearningPathInstance getRunningLearningPathBylpId(String lpId,LearnerDetails user);
 	
+	public LearningPathInstance getCompletedLearningPathBylpId(String lpId, LearnerDetails user);
+	
 	/**
 	 * Gets the next learning scenario that we need to run given by the lpInstId
 	 * TODO: find it per user

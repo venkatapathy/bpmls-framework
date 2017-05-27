@@ -15,6 +15,10 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+
+import it.cnr.isti.labsedc.bpmls.persistance.LearnerDetails;
+import it.cnr.isti.labsedc.bpmls.persistance.LearnerDetailsJpaRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +26,8 @@ import org.slf4j.LoggerFactory;
 
 public class BpmlsApp{
 	
-	
+	@Autowired
+	LearnerDetailsJpaRepository lRepo;
 	
 	
 	public static void main(String[] args) {
@@ -38,7 +43,11 @@ public class BpmlsApp{
 	@PostConstruct
     public void init(){
 		System.out.println("Entering the Application");
-		
+		LearnerDetails newuser = new LearnerDetails("venkat.s.iyer@gmail.com", "demo");
+
+		lRepo.save(newuser);
+
+		System.out.println("Registered new user: venkat.s.iyer@gmail.com");
 		
 
 	}

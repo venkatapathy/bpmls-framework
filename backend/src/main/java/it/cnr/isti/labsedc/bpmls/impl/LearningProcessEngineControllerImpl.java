@@ -7,6 +7,10 @@ import static j2html.TagCreator.p;
 import static j2html.TagCreator.text;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -132,7 +136,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 			if (user != null) {
 				throw new UserAuthenticationException("Username already present. Please choose another username!!");
 			}
-			
+
 			LearnerDetails newuser = new LearnerDetails(username, password);
 
 			userJpaDBRepo.save(newuser);
@@ -191,9 +195,16 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 				user);
 
 		if (lpInst == null) {
-			// quitely throw error status
-			JSONObject retMsg = new JSONObject();
-			return retMsg.put("status", "error").toString();
+			//dont throw yet get the completed one
+			lpInst = lpEngine.getLearningEngineRuntimeService().getCompletedLearningPathBylpId(lpid,
+					user);
+			if(lpInst==null){
+				// quitely throw error status
+				JSONObject retMsg = new JSONObject();
+				return retMsg.put("status", "error").toString();
+			}
+			return lpEngine.getFlowDiagramService().getLearningPathFlowDiagram(lpInst);
+			
 		}
 
 		return lpEngine.getFlowDiagramService().getLearningPathFlowDiagram(lpInst);
@@ -682,6 +693,17 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 		if (mapT != null) {
 			for (Map.Entry<String, Object> entry : mapT.entrySet()) {
 				// System.out.println(entry.getKey() + "/" + entry.getValue());
+				// if date different
+				DateFormat df = new SimpleDateFormat("YYYY-MM-DD");
+
+				try {
+					retJson.put(entry.getKey(), df.format(entry.getValue()));
+					continue;
+
+				} catch (IllegalArgumentException e) {
+					// e.printStackTrace();
+					// ignore
+				}
 				retJson.put(entry.getKey(), entry.getValue());
 
 			}

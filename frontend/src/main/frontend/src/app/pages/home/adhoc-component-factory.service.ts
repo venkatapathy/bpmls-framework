@@ -1,6 +1,8 @@
 import { Injectable, NgModule, ComponentFactory, Compiler } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DatepickerModule } from 'angular2-material-datepicker';
+
 @Injectable()
 export class AdHocComponentFactoryCreator {
   factories: ComponentFactory<any>[] = [];
@@ -20,7 +22,7 @@ export class AdHocComponentFactoryCreator {
     @NgModule({
       declarations: [component],
       entryComponents: [component],
-      imports: [CommonModule,FormsModule],
+      imports: [CommonModule,FormsModule,DatepickerModule],
     })
     class AdHocModule {}
     let factory = this.compiler.compileModuleAndAllComponentsSync(AdHocModule).componentFactories

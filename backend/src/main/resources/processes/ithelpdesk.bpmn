@@ -60,6 +60,12 @@
             </camunda:validation>
           </camunda:formField>
           <camunda:formField id="FormField_issolutionworking" label="Is Solution Working?" type="boolean" />
+          <camunda:formField id="FormField_datedemo" label="Date Demo" type="date" />
+          <camunda:formField id="FormField_datedemo2" label="DateDemo2" type="date">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_00wp3uo</bpmn:incoming>

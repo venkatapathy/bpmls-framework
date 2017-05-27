@@ -3,26 +3,26 @@ import { Http, Response, URLSearchParams, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map'
 import { Subject } from 'rxjs/Subject';
-import {hostaddress} from './hostaddress';
+import { hostaddress } from './hostaddress';
 
 @Injectable()
 export class LearningEngineService {
     public currentTaskHtml: any;
-    
+
     public alertMsg = new Subject<boolean>();
-   
+
 
     alertMsg$ = this.alertMsg.asObservable();
 
-    constructor(private http: Http) { 
-        
+    constructor(private http: Http) {
+
     }
 
     getavailablelearningpaths() {
         //console.log('http://localhost:8080/getavailablelearningpaths');
-         let responseJson = "{\"username\":" + localStorage.getItem('currentUser') + "}";
+        let responseJson = "{\"username\":" + localStorage.getItem('currentUser') + "}";
 
-        return this.http.post(hostaddress.host+'/getavailablelearningpaths',responseJson)
+        return this.http.post(hostaddress.host + '/getavailablelearningpaths', responseJson)
 
             .map((response: Response) => {
 
@@ -34,7 +34,7 @@ export class LearningEngineService {
     getrunninglearningpaths() {
         //console.log('http://localhost:8080/getavailablelearningpaths');
         let responseJson = "{\"username\":" + localStorage.getItem('currentUser') + "}";
-        return this.http.post(hostaddress.host+'/getrunningpaths',responseJson)
+        return this.http.post(hostaddress.host + '/getrunningpaths', responseJson)
 
             .map((response: Response) => {
 
@@ -47,13 +47,14 @@ export class LearningEngineService {
         this.alertMsg.next(setAsDemo);
     }
 
+    
     getcurrenttaskmodel(lpintid: string) {
         //console.log('http://localhost:8080/getcurrentlearningtask');
-         let responseJson = "{\"username\":" + localStorage.getItem('currentUser') + "}";
+        let responseJson = "{\"username\":" + localStorage.getItem('currentUser') + "}";
 
         let params = new URLSearchParams();
         params.set('lpinstid', lpintid);
-        return this.http.post(hostaddress.host+'/getcurrentlearningtaskmodel/' + lpintid, responseJson)
+        return this.http.post(hostaddress.host + '/getcurrentlearningtaskmodel/' + lpintid, responseJson)
 
             .map((response: Response) => {
 
@@ -69,11 +70,11 @@ export class LearningEngineService {
 
 
         let headers = new Headers({ 'Content-Type': 'application/json' });
-       
+
         let params = new URLSearchParams();
 
         params.set('lpinstid', lpid);
-        return this.http.post(hostaddress.host+'/getcurrentlearningpathstatus/' + lpid, responseJson)
+        return this.http.post(hostaddress.host + '/getcurrentlearningpathstatus/' + lpid, responseJson)
 
             .map((response: Response) => {
                 // login successful if there's a jwt token in the response
@@ -89,8 +90,11 @@ export class LearningEngineService {
         let headers = new Headers({ 'Content-Type': 'application/json' }); // ... Set content type to JSON
 
 
-        return this.http.post(hostaddress.host+'/completelearningtask/' + lpid, responseJson) // ...using post request
-            .map((res: Response) => { console.log(res); return res.json() }); // ...and calling .json() on the response to return data
+        return this.http.post(hostaddress.host + '/completelearningtask/' + lpid, responseJson) // ...using post request
+            .map((res: Response) => {
+                // console.log(res); 
+                return res.json()
+            }); // ...and calling .json() on the response to return data
         //...errors if any
 
     }
@@ -102,9 +106,9 @@ export class LearningEngineService {
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let params = new URLSearchParams();
 
-       // console.log("Starting a learning path for: " + lpid);
+        // console.log("Starting a learning path for: " + lpid);
 
-        return this.http.post(hostaddress.host+'/startalearningpath/' + lpid, responseJson)
+        return this.http.post(hostaddress.host + '/startalearningpath/' + lpid, responseJson)
 
             .map((response: Response) => {
                 // login successful if there's a jwt token in the response
@@ -120,9 +124,9 @@ export class LearningEngineService {
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let params = new URLSearchParams();
 
-        console.log("Starting a learning path for: " + lpid);
+        // console.log("Starting a learning path for: " + lpid);
 
-        return this.http.post(hostaddress.host+'/startalearningscenario/' + lpid + "/" + lpinstd, responseJson)
+        return this.http.post(hostaddress.host + '/startalearningscenario/' + lpid + "/" + lpinstd, responseJson)
 
             .map((response: Response) => {
                 // login successful if there's a jwt token in the response
@@ -138,7 +142,7 @@ export class LearningEngineService {
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let params = new URLSearchParams();
 
-        return this.http.post(hostaddress.host+'/getlearningflowdiagram/'+lpid,responseJson)
+        return this.http.post(hostaddress.host + '/getlearningflowdiagram/' + lpid, responseJson)
 
             .map((response: Response) => {
 
@@ -154,7 +158,7 @@ export class LearningEngineService {
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let params = new URLSearchParams();
 
-        return this.http.post(hostaddress.host+'/getprocessdiagramdetails/'+lpid,responseJson)
+        return this.http.post(hostaddress.host + '/getprocessdiagramdetails/' + lpid, responseJson)
 
             .map((response: Response) => {
 
@@ -170,7 +174,7 @@ export class LearningEngineService {
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let params = new URLSearchParams();
 
-        return this.http.post(hostaddress.host+'/getoraclevalues/'+lpid,responseJson)
+        return this.http.post(hostaddress.host + '/getoraclevalues/' + lpid, responseJson)
 
             .map((response: Response) => {
 

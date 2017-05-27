@@ -43,13 +43,13 @@ export class AppState {
   login(username: string, password: string) {
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });
-    console.log('http://localhost:8080/login', JSON.stringify({ username: username, password: password }), options);
+    // console.log('http://localhost:8080/login', JSON.stringify({ username: username, password: password }), options);
 
     return this.http.post('http://localhost:8080/login', JSON.stringify({ username: username, password: password }), options)
 
       .map((response: Response) => {
         // login successful if there's a jwt token in the response
-        console.log("mapping response");
+        // console.log("mapping response");
         let user = response.json();
         if (user) {
           // store user details and jwt token in local storage to keep user logged in between page refreshes

@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { LoginModule } from './pages/login/login.module';
 import { RegisterModule } from './pages/register/register.module';
 import { AuthGuard } from './_guards/index';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 /*
  * Platform and Environment providers/directives/pipes
@@ -53,6 +54,7 @@ export type StoreType = {
     PagesModule,
     LoginModule,
     RegisterModule,
+    BrowserAnimationsModule,
     routing,
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection

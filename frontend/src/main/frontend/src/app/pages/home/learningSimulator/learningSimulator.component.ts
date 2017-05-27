@@ -80,7 +80,21 @@ export class LearningSimulator implements AfterViewInit {
   }
 
 
+private static ReviveDateTime(key: any, value: any): any {
+        
+        if (typeof value === 'string') {
+          
+            let a = new Date(value);
+            
+            if (!isNaN( a.getTime() )) {
+                //alert(a);
+                return a;
 
+            }
+        }
+
+        return value;
+    }
 
   loadForm() {
 
@@ -93,7 +107,7 @@ export class LearningSimulator implements AfterViewInit {
         // if not empty
         let model = JSON.parse('{\"learningform\":\"empty\"}');
         if (JSON.stringify(response.formmodel).length != 2) {
-          model = response.formmodel.learningform;
+          model = JSON.parse(JSON.stringify(response.formmodel.learningform),LearningSimulator.ReviveDateTime);
         }
 
         this.learningEngineService.getcurrentlpstatus(this.lpid).subscribe(lpresponse => {
@@ -129,6 +143,8 @@ export class LearningSimulator implements AfterViewInit {
 
                 this.dynamicComponentService.createProcessDiagramComponent(this.bpmnDiagramContainer,
                   pfresponse.xmldata, pfresponse.available, pfresponse.running, pfresponse.completed, pfresponse.trace);
+              }else{
+                this.bpmnDiagramContainer.clear();
               }
             });
 

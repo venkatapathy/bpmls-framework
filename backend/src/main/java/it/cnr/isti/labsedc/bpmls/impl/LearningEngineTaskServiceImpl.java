@@ -1,5 +1,9 @@
 package it.cnr.isti.labsedc.bpmls.impl;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -91,6 +95,33 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 	}
 
 	private void completeAndUpdateinDB(LearningScenarioInstance lsInst, String taskId, Map<String, Object> taskInputs) {
+		// do typecasts before updating
+		// loop through map to typecase boolean values from string
+		for (Map.Entry<String, Object> entry : taskInputs.entrySet()) {
+			// ifstring
+			if (entry.getValue() instanceof String) {
+
+				if (entry.getValue().equals("true") || entry.getValue().equals("false")) {
+					entry.setValue(Boolean.parseBoolean((String) entry.getValue()));
+					return;
+				}
+
+				// try parsing it to date
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+				Date startDate;
+				try {
+					startDate = df.parse((String) entry.getValue());
+					entry.setValue(startDate);
+					if (entry.getValue() instanceof String) {
+						System.out.println("some problem");
+					}
+				} catch (ParseException e) {
+					// e.printStackTrace();
+					// ignore
+				}
+			}
+		}
+
 		taskServiceCamunda.complete(taskId, taskInputs);
 		updateNextLearningTaskinLearningScenarioInstance(lsInst);
 		// then assign a dummy user
@@ -98,7 +129,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 		Task task;
 		try {
 			task = getCurrentLearningTask(Integer.toString(lsInst.getLpInstance().getLpInstId()));
-			taskServiceCamunda.setAssignee(task.getId(), "dummmy");
+			// taskServiceCamunda.setAssignee(task.getId(), "dummmy");
 
 		} catch (LearningPathException e) {
 			// TODO Auto-generated catch block
@@ -141,10 +172,13 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 		}
 		// if the errlist is empty that is all is well
 		if (errMsgList == null) {
-			//TODO error handling
-			/*if(! (lsInst.getStatus().equals(LearningScenarioEvents.LS_STATUS_RUNNING))){
-				throw new LearningTaskException("Learning Scenario is not running anymore");
-			}*/
+			// TODO error handling
+			/*
+			 * if(! (lsInst.getStatus().equals(LearningScenarioEvents.
+			 * LS_STATUS_RUNNING))){ throw new
+			 * LearningTaskException("Learning Scenario is not running anymore"
+			 * ); }
+			 */
 			Task task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
 					.singleResult();
 
@@ -195,7 +229,8 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 
 		Task task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
 				.singleResult();
-		//no tasks just return, ideally the process should have been complete by now
+		// no tasks just return, ideally the process should have been complete
+		// by now
 		if (task == null) {
 			// wait until either the
 			return;
@@ -204,23 +239,69 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 		while (nextLT != null && task != null && !nextLT.equals(task.getTaskDefinitionKey())) {
 			//
 			// completeCurrentLearningTask
-			logger.info("Simulating: "+task.getTaskDefinitionKey()+" for the LearningScenario with id: "+lsInst.getLsId()+" and Instid: "+lsInst.getLsInstId());
-			taskServiceCamunda.complete(task.getId(),oracleService.getOracleValues(lsInst));
+			logger.info("Simulating: " + task.getTaskDefinitionKey() + " for the LearningScenario with id: "
+					+ lsInst.getLsId() + " and Instid: " + lsInst.getLsInstId());
+			Map<String, Object> map = oracleService.getOracleValues(lsInst);
+			// loop through map to typecase boolean/date values from string
+			for (Map.Entry<String, Object> entry : map.entrySet()) {
+				// ifstring
+				if (entry.getValue() instanceof String) {
+
+					if (entry.getValue().equals("true") || entry.getValue().equals("false")) {
+						entry.setValue(Boolean.parseBoolean((String) entry.getValue()));
+						return;
+					}
+
+					// try parsing it to date
+					DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+					Date startDate;
+					try {
+						startDate = df.parse((String) entry.getValue());
+						entry.setValue(startDate);
+						if (entry.getValue() instanceof String) {
+							System.out.println("some problem");
+						}
+					} catch (ParseException e) {
+						// e.printStackTrace();
+						// ignore
+					}
+				}
+			}
+			taskServiceCamunda.complete(task.getId(), map);	
 			task = getCurrentLearningTask(Integer.toString(lsInst.getLpInstance().getLpInstId()));
 		}
 
 		// when no learning tasks are there, just complete remaining tasks
 		if (nextLT == null) {
-			task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
-					.singleResult();
+			task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId()).singleResult();
 			while (task != null) {
-				logger.info("Simulating: "+task.getTaskDefinitionKey()+" for the LearningScenario with id: "+lsInst.getLsId()+" and Instid: "+lsInst.getLsInstId());
-				
-				Map<String,Object> map=oracleService.getOracleValues(lsInst);
-				//loop through map to typecase boolean values from string
-				for(Map.Entry<String, Object> entry:map.entrySet()){
-					if(entry.getValue().equals("true") || entry.getValue().equals("false")){
-						entry.setValue(Boolean.parseBoolean((String)entry.getValue()));
+				logger.info("Simulating: " + task.getTaskDefinitionKey() + " for the LearningScenario with id: "
+						+ lsInst.getLsId() + " and Instid: " + lsInst.getLsInstId());
+
+				Map<String, Object> map = oracleService.getOracleValues(lsInst);
+				// loop through map to typecase boolean/date values from string
+				for (Map.Entry<String, Object> entry : map.entrySet()) {
+					// ifstring
+					if (entry.getValue() instanceof String) {
+
+						if (entry.getValue().equals("true") || entry.getValue().equals("false")) {
+							entry.setValue(Boolean.parseBoolean((String) entry.getValue()));
+							return;
+						}
+
+						// try parsing it to date
+						DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+						Date startDate;
+						try {
+							startDate = df.parse((String) entry.getValue());
+							entry.setValue(startDate);
+							if (entry.getValue() instanceof String) {
+								System.out.println("some problem");
+							}
+						} catch (ParseException e) {
+							// e.printStackTrace();
+							// ignore
+						}
 					}
 				}
 				taskServiceCamunda.complete(task.getId(), map);

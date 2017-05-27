@@ -1,5 +1,8 @@
 package it.cnr.isti.labsedc.bpmls;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 /* Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -170,15 +173,24 @@ public class HtmlFormEngine {
 		if (formData.getFormFields().size() > 0) {
 			retMsg.append("{");
 		}
-		
-		
+
 		for (FormField formField : formData.getFormFields()) {
 
 			Object defaultValue = formField.getValue().getValue();
 			if (defaultValue != null && isReadOnly(formField)) {
+				if (isDate(formField)) {
+					DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); 
+					retMsg.append("\"" + formField.getId() + "\":\"" + df.format(defaultValue) + "\",");
+					continue;
+				}
 				retMsg.append("\"" + formField.getId() + "\":\"" + defaultValue.toString() + "\",");
 
 			} else {
+				if (isDate(formField)) {
+					DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); 
+					retMsg.append("\"" + formField.getId() + "\":\"" + df.format(defaultValue) + "\",");
+					continue;
+				}
 				retMsg.append("\"" + formField.getId() + "\":\"\",");
 			}
 		}
@@ -198,31 +210,34 @@ public class HtmlFormEngine {
 			return;
 		}
 
-		String defaultValue=null;
-		String hint=null;
+		String defaultValue = null;
+		String hint = null;
 		for (DataObject dov : ls.getDataObject()) {
 			if (dov.getBpmnCamundaid().equals(formField.getId())) {
-				//expected value is mandatory
-				defaultValue=dov.getExpectedValue().getValue();
-				if(dov.getDoHint()!=null){
-					hint=dov.getDoHint().getValue();
+				// expected value is mandatory
+				defaultValue = dov.getExpectedValue().getValue();
+				if (dov.getDoHint() != null) {
+					hint = dov.getDoHint().getValue();
 				}
-				
+
 			}
 		}
 		if (defaultValue != null && !isReadOnly(formField)) {
 			HtmlElementWriter hintSpan = new HtmlElementWriter(SPAN_ELEMENT)
-					.attribute("class", "help-block regular-text").attribute("style", "color:#FFFFFF; background-color: #008080").attribute("[hidden]", "helpHidden");
+					.attribute("class", "help-block regular-text")
+					.attribute("style", "color:#FFFFFF; background-color: #008080").attribute("[hidden]", "helpHidden");
 			hintSpan.textContent("Expected Value: &nbsp; &nbsp;" + defaultValue);
 			documentBuilder.startElement(hintSpan).endElement();
 
 		}
-		
+
 		if (hint != null && !isReadOnly(formField)) {
 			HtmlElementWriter hintSpan = new HtmlElementWriter(DIV_ELEMENT)
-					.attribute("class", "help-block regular-text").attribute("style", "color:#FFFFFF; background-color: #008080").attribute("[hidden]", "helpHidden");
+					.attribute("class", "help-block regular-text")
+					.attribute("style", "color:#FFFFFF; background-color: #008080").attribute("[hidden]", "helpHidden");
 			hintSpan.textContent("Hint: &nbsp; &nbsp;" + hint);
-			documentBuilder.startElement(new HtmlElementWriter("br",true)).startElement(hintSpan).endElement().startElement(new HtmlElementWriter("br",true));
+			documentBuilder.startElement(new HtmlElementWriter("br", true)).startElement(hintSpan).endElement()
+					.startElement(new HtmlElementWriter("br", true));
 
 		}
 	}
@@ -295,8 +310,23 @@ public class HtmlFormEngine {
 				HtmlElementWriter spanElement = new HtmlElementWriter(SPAN_ELEMENT).textContent(formFieldLabel);
 				documentBuilder.startElement(spanElement).endElement().endElement().endElement();
 				getFormFieldHint(documentBuilder, ls, formField);
-				
+
 				return;
+			} else if (isDate(formField)) {
+				labelElement = new HtmlElementWriter(LABEL_ELEMENT).attribute(FOR_ATTRIBUTE, formFieldId)
+						.textContent(formFieldLabel);
+				documentBuilder.startElement(labelElement).endElement();
+				HtmlElementWriter dateElement = new HtmlElementWriter("material-datepicker").textContent(formFieldLabel)
+						.attribute("[(date)]", FORM_ID_ATTRIBUTE + "." + formFieldId).attribute("dateFormat", "YYYY-MM-DD");
+				if (isReadOnly(formField)) {
+					dateElement.attribute("disabled", null);
+				}
+				documentBuilder.startElement(new HtmlElementWriter("br", true)).startElement(dateElement).endElement()
+						.startElement(new HtmlElementWriter("br", true));
+				getFormFieldHint(documentBuilder, ls, formField);
+				documentBuilder.endElement();
+				return;
+
 			} else {
 				labelElement = new HtmlElementWriter(LABEL_ELEMENT).attribute(FOR_ATTRIBUTE, formFieldId)
 						.textContent(formFieldLabel);
@@ -311,12 +341,7 @@ public class HtmlFormEngine {
 			// <select ...>
 			renderSelectBox(formField, documentBuilder);
 
-		} // else if (isDate(formField)){
-
-		// renderDatePicker(formField, documentBuilder);
-
-		// }
-		else if(!isBoolean(formField)) {
+		} else if (!isBoolean(formField)) {
 			// <input ...>
 			renderInputField(formField, documentBuilder);
 

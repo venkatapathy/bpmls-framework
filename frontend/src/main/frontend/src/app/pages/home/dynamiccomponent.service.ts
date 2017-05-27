@@ -87,7 +87,7 @@ export class DynamicComponentService {
 
     }
 
-    private getDynamicFormComponentwithModel(taskform: string, modelJs: JSON,
+    private getDynamicFormComponentwithModel(taskform: string, modelJs: any,
         simulatorComponent: LearningSimulator): Type<any> {
         @Component({
             template: taskform
@@ -107,7 +107,7 @@ export class DynamicComponentService {
             }
             constructor() {
 
-                //alert(JSON.stringify(this.learningForm));
+                //alert(typeof modelJs.FormField_datedemo);
             }
             private completeLearning(f) {
 
@@ -227,7 +227,7 @@ export class DynamicComponentService {
                     for (var i = 0; i < trace.length; i++) {
                         var obj: any = trace[i];
 
-                        console.log(obj.taskid);
+                        // console.log(obj.taskid);
                         const overlays = viewer.get('overlays');
                         const elementRegistry = viewer.get('elementRegistry');
                         const taskName = obj.taskid;
@@ -291,11 +291,11 @@ export class DynamicComponentService {
 
             handleError(err: any) {
 
-                console.log(err);
+                // console.log(err);
                 if (err) {
                     console.log('error rendering', err);
                 } else {
-                    console.log('rendered');
+                    // console.log('rendered');
 
                 }
 

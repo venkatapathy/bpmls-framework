@@ -1,6 +1,11 @@
 package it.cnr.isti.labsedc.bpmls.impl;
 
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -192,6 +197,8 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	public List<LearningPathInstance> getRunningLearningPaths(LearnerDetails owner) {
 		return lpRepository.findByldInstanceAndStatus(owner,LearningPathEvents.LP_STATUS_RUNNING);
 	}
+	
+	
 
 	/**
 	 * Get the current running Learning Path. (Only one per deployed
@@ -206,6 +213,16 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		return lpRepository.findOneByLpIdAndLdInstanceAndStatus(lpId,user,LearningPathEvents.LP_STATUS_RUNNING);
 	}
 
+	public LearningPathInstance getCompletedLearningPathBylpId(String lpId, LearnerDetails user) {
+		List<LearningPathInstance> temp=lpRepository.findByLpIdAndLdInstanceAndStatus(lpId,user,LearningPathEvents.LP_STATUS_COMPLETED);
+		
+		if(temp==null){
+			return null;
+		}
+		
+		return lpRepository.findByLpIdAndLdInstanceAndStatus(lpId,user,LearningPathEvents.LP_STATUS_COMPLETED).get(0);
+	}
+	
 	private LearningPathInstance getRunningLearningPathBylpInstId(String lpInstId){
 		return lpRepository.findByLpInstId(Integer.parseInt(lpInstId));
 	}
@@ -306,12 +323,34 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		
 		//loop through map to typecase boolean values from string
 		for(Map.Entry<String, Object> entry:map.entrySet()){
+			
+			//ifstring
+			if(entry.getValue() instanceof String){
+				
+			
 			if(entry.getValue().equals("true") || entry.getValue().equals("false")){
 				entry.setValue(Boolean.parseBoolean((String)entry.getValue()));
+				return;
+			}
+			
+			//try parsing it to date
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); 
+			Date startDate;
+			try {
+			    startDate = df.parse((String) entry.getValue());
+			    entry.setValue(startDate);
+			    if(entry.getValue() instanceof Date){
+			    	System.out.println(entry.getValue());
+			    }
+			} catch (ParseException e) {
+			    //e.printStackTrace();
+				//ignore
+			}
 			}
 		}
 		
 		String processInstId = camundaRuntimeService.startProcessInstanceByKey(processId, map).getProcessInstanceId();
+		
 		// 2. change the status in LSI
 		lsInst.setStatus("running");
 		// 3. set the processinstanceid in LSI
