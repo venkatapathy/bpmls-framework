@@ -195,16 +195,15 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 				user);
 
 		if (lpInst == null) {
-			//dont throw yet get the completed one
-			lpInst = lpEngine.getLearningEngineRuntimeService().getCompletedLearningPathBylpId(lpid,
-					user);
-			if(lpInst==null){
+			// dont throw yet get the completed one
+			lpInst = lpEngine.getLearningEngineRuntimeService().getCompletedLearningPathBylpId(lpid, user);
+			if (lpInst == null) {
 				// quitely throw error status
 				JSONObject retMsg = new JSONObject();
 				return retMsg.put("status", "error").toString();
 			}
 			return lpEngine.getFlowDiagramService().getLearningPathFlowDiagram(lpInst);
-			
+
 		}
 
 		return lpEngine.getFlowDiagramService().getLearningPathFlowDiagram(lpInst);
@@ -548,10 +547,12 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 			// get the valuation function
 			ValuationFunction tVfuc = null;
-			for (ValuationFunction vF : ls.getValuationOracle().getValuationFunction()) {
-				if (vF.getBpmnActivityid().equals(task.getTaskDefinitionKey())) {
-					tVfuc = vF;
-					break;
+			if (ls.getValuationOracle() != null) {
+				for (ValuationFunction vF : ls.getValuationOracle().getValuationFunction()) {
+					if (vF.getBpmnActivityid().equals(task.getTaskDefinitionKey())) {
+						tVfuc = vF;
+						break;
+					}
 				}
 			}
 
@@ -693,7 +694,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 		if (mapT != null) {
 			for (Map.Entry<String, Object> entry : mapT.entrySet()) {
 				// System.out.println(entry.getKey() + "/" + entry.getValue());
-				// if date different
+				/*// if date different
 				DateFormat df = new SimpleDateFormat("YYYY-MM-DD");
 
 				try {
@@ -703,7 +704,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 				} catch (IllegalArgumentException e) {
 					// e.printStackTrace();
 					// ignore
-				}
+				}*/
 				retJson.put(entry.getKey(), entry.getValue());
 
 			}

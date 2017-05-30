@@ -82,7 +82,7 @@ export class LearningSimulator implements AfterViewInit {
 
 private static ReviveDateTime(key: any, value: any): any {
         
-        if (typeof value === 'string') {
+       /* if (typeof value === 'string') {
           
             let a = new Date(value);
             
@@ -91,7 +91,7 @@ private static ReviveDateTime(key: any, value: any): any {
                 return a;
 
             }
-        }
+        }*/
 
         return value;
     }

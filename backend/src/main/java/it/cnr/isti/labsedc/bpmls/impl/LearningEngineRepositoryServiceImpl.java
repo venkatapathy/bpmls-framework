@@ -128,6 +128,9 @@ public class LearningEngineRepositoryServiceImpl implements LearningEngineReposi
 		LearningScenario curLS=getDeployedLearningScenario(lsId);
 		
 		//get the valuation functions
+		if(curLS.getValuationOracle()==null){
+			return null;
+		}
 		List<ValuationFunction> vFuncs= curLS.getValuationOracle().getValuationFunction();
 		if(vFuncs==null){
 			return null;

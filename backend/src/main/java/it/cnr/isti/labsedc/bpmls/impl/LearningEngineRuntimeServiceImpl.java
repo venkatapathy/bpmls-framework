@@ -10,14 +10,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.transaction.Transactional;
+
 import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.engine.TaskService;
-import org.camunda.bpm.engine.task.Task;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import it.cnr.isti.labsedc.bpmls.LearningEngineRepositoryService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRuntimeService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineTaskService;
@@ -333,19 +332,19 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 				return;
 			}
 			
-			//try parsing it to date
-			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); 
+			/*// try parsing it to date
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 			Date startDate;
 			try {
-			    startDate = df.parse((String) entry.getValue());
-			    entry.setValue(startDate);
-			    if(entry.getValue() instanceof Date){
-			    	System.out.println(entry.getValue());
-			    }
+				startDate = df.parse((String) entry.getValue());
+				entry.setValue(startDate);
+				if (entry.getValue() instanceof String) {
+					System.out.println("some problem");
+				}
 			} catch (ParseException e) {
-			    //e.printStackTrace();
-				//ignore
-			}
+				// e.printStackTrace();
+				// ignore
+			}*/
 			}
 		}
 		

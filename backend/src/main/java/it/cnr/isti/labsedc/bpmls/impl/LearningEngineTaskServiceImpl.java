@@ -1,4 +1,4 @@
-package it.cnr.isti.labsedc.bpmls.impl;
+	package it.cnr.isti.labsedc.bpmls.impl;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -106,7 +106,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 					return;
 				}
 
-				// try parsing it to date
+				/*// try parsing it to date
 				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 				Date startDate;
 				try {
@@ -118,7 +118,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 				} catch (ParseException e) {
 					// e.printStackTrace();
 					// ignore
-				}
+				}*/
 			}
 		}
 
@@ -252,7 +252,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 						return;
 					}
 
-					// try parsing it to date
+					/*// try parsing it to date
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 					Date startDate;
 					try {
@@ -264,7 +264,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 					} catch (ParseException e) {
 						// e.printStackTrace();
 						// ignore
-					}
+					}*/
 				}
 			}
 			taskServiceCamunda.complete(task.getId(), map);	
@@ -289,7 +289,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 							return;
 						}
 
-						// try parsing it to date
+						/*// try parsing it to date
 						DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 						Date startDate;
 						try {
@@ -301,7 +301,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 						} catch (ParseException e) {
 							// e.printStackTrace();
 							// ignore
-						}
+						}*/
 					}
 				}
 				taskServiceCamunda.complete(task.getId(), map);

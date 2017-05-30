@@ -1,0 +1,96 @@
+<LearningScenario id="bank_loan_general_demo_scenario" name="Loan Process Complete Demo" bpmn_processlabel="bankloan" bpmn_processid="bankloan" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<scenariocontexthint>
+<![CDATA[
+        This Learning Scenario gives a general introduction on what are the steps involved in Bank Loan Process. Who are the stake holders involved in the process? What activities are involved in each step of the process? And What constitues the completion of this Loan Process that will end in granting of the loan to the user?
+        
+        
+     ]]>
+</scenariocontexthint>
+
+<Trace>
+<vertex id="loan_request_application" bpmn_activityid="loan_request_application" bpmn_activitylabel="loan_request_application"></vertex>
+<vertex id="checkformcompleteness" bpmn_activityid="checkformcompleteness" bpmn_activitylabel="checkformcompleteness"></vertex>
+<vertex id="check_credit_history" bpmn_activityid="check_credit_history" bpmn_activitylabel="check_credit_history"></vertex>
+<vertex id="assess_loan_risk" bpmn_activityid="assess_loan_risk" bpmn_activitylabel="assess_loan_risk"></vertex>
+<vertex id="appraise_property" bpmn_activityid="appraise_property" bpmn_activitylabel="appraise_property"></vertex>
+<vertex id="assess_eligibility" bpmn_activityid="assess_eligibility" bpmn_activitylabel=""></vertex>
+<vertex id="prepare_pack" bpmn_activityid="prepare_pack" bpmn_activitylabel="prepare_pack"></vertex>
+<vertex id="verify_and_take_decision" bpmn_activityid="verify_and_take_decision" bpmn_activitylabel="verify_and_take_decision"></vertex>
+<vertex id="view_loan_agreement" bpmn_activityid="view_loan_agreement" bpmn_activitylabel="view_loan_agreement"></vertex>
+</Trace>
+
+<TargetVertexes>
+
+<vertex id="loan_request_application" bpmn_activityid="loan_request_application" bpmn_activitylabel="loan_request_application">
+<activitycontexthint>
+<![CDATA[
+        This is the first step in the Loan Application process wherein the Customer will apply for the loan by filling the given application. The application will contain various information that the user needs to provide which will help you, the Loan Officer and other stake holders to decide if the Customer is eligble for the loan. Go on check out what are the information that are required from the Customer for the loan Application. Once the Customer fills the form and submit it, we will do some automated check for some Application validation (such as if the user has given the proper information such as a valid email, correct Account no) and the application will reach the you Officers only when the information is correct!
+        
+     ]]>
+</activitycontexthint>
+</vertex>
+
+<vertex id="check_credit_history" bpmn_activityid="check_credit_history" bpmn_activitylabel="check_credit_history">
+<activitycontexthint>
+<![CDATA[
+        Once the Customer completes his application, and the application is auto-checked for completeness, the application will be delegated to a 'Finance Officer' to check Credit History. It involves, checking the Customers previous Loan details (if any) from our as well as other banks. It also involves doing a bacground check on the customer to see if there are any Legal issues that the loan applicant might be involved in. After doing all the background check the Finance Officer will assign a Credit assessment and various other details as mentioned above, and will complete his task. After the Finance Officer gives a credit assessment score for the loan application and the customer, an automated task will assess a Risk weight- between (0-100) which will say how risky is to give Loan to the corresponding Loan Applicant. Go on, check various outcomes that will come out of this Task- Check Credit History.
+        
+     ]]>
+</activitycontexthint>
+</vertex>
+
+<vertex id="appraise_property" bpmn_activityid="appraise_property" bpmn_activitylabel="appraise_property">
+<activitycontexthint>
+<![CDATA[
+        Next task is appraisal of Property that are pledged against the Loan, by the Customer. This is done by the 'Property Appraiser'. Usually the Property Appraiser visit the property that are pledged against the loan and will make the assessment. The outcome (along with various documents supporting the assessment) will be submitted by the officer at the end of this task. Check out what are the outcome from this task.
+        
+     ]]>
+</activitycontexthint>
+</vertex>
+
+
+
+<vertex id="assess_eligibility" bpmn_activityid="assess_eligibility" bpmn_activitylabel="assess_eligibility">
+<activitycontexthint>
+<![CDATA[
+       After the previous steps, the form will be forwards to you- 'The Loan Officer'. You must decide on the eligibility of the loan based on the outcome from the previous steps. (Later we will see few scenarios where you will be asked to assess eligibility for some sceanrios). The outcome from this task decides the fate of the loan application, and the reason for the decision. A very important step. For this demo let us imagine that the Loan Application is marked as eligible for the Loan.
+        
+     ]]>
+</activitycontexthint>
+</vertex>
+
+<vertex id="prepare_pack" bpmn_activityid="prepare_pack" bpmn_activitylabel="prepare_pack">
+<activitycontexthint>
+<![CDATA[
+       In this step, you will prepare an agreement for the Loan which includes details such as the Loan interest, Loan terms and conditions. Usually this will be based on the rule book. You fill in the suitable values and complete this task.
+        
+     ]]>
+</activitycontexthint>
+</vertex>
+
+<vertex id="verify_and_take_decision" bpmn_activityid="verify_and_take_decision" bpmn_activitylabel="verify_and_take_decision">
+<activitycontexthint>
+<![CDATA[
+       Finally you review every details, and confirm everything is in order with the Loan Application and the Loan Agreement clause. With that your involvement ends for the loan application process. 
+        
+     ]]>
+</activitycontexthint>
+</vertex>
+
+<vertex id="view_loan_agreement" bpmn_activityid="view_loan_agreement" bpmn_activitylabel="view_loan_agreement">
+<activitycontexthint>
+<![CDATA[
+       After you approve and prepare the loan agreement- the customer can view the application. he can download them and bring it to the bank to get his loan and officially begin the agreement.
+        
+     ]]>
+</activitycontexthint>
+</vertex>
+</TargetVertexes>
+
+<InitialValuation>
+<DataObject id="credit_assessment" bpmn_camundaid="credit_assessment" bpmn_dolabel="credit_assessment">B</DataObject>
+<DataObject id="application_status" bpmn_camundaid="application_status" bpmn_dolabel="application_status">complete</DataObject>
+<DataObject id="eligibility_status" bpmn_camundaid="eligibility_status" bpmn_dolabel="eligibility_status">eligible</DataObject>
+</InitialValuation>
+
+</LearningScenario>

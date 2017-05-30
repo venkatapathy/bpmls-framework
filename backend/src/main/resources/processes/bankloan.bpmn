@@ -1,0 +1,1464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.6.0">
+  <bpmn:collaboration id="Collaboration_180kh9z">
+    <bpmn:participant id="loanprovider" name="Loan Provider" processRef="bankloan" />
+  </bpmn:collaboration>
+  <bpmn:process id="bankloan" name="Bank Loan" isExecutable="true">
+    <bpmn:documentation>This process describes what are the tasks and process involved in bank loan process</bpmn:documentation>
+    <bpmn:laneSet>
+      <bpmn:lane id="loanapplicant" name="Loan Applicant">
+        <bpmn:flowNodeRef>updateloanapplication</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>loan_request_application</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_1t1g6tx</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_1dok5zi</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>view_rejected_application</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>view_loan_agreement</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="loanofficer" name="Loan Officer">
+        <bpmn:flowNodeRef>checkformcompleteness</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ExclusiveGateway_18xyco9</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ExclusiveGateway_1boqg70</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>assess_eligibility</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>prepare_pack</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>verify_and_take_decision</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="financeofficer" name="Finance Officer">
+        <bpmn:flowNodeRef>check_credit_history</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>assess_loan_risk</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="propertyappraiser" name="Property Appraiser">
+        <bpmn:flowNodeRef>appraise_property</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_18xyco9">
+      <bpmn:incoming>formcheck</bpmn:incoming>
+      <bpmn:outgoing>formincompletecondition</bpmn:outgoing>
+      <bpmn:outgoing>formcompletecondition</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:scriptTask id="checkformcompleteness" name="Check Form Completeness" scriptFormat="Groovy">
+      <bpmn:incoming>SequenceFlow_0kfgbs0</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_05l433d</bpmn:incoming>
+      <bpmn:outgoing>formcheck</bpmn:outgoing>
+      <bpmn:script><![CDATA[
+	application_identifier = execution.getVariable ("ProcessInstanceId");
+	execution.setVariable ("application_identifier",
+	application_identifier);
+	execution.setVariable ("application_submission_date", (new Date()).format("dd/MM/yyyy"));]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="updateloanapplication" name="Update Loan Application">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="applicant_name" label="Applicant Name" type="string" />
+          <camunda:formField id="applicant_surname" label="Applicant Surname" type="string" />
+          <camunda:formField id="applicant_email" label="Applicant Email" type="string" />
+          <camunda:formField id="current_employer" label="Current Employer" type="string" />
+          <camunda:formField id="monthly_net_revenue" label="Monthly Net Revenue" type="string" />
+          <camunda:formField id="account_type" label="Account Type" type="string" />
+          <camunda:formField id="account_number" label="Account Number" type="long" />
+          <camunda:formField id="account_balance" label="Account Balance" type="long" />
+          <camunda:formField id="property_type" label="Property Type" type="string" />
+          <camunda:formField id="property_address" label="Property Address" type="string" />
+          <camunda:formField id="purchasing_price" label="Purchasing Price" type="long" />
+          <camunda:formField id="loan_type" label="Loan Type" type="string" />
+          <camunda:formField id="loan_provider" label="Loan Provider" type="string" />
+          <camunda:formField id="loan_amount" label="Loan Amount" type="long" />
+          <camunda:formField id="loan_duration" label="Loan Duration" type="string" />
+          <camunda:formField id="loan_start_date" label="Loan Start Date" type="date" />
+          <camunda:formField id="loan_end_date" label="Loan End Date" type="date" />
+          <camunda:formField id="interest_type" label="Interest Type" type="enum">
+            <camunda:value id="variable" name="Variable" />
+            <camunda:value id="fixed" name="Fixed" />
+          </camunda:formField>
+          <camunda:formField id="interest_rate" label="Interest Rate" type="long" />
+          <camunda:formField id="application_identifier" label="Application Identifier" type="string" />
+          <camunda:formField id="application_submission_date" label="Application Submission Date" type="date" />
+          <camunda:formField id="application_status" label="Application Status" type="enum">
+            <camunda:value id="complete" name="Complete" />
+            <camunda:value id="incomplete" name="Incomplete" />
+            <camunda:value id="rejected" name="Rejected" />
+            <camunda:value id="cancelled" name="Cancelled" />
+            <camunda:value id="approved" name="Approved" />
+          </camunda:formField>
+          <camunda:formField id="comment_on_status" label="Comment on Status" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>formincompletecondition</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_05l433d</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1u2vify" sourceRef="StartEvent_1" targetRef="loan_request_application" />
+    <bpmn:sequenceFlow id="SequenceFlow_0kfgbs0" sourceRef="loan_request_application" targetRef="checkformcompleteness" />
+    <bpmn:sequenceFlow id="formcheck" name="Check Form Completeness" sourceRef="checkformcompleteness" targetRef="ExclusiveGateway_18xyco9" />
+    <bpmn:sequenceFlow id="formincompletecondition" name="Form Incomplete" sourceRef="ExclusiveGateway_18xyco9" targetRef="updateloanapplication">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${application_status=='incomplete'}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="formcompletecondition" name="Form Complete" sourceRef="ExclusiveGateway_18xyco9" targetRef="check_credit_history">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${application_status=='complete'}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1rp5sx0" sourceRef="check_credit_history" targetRef="assess_loan_risk" />
+    <bpmn:sequenceFlow id="SequenceFlow_05l433d" sourceRef="updateloanapplication" targetRef="checkformcompleteness" />
+    <bpmn:userTask id="loan_request_application" name="Loan Request Application">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="applicant_name" label="Applicant Name" type="string" />
+          <camunda:formField id="applicant_surname" label="Applicant Surname" type="string" />
+          <camunda:formField id="applicant_email" label="Applicant Email" type="string" />
+          <camunda:formField id="current_employer" label="Current Employer" type="string" />
+          <camunda:formField id="monthly_net_revenue" label="Monthly Net Revenue" type="string" />
+          <camunda:formField id="account_type" label="Account Type" type="string" />
+          <camunda:formField id="account_number" label="Account Number" type="long" />
+          <camunda:formField id="account_balance" label="Account Balance" type="long" />
+          <camunda:formField id="property_type" label="Property Type" type="string" />
+          <camunda:formField id="property_address" label="Property Address" type="string" />
+          <camunda:formField id="purchasing_price" label="Purchasing Price" type="long" />
+          <camunda:formField id="loan_type" label="Loan Type" type="string" />
+          <camunda:formField id="loan_provider" label="Loan Provider" type="string" />
+          <camunda:formField id="loan_amount" label="Loan Amount" type="long" />
+          <camunda:formField id="loan_duration" label="Loan Duration" type="string" />
+          <camunda:formField id="interest_type" label="Interest Type" type="enum">
+            <camunda:value id="variable" name="Variable" />
+            <camunda:value id="fixed" name="Fixed" />
+          </camunda:formField>
+          <camunda:formField id="interest_rate" label="Interest Rate" type="long" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1u2vify</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0kfgbs0</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:startEvent id="StartEvent_1" name="Customer Starts the Request">
+      <bpmn:outgoing>SequenceFlow_1u2vify</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="check_credit_history" name="Check Credit History">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="applicant_name" label="Applicant Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="applicant_surname" label="Applicant Surname" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="applicant_email" label="Applicant Email" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="current_employer" label="Current Employer" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="monthly_net_revenue" label="Monthly Net Revenue" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_type" label="Account Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_number" label="Account Number" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_balance" label="Account Balance" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="property_type" label="Property Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="property_address" label="Property Address" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="purchasing_price" label="Purchasing Price" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_type" label="Loan Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_provider" label="Loan Provider" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_amount" label="Loan Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_duration" label="Loan Duration" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="interest_type" label="Interest Type" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="variable" name="Variable" />
+            <camunda:value id="fixed" name="Fixed" />
+          </camunda:formField>
+          <camunda:formField id="interest_rate" label="Interest Rate" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="application_identifier" label="Application Identifier" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="application_status" label="Application Status" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="complete" name="Complete" />
+            <camunda:value id="incomplete" name="Incomplete" />
+            <camunda:value id="rejected" name="Rejected" />
+            <camunda:value id="cancelled" name="Cancelled" />
+            <camunda:value id="approved" name="Approved" />
+          </camunda:formField>
+          <camunda:formField id="comment_on_status" label="Comment on Status" type="string" />
+          <camunda:formField id="finance_officer_identifer" label="Finance Officer Identifier" type="string" />
+          <camunda:formField id="court_judgement_information" type="string" />
+          <camunda:formField id="bankruptcy_information" label="Bankruptcy Information" type="string" />
+          <camunda:formField id="credit_assessment" label="Credit Assessment" type="enum">
+            <camunda:value id="B" name="B" />
+            <camunda:value id="A" name="A" />
+          </camunda:formField>
+          <camunda:formField id="loan_application_history_amount" label="Previous Loan Amount" type="long" />
+          <camunda:formField id="loan_application_history_duration" label="Previous Credit Durato" type="string" />
+          <camunda:formField id="loan_application_history_overdue" label="Previous Loan Overdue" type="long" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>formcompletecondition</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1rp5sx0</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="assess_loan_risk" name="Assess Loan Risk" scriptFormat="Groovy">
+      <bpmn:incoming>SequenceFlow_1rp5sx0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1iilpl2</bpmn:outgoing>
+      <bpmn:script><![CDATA[
+if(credit_assessment=='B'){
+	execution.setVariable ("risk_weight",0);
+} else if(credit_assessment=='B'){
+	execution.setVariable ("risk_weight",20);
+}else if(credit_assessment=='B'){
+	execution.setVariable ("risk_weight",40);
+}else if(credit_assessment=='B'){
+	execution.setVariable ("risk_weight",60);
+}else if(credit_assessment=='B'){
+	execution.setVariable ("risk_weight",80);
+}else if(credit_assessment=='B'){
+	execution.setVariable ("risk_weight",100);
+}]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1iilpl2" sourceRef="assess_loan_risk" targetRef="appraise_property" />
+    <bpmn:sequenceFlow id="SequenceFlow_03df2da" sourceRef="appraise_property" targetRef="assess_eligibility" />
+    <bpmn:sequenceFlow id="SequenceFlow_1uej1ou" sourceRef="assess_eligibility" targetRef="ExclusiveGateway_1boqg70" />
+    <bpmn:sequenceFlow id="SequenceFlow_0vemp8s" sourceRef="prepare_pack" targetRef="verify_and_take_decision" />
+    <bpmn:sequenceFlow id="SequenceFlow_1entk7m" name="If Eligible" sourceRef="ExclusiveGateway_1boqg70" targetRef="prepare_pack">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${eligibility_status=='eligible'}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0kfi26c" name="If Ineligible" sourceRef="ExclusiveGateway_1boqg70" targetRef="view_rejected_application">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${eligibility_status=='ineligible'}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1boqg70">
+      <bpmn:incoming>SequenceFlow_1uej1ou</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1entk7m</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0kfi26c</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_01bo0z7" sourceRef="view_rejected_application" targetRef="EndEvent_1dok5zi" />
+    <bpmn:sequenceFlow id="SequenceFlow_0klfdt2" sourceRef="verify_and_take_decision" targetRef="view_loan_agreement" />
+    <bpmn:sequenceFlow id="SequenceFlow_16umbus" sourceRef="view_loan_agreement" targetRef="EndEvent_1t1g6tx" />
+    <bpmn:endEvent id="EndEvent_1t1g6tx">
+      <bpmn:incoming>SequenceFlow_16umbus</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="appraise_property" name="Appraise Property">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="application_identifier" label="Application Identifier" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_1_name" label="Surrounding Properties 1: Name" type="string" />
+          <camunda:formField id="surrounding_properties_1_value" label="Surrounding Properties 1: Value" type="long" />
+          <camunda:formField id="surrounding_properties_2_name" label="Surrounding Properties 2: Name" type="string" />
+          <camunda:formField id="surrounding_properties_2_value" label="Surrounding Properties 2: Value" type="long" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1iilpl2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_03df2da</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="assess_eligibility" name="Assess Eligibility">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="applicant_name" label="Applicant Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="applicant_surname" label="Applicant Surname" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="applicant_email" label="Applicant Email" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="current_employer" label="Current Employer" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="monthly_net_revenue" label="Monthly Net Revenue" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_type" label="Account Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_number" label="Account Number" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_balance" label="Account Balance" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="property_type" label="Property Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="property_address" label="Property Address" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="purchasing_price" label="Purchasing Price" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_type" label="Loan Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_provider" label="Loan Provider" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_amount" label="Loan Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_duration" label="Loan Duration" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="interest_type" label="Interest Type" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="variable" name="Variable" />
+            <camunda:value id="fixed" name="Fixed" />
+          </camunda:formField>
+          <camunda:formField id="interest_rate" label="Interest Rate" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="application_identifier" label="Application Identifier" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="application_status" label="Application Status" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="complete" name="Complete" />
+            <camunda:value id="incomplete" name="Incomplete" />
+            <camunda:value id="rejected" name="Rejected" />
+            <camunda:value id="cancelled" name="Cancelled" />
+            <camunda:value id="approved" name="Approved" />
+          </camunda:formField>
+          <camunda:formField id="comment_on_status" label="Comment on Status" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="finance_officer_identifer" label="Finance Officer Identifier" type="string" />
+          <camunda:formField id="court_judgement_information" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="bankruptcy_information" label="Bankruptcy Information" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="credit_assessment" label="Credit Assessment" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="A" name="A" />
+            <camunda:value id="B" name="B" />
+          </camunda:formField>
+          <camunda:formField id="loan_application_history_amount" label="Previous Loan Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_application_history_duration" label="Previous Credit Durato" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_application_history_overdue" label="Previous Loan Overdue" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_1_name" label="Surrounding Properties 1: Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_1_value" label="Surrounding Properties 1: Value" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_2_name" label="Surrounding Properties 2: Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_2_value" label="Surrounding Properties 2: Value" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="risk_weight" label="Assigned Risk Weight" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="eligibility_status" label="Eligibility Status" type="enum">
+            <camunda:value id="eligible" name="eligible" />
+            <camunda:value id="ineligible" name="ineligible" />
+          </camunda:formField>
+          <camunda:formField id="comment_on_eligibility" label="Comment On Eligibility" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_03df2da</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1uej1ou</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="EndEvent_1dok5zi">
+      <bpmn:incoming>SequenceFlow_01bo0z7</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="view_rejected_application" name="View Rejected Application">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="applicant_name" label="Applicant Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="applicant_surname" label="Applicant Surname" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="applicant_email" label="Applicant Email" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="current_employer" label="Current Employer" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="monthly_net_revenue" label="Monthly Net Revenue" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_type" label="Account Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_number" label="Account Number" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_balance" label="Account Balance" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="property_type" label="Property Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="property_address" label="Property Address" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="purchasing_price" label="Purchasing Price" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_type" label="Loan Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_provider" label="Loan Provider" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_amount" label="Loan Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_duration" label="Loan Duration" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_start_date" label="Loan Start Date" type="date">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_end_date" label="Loan End Date" type="date">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="interest_type" label="Interest Type" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="variable" name="Variable" />
+            <camunda:value id="fixed" name="Fixed" />
+          </camunda:formField>
+          <camunda:formField id="interest_rate" label="Interest Rate" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="application_identifier" label="Application Identifier" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="application_submission_date" label="Application Submission Date" type="date">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="application_status" label="Application Status" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="complete" name="Complete" />
+            <camunda:value id="incomplete" name="Incomplete" />
+            <camunda:value id="rejected" name="Rejected" />
+            <camunda:value id="cancelled" name="Cancelled" />
+            <camunda:value id="approved" name="Approved" />
+          </camunda:formField>
+          <camunda:formField id="comment_on_status" label="Comment on Status" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="finance_officer_identifer" label="Finance Officer Identifier" type="string" />
+          <camunda:formField id="court_judgement_information" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="bankruptcy_information" label="Bankruptcy Information" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="credit_assessment" label="Credit Assessment" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="B" name="B" />
+          </camunda:formField>
+          <camunda:formField id="loan_application_history_amount" label="Previous Loan Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_application_history_duration" label="Previous Credit Durato" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_application_history_overdue" label="Previous Loan Overdue" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_1_name" label="Surrounding Properties 1: Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_1_value" label="Surrounding Properties 1: Value" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_2_name" label="Surrounding Properties 2: Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_2_value" label="Surrounding Properties 2: Value" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="risk_weight" label="Assigned Risk Weight" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="eligibility_status" label="Eligibility Status" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="eligible" name="eligible" />
+            <camunda:value id="ineligible" name="ineligible" />
+          </camunda:formField>
+          <camunda:formField id="comment_on_eligibility" label="Comment On Eligibility" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0kfi26c</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_01bo0z7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="prepare_pack" name="Prepare Loan Acceptance Pack">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="applicant_name" label="Applicant Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="applicant_surname" label="Applicant Surname" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="applicant_email" label="Applicant Email" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="current_employer" label="Current Employer" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="monthly_net_revenue" label="Monthly Net Revenue" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_type" label="Account Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_number" label="Account Number" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_balance" label="Account Balance" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="property_type" label="Property Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="property_address" label="Property Address" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="purchasing_price" label="Purchasing Price" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_type" label="Loan Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_provider" label="Loan Provider" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_amount" label="Loan Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_duration" label="Loan Duration" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="interest_type" label="Interest Type" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="variable" name="Variable" />
+            <camunda:value id="fixed" name="Fixed" />
+          </camunda:formField>
+          <camunda:formField id="interest_rate" label="Interest Rate" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="application_identifier" label="Application Identifier" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="application_status" label="Application Status" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="complete" name="Complete" />
+            <camunda:value id="incomplete" name="Incomplete" />
+            <camunda:value id="rejected" name="Rejected" />
+            <camunda:value id="cancelled" name="Cancelled" />
+            <camunda:value id="approved" name="Approved" />
+          </camunda:formField>
+          <camunda:formField id="comment_on_status" label="Comment on Status" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="finance_officer_identifer" label="Finance Officer Identifier" type="string" />
+          <camunda:formField id="court_judgement_information" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="bankruptcy_information" label="Bankruptcy Information" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="credit_assessment" label="Credit Assessment" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="A" name="A" />
+            <camunda:value id="B" name="B" />
+          </camunda:formField>
+          <camunda:formField id="loan_application_history_amount" label="Previous Loan Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_application_history_duration" label="Previous Credit Durato" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_application_history_overdue" label="Previous Loan Overdue" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_1_name" label="Surrounding Properties 1: Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_1_value" label="Surrounding Properties 1: Value" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_2_name" label="Surrounding Properties 2: Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_2_value" label="Surrounding Properties 2: Value" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="risk_weight" label="Assigned Risk Weight" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="eligibility_status" label="Eligibility Status" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+            <camunda:value id="eligible" name="eligible" />
+            <camunda:value id="ineligible" name="ineligible" />
+          </camunda:formField>
+          <camunda:formField id="comment_on_eligibility" label="Comment On Eligibility" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="additional_cost_on_loan" label="Additional Cost On Loan" type="long" />
+          <camunda:formField id="loan_terms_and_conditions" label="Loan Terms and Conditions" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1entk7m</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0vemp8s</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="verify_and_take_decision" name="Verify Loan Agreement and Take Final Decision">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="applicant_name" label="Applicant Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="applicant_surname" label="Applicant Surname" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="applicant_email" label="Applicant Email" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="current_employer" label="Current Employer" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="monthly_net_revenue" label="Monthly Net Revenue" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_type" label="Account Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_number" label="Account Number" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_balance" label="Account Balance" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="property_type" label="Property Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="property_address" label="Property Address" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="purchasing_price" label="Purchasing Price" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_type" label="Loan Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_provider" label="Loan Provider" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_amount" label="Loan Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_duration" label="Loan Duration" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="interest_type" label="Interest Type" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="variable" name="Variable" />
+            <camunda:value id="fixed" name="Fixed" />
+          </camunda:formField>
+          <camunda:formField id="interest_rate" label="Interest Rate" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="application_identifier" label="Application Identifier" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="application_status" label="Application Status" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="complete" name="Complete" />
+            <camunda:value id="incomplete" name="Incomplete" />
+            <camunda:value id="rejected" name="Rejected" />
+            <camunda:value id="cancelled" name="Cancelled" />
+            <camunda:value id="approved" name="Approved" />
+          </camunda:formField>
+          <camunda:formField id="comment_on_status" label="Comment on Status" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="finance_officer_identifer" label="Finance Officer Identifier" type="string" />
+          <camunda:formField id="court_judgement_information" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="bankruptcy_information" label="Bankruptcy Information" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="credit_assessment" label="Credit Assessment" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="B" name="B" />
+            <camunda:value id="A" name="A" />
+          </camunda:formField>
+          <camunda:formField id="loan_application_history_amount" label="Previous Loan Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_application_history_duration" label="Previous Credit Durato" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_application_history_overdue" label="Previous Loan Overdue" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_1_name" label="Surrounding Properties 1: Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_1_value" label="Surrounding Properties 1: Value" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_2_name" label="Surrounding Properties 2: Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_2_value" label="Surrounding Properties 2: Value" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="risk_weight" label="Assigned Risk Weight" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="eligibility_status" label="Eligibility Status" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+            <camunda:value id="eligible" name="eligible" />
+            <camunda:value id="ineligible" name="ineligible" />
+          </camunda:formField>
+          <camunda:formField id="comment_on_eligibility" label="Comment On Eligibility" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="additional_cost_on_loan" label="Additional Cost On Loan" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_terms_and_conditions" label="Loan Terms and Conditions" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="conditions_agreed" label="Conditions Looks good?" type="boolean" />
+          <camunda:formField id="repayment_agreed" label="Repayment Agreed?" type="boolean" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0vemp8s</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0klfdt2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="view_loan_agreement" name="View Loan Agreement">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="applicant_name" label="Applicant Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="applicant_surname" label="Applicant Surname" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="applicant_email" label="Applicant Email" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="current_employer" label="Current Employer" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="monthly_net_revenue" label="Monthly Net Revenue" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_type" label="Account Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_number" label="Account Number" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="account_balance" label="Account Balance" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="property_type" label="Property Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="property_address" label="Property Address" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="purchasing_price" label="Purchasing Price" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_type" label="Loan Type" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_provider" label="Loan Provider" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_amount" label="Loan Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_duration" label="Loan Duration" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="interest_type" label="Interest Type" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="variable" name="Variable" />
+            <camunda:value id="fixed" name="Fixed" />
+          </camunda:formField>
+          <camunda:formField id="interest_rate" label="Interest Rate" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="application_identifier" label="Application Identifier" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="application_status" label="Application Status" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="complete" name="Complete" />
+            <camunda:value id="incomplete" name="Incomplete" />
+            <camunda:value id="rejected" name="Rejected" />
+            <camunda:value id="cancelled" name="Cancelled" />
+            <camunda:value id="approved" name="Approved" />
+          </camunda:formField>
+          <camunda:formField id="comment_on_status" label="Comment on Status" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="finance_officer_identifer" label="Finance Officer Identifier" type="string" />
+          <camunda:formField id="court_judgement_information" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="bankruptcy_information" label="Bankruptcy Information" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="credit_assessment" label="Credit Assessment" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+            <camunda:value id="A" name="A" />
+            <camunda:value id="B" name="B" />
+          </camunda:formField>
+          <camunda:formField id="loan_application_history_amount" label="Previous Loan Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_application_history_duration" label="Previous Credit Durato" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_application_history_overdue" label="Previous Loan Overdue" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_1_name" label="Surrounding Properties 1: Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_1_value" label="Surrounding Properties 1: Value" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_2_name" label="Surrounding Properties 2: Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="surrounding_properties_2_value" label="Surrounding Properties 2: Value" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="risk_weight" label="Assigned Risk Weight" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="eligibility_status" label="Eligibility Status" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+            <camunda:value id="eligible" name="eligible" />
+            <camunda:value id="ineligible" name="ineligible" />
+          </camunda:formField>
+          <camunda:formField id="comment_on_eligibility" label="Comment On Eligibility" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="additional_cost_on_loan" label="Additional Cost On Loan" type="long" />
+          <camunda:formField id="loan_terms_and_conditions" label="Loan Terms and Conditions" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0klfdt2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_16umbus</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_180kh9z">
+      <bpmndi:BPMNShape id="Participant_0nkrz2q_di" bpmnElement="loanprovider">
+        <dc:Bounds x="110" y="57" width="1298" height="506" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1y2om6g_di" bpmnElement="loan_request_application">
+        <dc:Bounds x="278" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_18xyco9_di" bpmnElement="ExclusiveGateway_18xyco9" isMarkerVisible="true">
+        <dc:Bounds x="530" y="238" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="555" y="288" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="195" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="171" y="135" width="83" height="25" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1yo8squ_di" bpmnElement="checkformcompleteness">
+        <dc:Bounds x="347" y="223" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1hk5adx_di" bpmnElement="check_credit_history">
+        <dc:Bounds x="347" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1cdatwz_di" bpmnElement="updateloanapplication">
+        <dc:Bounds x="505" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1u2vify_di" bpmnElement="SequenceFlow_1u2vify">
+        <di:waypoint xsi:type="dc:Point" x="231" y="117" />
+        <di:waypoint xsi:type="dc:Point" x="278" y="117" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="255" y="102" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kfgbs0_di" bpmnElement="SequenceFlow_0kfgbs0">
+        <di:waypoint xsi:type="dc:Point" x="328" y="157" />
+        <di:waypoint xsi:type="dc:Point" x="328" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="347" y="263" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="343" y="210" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1xyr6u3_di" bpmnElement="formcheck">
+        <di:waypoint xsi:type="dc:Point" x="447" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="530" y="263" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="453" y="228.00268411393932" width="71" height="25" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_17obl3y_di" bpmnElement="formincompletecondition">
+        <di:waypoint xsi:type="dc:Point" x="555" y="238" />
+        <di:waypoint xsi:type="dc:Point" x="555" y="157" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="559" y="217.975" width="83" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1tiewka_di" bpmnElement="formcompletecondition">
+        <di:waypoint xsi:type="dc:Point" x="555" y="288" />
+        <di:waypoint xsi:type="dc:Point" x="555" y="313" />
+        <di:waypoint xsi:type="dc:Point" x="397" y="313" />
+        <di:waypoint xsi:type="dc:Point" x="397" y="345" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="450" y="297" width="77" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rp5sx0_di" bpmnElement="SequenceFlow_1rp5sx0">
+        <di:waypoint xsi:type="dc:Point" x="447" y="385" />
+        <di:waypoint xsi:type="dc:Point" x="505" y="385" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="476" y="370" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_05l433d_di" bpmnElement="SequenceFlow_05l433d">
+        <di:waypoint xsi:type="dc:Point" x="505" y="116" />
+        <di:waypoint xsi:type="dc:Point" x="397" y="116" />
+        <di:waypoint xsi:type="dc:Point" x="397" y="223" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="451" y="101" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Lane_0tu9xi7_di" bpmnElement="loanapplicant">
+        <dc:Bounds x="139.5" y="57" width="1267.6769911504425" height="133" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_11gxd07_di" bpmnElement="loanofficer">
+        <dc:Bounds x="139.5" y="190" width="1267.6769911504425" height="133" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0pp6mxi_di" bpmnElement="financeofficer">
+        <dc:Bounds x="139.5" y="323" width="1267.6769911504425" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1kkkz1x_di" bpmnElement="propertyappraiser">
+        <dc:Bounds x="139.5" y="443" width="1267.6769911504425" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0d5zmfw_di" bpmnElement="assess_loan_risk">
+        <dc:Bounds x="505" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1iilpl2_di" bpmnElement="SequenceFlow_1iilpl2">
+        <di:waypoint xsi:type="dc:Point" x="555" y="425" />
+        <di:waypoint xsi:type="dc:Point" x="555" y="461" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="570" y="443" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_03df2da_di" bpmnElement="SequenceFlow_03df2da">
+        <di:waypoint xsi:type="dc:Point" x="605" y="501" />
+        <di:waypoint xsi:type="dc:Point" x="630" y="501" />
+        <di:waypoint xsi:type="dc:Point" x="630" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="656" y="263" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="645" y="382" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1uej1ou_di" bpmnElement="SequenceFlow_1uej1ou">
+        <di:waypoint xsi:type="dc:Point" x="756" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="829" y="263" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="793" y="248" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0vemp8s_di" bpmnElement="SequenceFlow_0vemp8s">
+        <di:waypoint xsi:type="dc:Point" x="1055" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="1170" y="263" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1113" y="248" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1boqg70_di" bpmnElement="ExclusiveGateway_1boqg70" isMarkerVisible="true">
+        <dc:Bounds x="829.1769911504425" y="238" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="855" y="288" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1entk7m_di" bpmnElement="SequenceFlow_1entk7m">
+        <di:waypoint xsi:type="dc:Point" x="879" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="955" y="263" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="885" y="243" width="45" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kfi26c_di" bpmnElement="SequenceFlow_0kfi26c">
+        <di:waypoint xsi:type="dc:Point" x="854" y="238" />
+        <di:waypoint xsi:type="dc:Point" x="854" y="194" />
+        <di:waypoint xsi:type="dc:Point" x="854" y="194" />
+        <di:waypoint xsi:type="dc:Point" x="854" y="149" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="857" y="197" width="55" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_01bo0z7_di" bpmnElement="SequenceFlow_01bo0z7">
+        <di:waypoint xsi:type="dc:Point" x="904" y="109" />
+        <di:waypoint xsi:type="dc:Point" x="926" y="109" />
+        <di:waypoint xsi:type="dc:Point" x="926" y="109" />
+        <di:waypoint xsi:type="dc:Point" x="949" y="109" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="941" y="109" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0klfdt2_di" bpmnElement="SequenceFlow_0klfdt2">
+        <di:waypoint xsi:type="dc:Point" x="1220" y="223" />
+        <di:waypoint xsi:type="dc:Point" x="1220" y="157" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1235" y="190" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1t1g6tx_di" bpmnElement="EndEvent_1t1g6tx">
+        <dc:Bounds x="1347.1769911504425" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1366" y="135" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_16umbus_di" bpmnElement="SequenceFlow_16umbus">
+        <di:waypoint xsi:type="dc:Point" x="1270" y="117" />
+        <di:waypoint xsi:type="dc:Point" x="1347" y="117" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1309" y="102" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0digfq8_di" bpmnElement="appraise_property">
+        <dc:Bounds x="505" y="461" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1169jqc_di" bpmnElement="assess_eligibility">
+        <dc:Bounds x="656" y="223" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0inx0ss_di" bpmnElement="EndEvent_1dok5zi">
+        <dc:Bounds x="949" y="91" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="967" y="127" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0cmwet7_di" bpmnElement="view_rejected_application">
+        <dc:Bounds x="804" y="69" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_04kt275_di" bpmnElement="prepare_pack">
+        <dc:Bounds x="955" y="223" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0zx2js7_di" bpmnElement="verify_and_take_decision">
+        <dc:Bounds x="1170" y="223" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0d0wqqq_di" bpmnElement="view_loan_agreement">
+        <dc:Bounds x="1170" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

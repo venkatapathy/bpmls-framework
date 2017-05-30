@@ -9,7 +9,7 @@
 }
 
 .highlight-available-overlay {
-  background-color: white; /* color elements as green */
+  background-color: red; /* color elements as green */
   opacity: 0.4;
   pointer-events: none; /* no pointer events, allows clicking through onto the element */
 }

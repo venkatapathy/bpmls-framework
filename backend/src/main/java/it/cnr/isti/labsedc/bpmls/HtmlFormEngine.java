@@ -214,8 +214,11 @@ public class HtmlFormEngine {
 		String hint = null;
 		for (DataObject dov : ls.getDataObject()) {
 			if (dov.getBpmnCamundaid().equals(formField.getId())) {
-				// expected value is mandatory
-				defaultValue = dov.getExpectedValue().getValue();
+				
+				if(dov.getExpectedValue()!=null){
+					defaultValue = dov.getExpectedValue().getValue();
+				}
+				
 				if (dov.getDoHint() != null) {
 					hint = dov.getDoHint().getValue();
 				}

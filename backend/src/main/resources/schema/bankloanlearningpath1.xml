@@ -1,8 +1,8 @@
-<LearningPath competencyid="" id="learningpath1" name="Learning Path1" processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<LearningPath competencyid="" id="bankloan" name="A Learning Path for a Loan Officer involved in Bank Loan Process" processid="bankloan" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
 <learningcontexthint>
 <![CDATA[<html>
        
-        Hint for the LearningPath
+        This Learning Path gives a general introduction about a Bank loan process from the Loan Officer perspective. It also includes various scenarios that will help the bank officer decide when to accept a loan, when to reject, and how to communicate to the Applicant and various other procedures involved in Assessing a Loan application and Granting of Loan for a Customer.
        
         
      ]]>
@@ -25,15 +25,8 @@
 <LearningGoals>
 <LearningGoal id="">
 <LearningScenarios>
-<LearningScenario lsid="learningscenario1"/>
+<LearningScenario lsid="bank_loan_general_demo_scenario"/>
 
-</LearningScenarios>
-<KPIs>
-</KPIs>
-</LearningGoal>
-<LearningGoal id="">
-<LearningScenarios>
-<LearningScenario lsid="learningscenario2"/>
 </LearningScenarios>
 <KPIs>
 </KPIs>
