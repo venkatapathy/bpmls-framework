@@ -20,7 +20,7 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="TargetVertexes" maxOccurs="1" minOccurs="1">
+        <xs:element name="TargetVertexes">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="vertex" maxOccurs="unbounded" minOccurs="1">
@@ -62,7 +62,7 @@
                     <xs:element name="DataObject" maxOccurs="unbounded" minOccurs="1">
                       <xs:complexType>
                         <xs:sequence>
-                          <xs:element name="ExpectedValue">
+                          <xs:element name="ExpectedValue" maxOccurs="1" minOccurs="0">
                             <xs:complexType>
                               <xs:simpleContent>
                                 <xs:extension base="xs:string">
@@ -71,7 +71,7 @@
                               </xs:simpleContent>
                             </xs:complexType>
                           </xs:element>
-                          <xs:element name="DoHint">
+                          <xs:element name="DoHint" maxOccurs="1" minOccurs="0">
                             <xs:complexType>
                               <xs:simpleContent>
                                 <xs:extension base="xs:string">

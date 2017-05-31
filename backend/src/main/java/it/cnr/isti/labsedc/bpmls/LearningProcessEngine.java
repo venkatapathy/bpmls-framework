@@ -91,6 +91,8 @@ public interface LearningProcessEngine {
 		
 		@Override
 		public void notify(DelegateTask delegateTask) {
+			//need to flush the jpa repo because this might be called even before lsinst set
+			
 			//when a task is created update the oracle values to its corresponding task
 			LearningScenarioInstance lsInst=lsJpaRepo.findOneByProcessInstanceId(delegateTask.getProcessInstanceId());
 			if(lsInst==null){

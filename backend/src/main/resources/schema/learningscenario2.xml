@@ -1,0 +1,79 @@
+<LearningScenario id="learningscenario2" name="Additional Details" bpmn_processlabel="" bpmn_processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<scenariocontexthint>
+<![CDATA[
+        
+        In this learning scenario we will see how to open a case, and close the case if the solution is working. Imagine we got a problem with our computer: The internet is not working.
+        What would you do? First, You open a ticket to the general support providing them with the information. Later they provide you with a solution. After, You tried their solution and find if it is working, you need to close the ticket.Let us see how we can do it with a Mock scenario
+        
+       
+        
+        
+        
+     ]]>
+</scenariocontexthint>
+
+<Trace>
+<vertex id="opencase" bpmn_activityid="opencase" bpmn_activitylabel=""></vertex>
+<vertex id="analyzecase" bpmn_activityid="analyzecase" bpmn_activitylabel=""></vertex>
+<vertex id="caseresolution" bpmn_activityid="caseresolution" bpmn_activitylabel=""></vertex>
+<vertex id="notifyuser" bpmn_activityid="notifyuser" bpmn_activitylabel=""></vertex>
+<vertex id="checkresolution" bpmn_activityid="checkresolution" bpmn_activitylabel=""></vertex>
+<vertex id="closecase" bpmn_activityid="closecase" bpmn_activitylabel=""></vertex>  
+</Trace>
+<TargetVertexes>
+<vertex id="opencase" bpmn_activityid="opencase" bpmn_activitylabel="opencase">
+<activitycontexthint>
+<![CDATA[
+        
+        <br/>
+        How do you close? By simply checking the option yes in the task form that will be provided below.
+        
+        
+     ]]>
+</activitycontexthint>
+</vertex>
+<vertex id="checkresolution" bpmn_activityid="checkresolution" bpmn_activitylabel="caseresolution">
+<activitycontexthint>
+<![CDATA[
+        
+        <br/>
+        You said Internet is not working. And the General Support helped you with it. Now, your internet is working again, and the General Support has asked you the feedback to close the case. How do you provide? By simply checking the option yes in the task form that will be provided below.
+       
+        
+     ]]>
+</activitycontexthint>
+</vertex>
+
+</TargetVertexes>
+
+<InitialValuation>
+<DataObject id="FormField_caseresolution" bpmn_camundaid="FormField_caseresolution" bpmn_dolabel="FormField_caseresolution">DNS Error- Changed the DNS</DataObject>
+</InitialValuation>
+
+<ValuationOracle>
+<ValuationFunction id="opencase" bpmn_activityid="opencase" bpmn_activitylabel="opencase">
+<DataObject id="" bpmn_camundaid="FormField_caseresolution" bpmn_dolabel="FormField_caseresolution">
+<DoHint id=""><![CDATA[
+        <div >
+        Imagine internet is not working in your system, Give a description that will describe your problem. It is free text and you are allowed to describe in your own words. 
+        </div>
+        
+     ]]></DoHint>
+
+</DataObject>
+</ValuationFunction>
+<ValuationFunction id="checkresolution" bpmn_activityid="checkresolution" bpmn_activitylabel="">
+<DataObject id="" bpmn_camundaid="FormField_issolutionworking" bpmn_dolabel="FormField_issolutionworking">
+<ExpectedValue id="">true</ExpectedValue>
+<DoHint id=""><![CDATA[
+        <div >
+        Just check the box to make complete the task with mentioning that the solution work (for this mock scenario)
+        </div>
+        
+     ]]></DoHint>
+</DataObject>
+
+</ValuationFunction>
+
+</ValuationOracle>
+</LearningScenario>

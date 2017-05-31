@@ -33,8 +33,9 @@ export class DynamicComponentService {
                 diagram.drawSVG('diagram', {
                     // 'x': 30,
                     // 'y': 50,
+                    
                     'line-width': 3,
-                    'maxWidth': 3,//ensures the flowcharts fits within a certian width
+                    'maxWidth': 100,//ensures the flowcharts fits within a certian width
                     'line-length': 80,
                     'text-margin': 10,
                     'font-size': 14,
@@ -182,7 +183,7 @@ export class DynamicComponentService {
                         const elementRegistry = viewer.get('elementRegistry');
                         const taskName = obj.taskid;
                         const shape = elementRegistry.get(taskName);
-
+                        viewer.get('canvas').zoom('fit-viewport');
                         const $overlayHtml = $('<div class="highlight-available-overlay">')
                             .css({
                                 width: shape.width,

@@ -1,4 +1,4 @@
-	package it.cnr.isti.labsedc.bpmls.impl;
+package it.cnr.isti.labsedc.bpmls.impl;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -27,6 +27,7 @@ import it.cnr.isti.labsedc.bpmls.Exceptions.LearningTaskException;
 import it.cnr.isti.labsedc.bpmls.Exceptions.LearningTaskExceptionErrorCodes;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath.LearningGoals.LearningGoal.LearningScenarios.LearningScenario;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.TargetVertexes.Vertex;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction.DataObject;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathInstance;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioEvents;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioInstance;
@@ -106,35 +107,19 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 					return;
 				}
 
-				/*// try parsing it to date
-				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-				Date startDate;
-				try {
-					startDate = df.parse((String) entry.getValue());
-					entry.setValue(startDate);
-					if (entry.getValue() instanceof String) {
-						System.out.println("some problem");
-					}
-				} catch (ParseException e) {
-					// e.printStackTrace();
-					// ignore
-				}*/
+				/*
+				 * // try parsing it to date DateFormat df = new
+				 * SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); Date startDate;
+				 * try { startDate = df.parse((String) entry.getValue());
+				 * entry.setValue(startDate); if (entry.getValue() instanceof
+				 * String) { System.out.println("some problem"); } } catch
+				 * (ParseException e) { // e.printStackTrace(); // ignore }
+				 */
 			}
 		}
 
 		taskServiceCamunda.complete(taskId, taskInputs);
 		updateNextLearningTaskinLearningScenarioInstance(lsInst);
-		// then assign a dummy user
-		// TODO: assign to the actual user
-		Task task;
-		try {
-			task = getCurrentLearningTask(Integer.toString(lsInst.getLpInstance().getLpInstId()));
-			// taskServiceCamunda.setAssignee(task.getId(), "dummmy");
-
-		} catch (LearningPathException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 	}
 
@@ -161,6 +146,30 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 		 * }
 		 */
 
+		// append empty values to other oracle parameters so that the check can
+		// be made full
+		Task task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
+				.singleResult();
+		List<DataObject> orValues=null;
+		try {
+			orValues = lpRepositoryService.getCurrentOracleValuesFromRepo(lsInst.getLsId(), task.getTaskDefinitionKey());
+		} catch (LearningPathException e1) {
+			logger.error("Unexpected Error when trying to get current Oracle values while completing task: "+task.getName()+"for learning"
+					+ "path: "+lsInst.getLsId()+"and Learning Inst id: "+lsInst.getLsInstId()+". Error is:"+e1.getMessage());
+		}
+
+		// for all oracle values
+		if (orValues != null) {
+
+			for (DataObject dO : orValues) {
+				// if not present in input from the user
+				if (taskInputs.get(dO.getId()) == null) {
+					// init with null
+					taskInputs.put(dO.getId(), null);
+				}
+			}
+		}
+
 		List<TaskIncompleteErrorMessage> errMsgList = oracleService.checkOracleValues(lsInst, taskInputs); // call
 																											// the
 																											// oracle
@@ -179,10 +188,10 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 			 * LearningTaskException("Learning Scenario is not running anymore"
 			 * ); }
 			 */
-			Task task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
-					.singleResult();
 
 			this.completeAndUpdateinDB(lsInst, task.getId(), taskInputs);
+			logger.info("Completing a Learning Task:" + task.getTaskDefinitionKey() + " for learning instance: "
+					+ lsInst.getLsId() + " with Inst ID: " + lsInst.getLsInstId());
 			try {
 				simulateNonLearningTasks(lsInst);
 			} catch (LearningPathException e) {
@@ -252,22 +261,18 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 						return;
 					}
 
-					/*// try parsing it to date
-					DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-					Date startDate;
-					try {
-						startDate = df.parse((String) entry.getValue());
-						entry.setValue(startDate);
-						if (entry.getValue() instanceof String) {
-							System.out.println("some problem");
-						}
-					} catch (ParseException e) {
-						// e.printStackTrace();
-						// ignore
-					}*/
+					/*
+					 * // try parsing it to date DateFormat df = new
+					 * SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); Date
+					 * startDate; try { startDate = df.parse((String)
+					 * entry.getValue()); entry.setValue(startDate); if
+					 * (entry.getValue() instanceof String) {
+					 * System.out.println("some problem"); } } catch
+					 * (ParseException e) { // e.printStackTrace(); // ignore }
+					 */
 				}
 			}
-			taskServiceCamunda.complete(task.getId(), map);	
+			taskServiceCamunda.complete(task.getId(), map);
 			task = getCurrentLearningTask(Integer.toString(lsInst.getLpInstance().getLpInstId()));
 		}
 
@@ -289,19 +294,16 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 							return;
 						}
 
-						/*// try parsing it to date
-						DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-						Date startDate;
-						try {
-							startDate = df.parse((String) entry.getValue());
-							entry.setValue(startDate);
-							if (entry.getValue() instanceof String) {
-								System.out.println("some problem");
-							}
-						} catch (ParseException e) {
-							// e.printStackTrace();
-							// ignore
-						}*/
+						/*
+						 * // try parsing it to date DateFormat df = new
+						 * SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); Date
+						 * startDate; try { startDate = df.parse((String)
+						 * entry.getValue()); entry.setValue(startDate); if
+						 * (entry.getValue() instanceof String) {
+						 * System.out.println("some problem"); } } catch
+						 * (ParseException e) { // e.printStackTrace(); //
+						 * ignore }
+						 */
 					}
 				}
 				taskServiceCamunda.complete(task.getId(), map);

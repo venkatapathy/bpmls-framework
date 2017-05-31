@@ -21,6 +21,7 @@
 
 <TargetVertexes>
 
+
 <vertex id="loan_request_application" bpmn_activityid="loan_request_application" bpmn_activitylabel="loan_request_application">
 <activitycontexthint>
 <![CDATA[
@@ -29,7 +30,6 @@
      ]]>
 </activitycontexthint>
 </vertex>
-
 <vertex id="check_credit_history" bpmn_activityid="check_credit_history" bpmn_activitylabel="check_credit_history">
 <activitycontexthint>
 <![CDATA[

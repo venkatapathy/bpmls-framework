@@ -26,13 +26,13 @@
     <bpmn:userTask id="opencase" name="Open Case">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="FormField_casepriority" label="casepriority" type="enum">
+          <camunda:formField id="FormField_casepriority" label="Case Priority" type="enum">
             <camunda:value id="low" name="low" />
             <camunda:value id="medium" name="medium" />
             <camunda:value id="high" name="high" />
           </camunda:formField>
-          <camunda:formField id="FormField_casedescription" label="casedescription" type="string" />
-          <camunda:formField id="FormField_nameoftheuser" label="nameofuser" type="string" />
+          <camunda:formField id="FormField_casedescription" label="Describe your Problem" type="string" />
+          <camunda:formField id="FormField_nameoftheuser" label="Your Name" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0z4nasv</bpmn:incoming>
@@ -60,12 +60,6 @@
             </camunda:validation>
           </camunda:formField>
           <camunda:formField id="FormField_issolutionworking" label="Is Solution Working?" type="boolean" />
-          <camunda:formField id="FormField_datedemo" label="Date Demo" type="date" />
-          <camunda:formField id="FormField_datedemo2" label="DateDemo2" type="date">
-            <camunda:validation>
-              <camunda:constraint name="readonly" config="readonly" />
-            </camunda:validation>
-          </camunda:formField>
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_00wp3uo</bpmn:incoming>

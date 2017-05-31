@@ -26,6 +26,10 @@ export class LearningSimulator implements AfterViewInit {
 
   private lpid: string;
   public lpname: string;
+  private lsname: string;
+  private lscontext: string;
+  private ltname: string;
+  private ltcontext: string;
   //for demo purpose
   private currentDemoStage: any;
   isDemo: boolean = false;
@@ -116,9 +120,33 @@ private static ReviveDateTime(key: any, value: any): any {
 
             const tempStage: string = lpresponse.demostage;
             // console.log(tempStage);
-            this.currentDemoStage = DemoStages[tempStage];
+             //alert(lpresponse.lthint);
+           
+            if(lpresponse.lsname){
+              this.lsname=lpresponse.lsname;
+              // alert(this.lsname);
+            }else{
+              this.lsname=""
+            }
+            if(lpresponse.lshint){
+              this.lscontext=lpresponse.lshint;
+            }else{
+              this.lscontext="No Context information Available";
+            }
+            if(lpresponse.ltname){
+              this.ltname=lpresponse.ltname;
+            }else{
+              this.ltname="";
+            }
+           
 
+            if(lpresponse.lthint){
 
+              this.ltcontext=lpresponse.lthint;
+            }else{
+              this.ltcontext="No Context information Available";
+            }
+            
             // get the prompt
 
 
@@ -148,11 +176,8 @@ private static ReviveDateTime(key: any, value: any): any {
               }
             });
 
-            //for demo purpose
-            if (this.isDemo) {
-              //call demoTour
-              this.demotour();
-            }
+           //scroll to top
+           jQuery('html, body').animate({scrollTop:0}, {duration:1000});
 
           } else if (response.status == 'error') {
 
@@ -216,12 +241,7 @@ private static ReviveDateTime(key: any, value: any): any {
       }
 
     });
-    //for demo purposes
-
-    //if (this.learningEngineService.freshDemo) {
-
-
-    //}
+    
 
 
   }
@@ -245,8 +265,8 @@ private static ReviveDateTime(key: any, value: any): any {
           size: 'lg',
 
         });
-        activeModal.componentInstance.modalHeader = 'Error Acessing Learning Simulator';
-        activeModal.componentInstance.modalContent = response.errorMsg;
+        activeModal.componentInstance.modalHeader = 'Incorrect Responses';
+        activeModal.componentInstance.modalContent = 'Make sure you input what is expected! Checkout Expected value for the correct required Input';
         activeModal.result.then((result) => {
           // redirect to back hom
 

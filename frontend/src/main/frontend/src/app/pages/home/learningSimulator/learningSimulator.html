@@ -1,29 +1,49 @@
-<div  id="completesimulatorwindow">
-<div class="widgets">
-    <div class="row">
-        <div class="col-md-12" id="step1">
-            <ba-card title="Progress of Current Learning Path: {{lpname}}">
+<div id="completesimulatorwindow">
+    <div class="widgets">
+        <div class="row">
+            <div class="col-md-12" id="step1">
+                <ba-card title="Progress of Current Learning Path: {{lpname}}">
 
-                <div style="min-height: 70px;position:absolute" #pathFlowDiagram></div>
-            </ba-card>
+                    <div style="min-height: 70px;position:absolute" #pathFlowDiagram></div>
+                </ba-card>
+            </div>
+
+
         </div>
-
-
     </div>
-</div>
 
-<!--<button (click)="toggleHelp()" type="button" class="btn btn-with-icon" style="color:#FFFFFF; background-color: #008080"><i class="ion-information"></i>Toggle Help</button>-->
-<div class="row">
-    <div class="col-md-5">
-        <div>
+    <!--<button (click)="toggleHelp()" type="button" class="btn btn-with-icon" style="color:#FFFFFF; background-color: #008080"><i class="ion-information"></i>Toggle Help</button>-->
+    <div class="row">
+        <div class="col-md-5">
+            <div>
+                <ba-card title="Current Learning Scenario:{{lsname}}" >
+                    <div style="color:white; background-color: rgba(0,0,0,0.75) ; opacity: 0.9;">
+                        
+                            <h1>{{lsname}} Scenario Context</h1>
 
-            <tabs>
-                <tab [tabTitle]="'Learning Simulator'">
+                            {{lscontext}}
+                        
+                    </div>
+                </ba-card>
 
-                    <ba-card baCardClass="with-scroll">
-                        <div style="min-height: 500px;">
+                 <ba-card title="Current Learning Task:{{ltname}}" >
+                    <div style="color:white; background-color: rgba(0,0,0,0.75) ; opacity: 0.9;">
+                        
+                            <h1>{{ltname}} Task Context</h1>
 
-                            <!--<form #learningForm="ngForm" (ngSubmit)="completeLearning(learningForm)">
+                           {{ltcontext}}
+                        
+                    </div>
+                </ba-card>
+
+                <tabs>
+                    <tab [tabTitle]="'Learning Simulator'">
+
+                        <ba-card baCardClass="with-scroll">
+
+                            <div style="min-height: 500px;">
+
+                                <!--<form #learningForm="ngForm" (ngSubmit)="completeLearning(learningForm)">
                                 <div class="form-group">
                                     <label for="input01">Text</label> <br/>
                                     <material-datepicker disabled></material-datepicker>
@@ -60,41 +80,41 @@
                                     </div></span>
                                 </div>
                             </form> -->
-                            
-                            <div #taskFormContainer></div>
-                        </div>
-                    </ba-card>
-                </tab>
-                <tab tabTitle="Advansced Viewing">
-                    <ba-card title="Business Keys and Values" baCardClass="with-scroll table-panel">
-                        <div style="min-height: 800px;">
-                            <condensed-table></condensed-table>
-                        </div>
-                    </ba-card>
-                </tab>
-                
 
-            </tabs>
+                                <div #taskFormContainer></div>
+                            </div>
+                        </ba-card>
+                    </tab>
+                    <tab tabTitle="Execution Context">
+                        <ba-card title="Business Keys and Values" baCardClass="with-scroll table-panel">
+                            <div style="min-height: 800px;">
+                                <condensed-table></condensed-table>
+                            </div>
+                        </ba-card>
+                    </tab>
 
+
+                </tabs>
+
+            </div>
         </div>
-    </div>
 
-    <!--diagram-->
-    <div class="col-md-7">
-        <div>
-            <ba-card>
-
-
-                <div style="min-height: 500px;position:absolute" #bpmnDiagramContainer>
+        <!--diagram-->
+        <div class="col-md-7">
+            <div>
+                <ba-card>
 
 
-
-                </div>
-            </ba-card>
+                    <div style="min-height: 500px;position:absolute" #bpmnDiagramContainer>
 
 
+
+                    </div>
+                </ba-card>
+
+
+            </div>
         </div>
+        <!-- diagram end-->
     </div>
-    <!-- diagram end-->
-</div>
 </div>

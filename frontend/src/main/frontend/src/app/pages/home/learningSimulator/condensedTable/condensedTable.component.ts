@@ -16,6 +16,7 @@ export class CondensedTable implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+    //alert("hi");
     this.route
       .params
       .subscribe(params => {
@@ -32,6 +33,23 @@ export class CondensedTable implements AfterViewInit {
     });
 
     
+  }
+
+  public refreshTable(){
+     this.route
+      .params
+      .subscribe(params => {
+        // Defaults to 0 if no query param provided.
+        this.lpid = params['id'] || '0';
+         //console.log("initalized lpinstids: " + this.lpid)
+      });
+    this.learningEngineService.getoraclevalues(this.lpid).subscribe(response => {
+      if (response.status == 'success') {
+        //alert(JSON.stringify(response.oracledata));
+
+        this.peopleTableData = response.oracledata;
+      }
+    });
   }
 
 }

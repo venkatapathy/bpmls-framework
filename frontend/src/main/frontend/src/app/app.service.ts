@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, Response,RequestOptions } from '@angular/http';
+import { hostaddress } from '../assets/js/hostaddress';
 
 export type InternalStateType = {
   [key: string]: any
@@ -45,7 +46,7 @@ export class AppState {
     let options = new RequestOptions({ headers: headers });
     // console.log('http://localhost:8080/login', JSON.stringify({ username: username, password: password }), options);
 
-    return this.http.post('http://localhost:8080/login', JSON.stringify({ username: username, password: password }), options)
+    return this.http.post(hostaddress.host + '/login', JSON.stringify({ username: username, password: password }), options)
 
       .map((response: Response) => {
         // login successful if there's a jwt token in the response
@@ -68,7 +69,7 @@ export class AppState {
     let options = new RequestOptions({ headers: headers });
     //console.log('http://localhost:8080/login', JSON.stringify({ username: username, password: password }), options);
 
-    return this.http.post('http://localhost:8080/registernewuser', JSON.stringify({ username: username, password: password }), options)
+    return this.http.post(hostaddress.host + '/registernewuser', JSON.stringify({ username: username, password: password }), options)
 
       .map((response: Response) => {
         // login successful if there's a jwt token in the response
@@ -83,7 +84,7 @@ export class AppState {
     let options = new RequestOptions({ headers: headers });
     //console.log('http://localhost:8080/login', JSON.stringify({ username: username, password: password }), options);
 
-    return this.http.post('http://localhost:8080/authenticateuser', JSON.stringify({ username: username, password: password }), options)
+    return this.http.post(hostaddress.host + '/authenticateuser', JSON.stringify({ username: username, password: password }), options)
 
       .map((response: Response) => {
         // login successful if there's a jwt token in the response

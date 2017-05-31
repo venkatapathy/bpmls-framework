@@ -3,7 +3,7 @@ import { Http, Response, URLSearchParams, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map'
 import { Subject } from 'rxjs/Subject';
-import { hostaddress } from './hostaddress';
+import { hostaddress } from '../../../assets/js/hostaddress';
 
 @Injectable()
 export class LearningEngineService {

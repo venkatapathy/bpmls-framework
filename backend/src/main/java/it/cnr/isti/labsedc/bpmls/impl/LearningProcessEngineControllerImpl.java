@@ -445,7 +445,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 				// now before congradulating, make that learning path status to
 				// completed
 				logger.info("Chaning status of a running LP from running to completed with LPID: " + lpInst.getLpId()
-						+ " and LPInstID: " + lpInst.getLpInstId());
+						+ " and LPInstID: " + lpInst.getLpInstId()+" for User: "+username);
 				lpEngine.getLearningEngineRuntimeService().completeaLearningPath(lpInst);
 
 				ContainerTag resMsg = div()
@@ -506,6 +506,8 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 				// <div class="typography-widget" style="color:#dfb81c"
 				String hint = ls.getScenariocontexthint();
 				if (hint != null) {
+					retJson.put("lsname", ls.getName());
+					retJson.put("lshint", hint);
 					HtmlElementWriter pElement = new HtmlElementWriter("br", true);
 					HtmlElementWriter helpToggleButtonElement = new HtmlElementWriter("button")
 							.attribute("(click)", "toggleHelp()").attribute("type", "button")
@@ -520,24 +522,18 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 							.endElement()
 							.startElement(new HtmlElementWriter("h1").textContent("Task Name:" + task.getName()))
 							.endElement().startElement(new HtmlElementWriter("br", true));
-					HtmlElementWriter hintDivElement = new HtmlElementWriter("div");
-					hintDivElement.attribute("style", "color:#FFFFFF; background-color: #008080").attribute("[hidden]",
-							"helpHidden");
-					hintDivElement.textContent(hint);
-					documentBuilder.startElement(hintDivElement).endElement();
+					
 					htmlRet.append(documentBuilder.getHtmlString());
 				}
 
 				hint = getTaskHint(ls, task.getTaskDefinitionKey());
 				if (hint != null) {
+					retJson.put("ltname", task.getName());
+					retJson.put("lthint", hint);
 					HtmlElementWriter pElement = new HtmlElementWriter("br", true);
 
 					HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(pElement);
-					HtmlElementWriter hintDivElement = new HtmlElementWriter("div");
-					hintDivElement.attribute("style", "color:#FFFFFF; background-color: #008080").attribute("[hidden]",
-							"helpHidden");
-					hintDivElement.textContent(hint);
-					documentBuilder.startElement(hintDivElement).endElement().endElement();
+								
 					htmlRet.append(documentBuilder.startElement(new HtmlElementWriter("br", true))
 							.startElement(new HtmlElementWriter("h1").textContent("Task Form")).endElement()
 							.getHtmlString());
@@ -841,7 +837,8 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 				}
 				// if not already running
 				if (dlp != null) {
-					lparray.put(new JSONObject().put("lpid", lp.getLpId()).put("lpname", dlp.getName()));
+					lparray.put(new JSONObject().put("lpid", lp.getLpId()).put("lpname", dlp.getName()).put("lphint",
+							dlp.getLearningcontexthint()));
 
 				}
 			}
@@ -888,7 +885,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 		try {
 			lpEngine.getLearningEngineRuntimeService().startaLearningPathById(lpid, user);
 
-			logger.info("Starting a Learning path with LP ID: " + lpid);
+			logger.info("Starting a Learning path with LP ID: " + lpid+" for User: "+username);
 			JSONObject retJson = new JSONObject();
 			retJson.put("status", "success").put("lpid", lpid);
 			return retJson.toString();
@@ -1009,8 +1006,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 		try {
 			lpEngine.getLearningEngineTaskService().completeCurrentLearningTask(lsInst, formMap);
 			// if all is well return
-			logger.info("Completing a Learning Task for learning instance: " + lsInst.getLsId() + " with Inst ID: "
-					+ lsInst.getLsInstId());
+			
 		} catch (LearningTaskException e) {
 			JSONArray errArr = new JSONArray();
 			for (TaskIncompleteErrorMessage errTask : e.userInputErrorMsgs) {

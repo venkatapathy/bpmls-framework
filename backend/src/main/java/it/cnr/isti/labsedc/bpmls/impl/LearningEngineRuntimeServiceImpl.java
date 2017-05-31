@@ -362,6 +362,13 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 
 		// set the initial values to the oracle
 		oracleService.updateOracleValuesinit(lsInst, corLS.getInitialValuation().getDataObject());
+		
+		//do it also for the first task because task event called along with start event and wont give time to update oracle values
+		if(corLS.getValuationOracle()!=null && corLS.getValuationOracle().getValuationFunction()!=null && 
+				!corLS.getValuationOracle().getValuationFunction().isEmpty()){
+			oracleService.updateOracleValues(lsInst, corLS.getValuationOracle().getValuationFunction().get(0).getDataObject());
+		}
+		
 		lsRepository.save(lsInst);
 
 		// save everythin

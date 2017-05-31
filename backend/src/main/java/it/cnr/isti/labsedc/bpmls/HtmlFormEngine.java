@@ -228,7 +228,7 @@ public class HtmlFormEngine {
 		if (defaultValue != null && !isReadOnly(formField)) {
 			HtmlElementWriter hintSpan = new HtmlElementWriter(SPAN_ELEMENT)
 					.attribute("class", "help-block regular-text")
-					.attribute("style", "color:#FFFFFF; background-color: #008080").attribute("[hidden]", "helpHidden");
+					.attribute("style", "color:white; background-color: rgba(0,0,0,0.75) ; opacity: 0.9;").attribute("[hidden]", "helpHidden");
 			hintSpan.textContent("Expected Value: &nbsp; &nbsp;" + defaultValue);
 			documentBuilder.startElement(hintSpan).endElement();
 
@@ -237,7 +237,7 @@ public class HtmlFormEngine {
 		if (hint != null && !isReadOnly(formField)) {
 			HtmlElementWriter hintSpan = new HtmlElementWriter(DIV_ELEMENT)
 					.attribute("class", "help-block regular-text")
-					.attribute("style", "color:#FFFFFF; background-color: #008080").attribute("[hidden]", "helpHidden");
+					.attribute("style", "color:white; background-color: rgba(0,0,0,0.75) ; opacity: 0.9;").attribute("[hidden]", "helpHidden");
 			hintSpan.textContent("Hint: &nbsp; &nbsp;" + hint);
 			documentBuilder.startElement(new HtmlElementWriter("br", true)).startElement(hintSpan).endElement()
 					.startElement(new HtmlElementWriter("br", true));

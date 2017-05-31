@@ -16,8 +16,8 @@
         <bpmn:flowNodeRef>view_loan_agreement</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="loanofficer" name="Loan Officer">
-        <bpmn:flowNodeRef>checkformcompleteness</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>ExclusiveGateway_18xyco9</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>checkformcompleteness</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>ExclusiveGateway_1boqg70</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>assess_eligibility</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>prepare_pack</bpmn:flowNodeRef>
@@ -40,6 +40,11 @@
       <bpmn:incoming>SequenceFlow_0kfgbs0</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_05l433d</bpmn:incoming>
       <bpmn:outgoing>formcheck</bpmn:outgoing>
+      <bpmn:property id="Property_0gi98y4" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_1sf8fxp">
+        <bpmn:sourceRef>DataObjectReference_1sa08ac</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0gi98y4</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
       <bpmn:script><![CDATA[
 	application_identifier = execution.getVariable ("ProcessInstanceId");
 	execution.setVariable ("application_identifier",
@@ -85,6 +90,9 @@
       </bpmn:extensionElements>
       <bpmn:incoming>formincompletecondition</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_05l433d</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1h5g0a1">
+        <bpmn:targetRef>DataObjectReference_1sa08ac</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_1u2vify" sourceRef="StartEvent_1" targetRef="loan_request_application" />
     <bpmn:sequenceFlow id="SequenceFlow_0kfgbs0" sourceRef="loan_request_application" targetRef="checkformcompleteness" />
@@ -124,6 +132,9 @@
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1u2vify</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0kfgbs0</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_0ldmaei">
+        <bpmn:targetRef>DataObjectReference_1sa08ac</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:userTask>
     <bpmn:startEvent id="StartEvent_1" name="Customer Starts the Request">
       <bpmn:outgoing>SequenceFlow_1u2vify</bpmn:outgoing>
@@ -248,6 +259,9 @@
       </bpmn:extensionElements>
       <bpmn:incoming>formcompletecondition</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1rp5sx0</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1muj926">
+        <bpmn:targetRef>DataObjectReference_0xhy9m2</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:userTask>
     <bpmn:scriptTask id="assess_loan_risk" name="Assess Loan Risk" scriptFormat="Groovy">
       <bpmn:incoming>SequenceFlow_1rp5sx0</bpmn:incoming>
@@ -482,6 +496,15 @@ if(credit_assessment=='B'){
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_03df2da</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1uej1ou</bpmn:outgoing>
+      <bpmn:property id="Property_15bk87k" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0955in4">
+        <bpmn:sourceRef>DataObjectReference_0xhy9m2</bpmn:sourceRef>
+        <bpmn:targetRef>Property_15bk87k</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation id="DataInputAssociation_0rnioh0">
+        <bpmn:sourceRef>DataObjectReference_1a00628</bpmn:sourceRef>
+        <bpmn:targetRef>Property_15bk87k</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:userTask>
     <bpmn:endEvent id="EndEvent_1dok5zi">
       <bpmn:incoming>SequenceFlow_01bo0z7</bpmn:incoming>
@@ -684,6 +707,11 @@ if(credit_assessment=='B'){
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0kfi26c</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_01bo0z7</bpmn:outgoing>
+      <bpmn:property id="Property_1l8rzew" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_1hyp6b8">
+        <bpmn:sourceRef>DataObjectReference_1sa08ac</bpmn:sourceRef>
+        <bpmn:targetRef>Property_1l8rzew</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:userTask>
     <bpmn:userTask id="prepare_pack" name="Prepare Loan Acceptance Pack">
       <bpmn:extensionElements>
@@ -871,6 +899,9 @@ if(credit_assessment=='B'){
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1entk7m</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0vemp8s</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1chef48">
+        <bpmn:targetRef>DataObjectReference_1rzebak</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:userTask>
     <bpmn:userTask id="verify_and_take_decision" name="Verify Loan Agreement and Take Final Decision">
       <bpmn:extensionElements>
@@ -1068,6 +1099,11 @@ if(credit_assessment=='B'){
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0vemp8s</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0klfdt2</bpmn:outgoing>
+      <bpmn:property id="Property_1sbgewb" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0ppdh4r">
+        <bpmn:sourceRef>DataObjectReference_1rzebak</bpmn:sourceRef>
+        <bpmn:targetRef>Property_1sbgewb</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:userTask>
     <bpmn:userTask id="view_loan_agreement" name="View Loan Agreement">
       <bpmn:extensionElements>
@@ -1255,12 +1291,25 @@ if(credit_assessment=='B'){
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0klfdt2</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_16umbus</bpmn:outgoing>
+      <bpmn:property id="Property_0o0ak1l" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0xdkwgx">
+        <bpmn:sourceRef>DataObjectReference_1rzebak</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0o0ak1l</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:userTask>
+    <bpmn:dataObjectReference id="DataObjectReference_1sa08ac" name="Loan Application" dataObjectRef="DataObject_0w3cmdb" />
+    <bpmn:dataObject id="DataObject_0w3cmdb" />
+    <bpmn:dataObjectReference id="DataObjectReference_0xhy9m2" name="Credit History" dataObjectRef="DataObject_1ln1eur" />
+    <bpmn:dataObject id="DataObject_1ln1eur" />
+    <bpmn:dataObjectReference id="DataObjectReference_1a00628" name="Property Appraisal" dataObjectRef="DataObject_1itl8sj" />
+    <bpmn:dataObject id="DataObject_1itl8sj" />
+    <bpmn:dataObjectReference id="DataObjectReference_1rzebak" name="Loan Agreement" dataObjectRef="DataObject_089s7ia" />
+    <bpmn:dataObject id="DataObject_089s7ia" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_180kh9z">
       <bpmndi:BPMNShape id="Participant_0nkrz2q_di" bpmnElement="loanprovider">
-        <dc:Bounds x="110" y="57" width="1298" height="506" />
+        <dc:Bounds x="110" y="-76.44401168451805" width="1298" height="639.444011684518" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_1y2om6g_di" bpmnElement="loan_request_application">
         <dc:Bounds x="278" y="77" width="100" height="80" />
@@ -1340,7 +1389,7 @@ if(credit_assessment=='B'){
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Lane_0tu9xi7_di" bpmnElement="loanapplicant">
-        <dc:Bounds x="139.5" y="57" width="1267.6769911504425" height="133" />
+        <dc:Bounds x="140" y="-76.44401168451805" width="1268" height="266.44401168451805" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_11gxd07_di" bpmnElement="loanofficer">
         <dc:Bounds x="139.5" y="190" width="1267.6769911504425" height="133" />
@@ -1459,6 +1508,71 @@ if(credit_assessment=='B'){
       <bpmndi:BPMNShape id="UserTask_0d0wqqq_di" bpmnElement="view_loan_agreement">
         <dc:Bounds x="1170" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataObjectReference_1sa08ac_di" bpmnElement="DataObjectReference_1sa08ac">
+        <dc:Bounds x="433.49269717624145" y="-65.44401168451805" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="346" y="-61.444011684518046" width="82" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_0ldmaei_di" bpmnElement="DataOutputAssociation_0ldmaei">
+        <di:waypoint xsi:type="dc:Point" x="362" y="77" />
+        <di:waypoint xsi:type="dc:Point" x="440" y="-15" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_1sf8fxp_di" bpmnElement="DataInputAssociation_1sf8fxp">
+        <di:waypoint xsi:type="dc:Point" x="448" y="-15" />
+        <di:waypoint xsi:type="dc:Point" x="417" y="223" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1h5g0a1_di" bpmnElement="DataOutputAssociation_1h5g0a1">
+        <di:waypoint xsi:type="dc:Point" x="525" y="77" />
+        <di:waypoint xsi:type="dc:Point" x="456" y="-15" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="DataObjectReference_0xhy9m2_di" bpmnElement="DataObjectReference_0xhy9m2">
+        <dc:Bounds x="706.4688473520249" y="-64.77725856697816" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="750" y="-55.77725856697816" width="68" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataObjectReference_1a00628_di" bpmnElement="DataObjectReference_1a00628">
+        <dc:Bounds x="791.8694581280788" y="465.210591133005" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="786" y="515.210591133005" width="48" height="25" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataObjectReference_1rzebak_di" bpmnElement="DataObjectReference_1rzebak">
+        <dc:Bounds x="1062.8694581280788" y="-44.789408866995046" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1040" y="5.210591133004954" width="82" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1muj926_di" bpmnElement="DataOutputAssociation_1muj926">
+        <di:waypoint xsi:type="dc:Point" x="447" y="365" />
+        <di:waypoint xsi:type="dc:Point" x="580" y="310" />
+        <di:waypoint xsi:type="dc:Point" x="721" y="-15" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0955in4_di" bpmnElement="DataInputAssociation_0955in4">
+        <di:waypoint xsi:type="dc:Point" x="724" y="-15" />
+        <di:waypoint xsi:type="dc:Point" x="721.8694581280788" y="221.21059113300495" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0rnioh0_di" bpmnElement="DataInputAssociation_0rnioh0">
+        <di:waypoint xsi:type="dc:Point" x="799" y="465" />
+        <di:waypoint xsi:type="dc:Point" x="726" y="303" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1chef48_di" bpmnElement="DataOutputAssociation_1chef48">
+        <di:waypoint xsi:type="dc:Point" x="1015" y="223" />
+        <di:waypoint xsi:type="dc:Point" x="1071" y="5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0ppdh4r_di" bpmnElement="DataInputAssociation_0ppdh4r">
+        <di:waypoint xsi:type="dc:Point" x="1092" y="5" />
+        <di:waypoint xsi:type="dc:Point" x="1189.8694581280788" y="219.21059113300495" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0xdkwgx_di" bpmnElement="DataInputAssociation_0xdkwgx">
+        <di:waypoint xsi:type="dc:Point" x="1099" y="-8" />
+        <di:waypoint xsi:type="dc:Point" x="1221.8694581280788" y="71.21059113300495" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_1hyp6b8_di" bpmnElement="DataInputAssociation_1hyp6b8">
+        <di:waypoint xsi:type="dc:Point" x="469" y="-34" />
+        <di:waypoint xsi:type="dc:Point" x="807" y="76" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

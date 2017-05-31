@@ -21,7 +21,7 @@
 }
 
 .highlight-running-overlay {
-  background-color: yellow; /* color elements as green */
+  background-color: #ffff00; /* color elements as green */
   opacity: 0.4;
   pointer-events: none; /* no pointer events, allows clicking through onto the element */
 }
