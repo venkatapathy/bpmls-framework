@@ -152,7 +152,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 				.singleResult();
 		List<DataObject> orValues=null;
 		try {
-			orValues = lpRepositoryService.getCurrentOracleValuesFromRepo(lsInst.getLsId(), task.getTaskDefinitionKey());
+			orValues = lpRepositoryService.getCurrentOracleValuesFromRepo(lsInst.getProcessInstanceId(),lsInst.getLsId(), task.getTaskDefinitionKey());
 		} catch (LearningPathException e1) {
 			logger.error("Unexpected Error when trying to get current Oracle values while completing task: "+task.getName()+"for learning"
 					+ "path: "+lsInst.getLsId()+"and Learning Inst id: "+lsInst.getLsInstId()+". Error is:"+e1.getMessage());

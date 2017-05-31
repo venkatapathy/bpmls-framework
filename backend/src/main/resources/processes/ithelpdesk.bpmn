@@ -10,7 +10,7 @@
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>checkresolution</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>ExclusiveGateway_1maqy15</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_0t4et4e</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>provideadditionalinfo</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1i8av72" name="General Support">
         <bpmn:flowNodeRef>closecase</bpmn:flowNodeRef>
@@ -60,6 +60,7 @@
             </camunda:validation>
           </camunda:formField>
           <camunda:formField id="FormField_issolutionworking" label="Is Solution Working?" type="boolean" />
+          <camunda:formField id="FormField_caseadddetails" label="Additional Details, If provided" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_00wp3uo</bpmn:incoming>
@@ -74,10 +75,10 @@
       </bpmn:dataOutputAssociation>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_1irvfhj" sourceRef="checkresolution" targetRef="ExclusiveGateway_1maqy15" />
-    <bpmn:sequenceFlow id="SequenceFlow_1dr9by2" name="Solution does not work" sourceRef="ExclusiveGateway_1maqy15" targetRef="Task_0t4et4e">
+    <bpmn:sequenceFlow id="SequenceFlow_1dr9by2" name="Solution does not work" sourceRef="ExclusiveGateway_1maqy15" targetRef="provideadditionalinfo">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${FormField_issolutionworking=='false'}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_0icyup8" sourceRef="Task_0t4et4e" targetRef="analyzecase" />
+    <bpmn:sequenceFlow id="SequenceFlow_0icyup8" sourceRef="provideadditionalinfo" targetRef="analyzecase" />
     <bpmn:sequenceFlow id="SequenceFlow_0wxg60d" name="Solution works" sourceRef="ExclusiveGateway_1maqy15" targetRef="closecase">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${FormField_issolutionworking=='true'}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -93,10 +94,21 @@
       <bpmn:outgoing>SequenceFlow_1dr9by2</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0wxg60d</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:userTask id="Task_0t4et4e" name="Provide Additional Information">
+    <bpmn:userTask id="provideadditionalinfo" name="Provide Additional Information">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="FormField_caseadddetails" label="caseadddetails" type="string" />
+          <camunda:formField id="FormField_casedescription" label="casedescription" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="FormField_caseresolution" label="caseresolution" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="FormField_issolutionworking" label="Is Solution Working?" type="boolean" />
+          <camunda:formField id="FormField_caseadddetails" label="Additional Details, If provided" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1dr9by2</bpmn:incoming>
@@ -245,7 +257,7 @@
           <dc:Bounds x="878" y="100" width="87" height="25" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_0z6a8si_di" bpmnElement="Task_0t4et4e">
+      <bpmndi:BPMNShape id="UserTask_0z6a8si_di" bpmnElement="provideadditionalinfo">
         <dc:Bounds x="956" y="97" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0icyup8_di" bpmnElement="SequenceFlow_0icyup8">

@@ -47,7 +47,7 @@ public interface LearningEngineRepositoryService {
 	public LearningScenario getDeployedLearningScenario(String lsId)throws LearningPathException;
 	
 	
-	public List<DataObject> getCurrentOracleValuesFromRepo(String lsId,String cur_bpmn_activityid)throws LearningPathException;
+	public List<DataObject> getCurrentOracleValuesFromRepo(String processInstance, String lsId,String cur_bpmn_activityid)throws LearningPathException;
 	
 	
 	

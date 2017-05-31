@@ -1,12 +1,8 @@
-<LearningScenario id="learningscenario2" name="Additional Details" bpmn_processlabel="" bpmn_processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<LearningScenario id="learningscenario1" name="Open and Close Case" bpmn_processlabel="ithelpdeskprocess" bpmn_processid="ithelpdeskprocess" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
 <scenariocontexthint>
 <![CDATA[
-        
-        In this learning scenario we will see how to open a case, and close the case if the solution is working. Imagine we got a problem with our computer: The internet is not working.
-        What would you do? First, You open a ticket to the general support providing them with the information. Later they provide you with a solution. After, You tried their solution and find if it is working, you need to close the ticket.Let us see how we can do it with a Mock scenario
-        
-       
-        
+              
+        In this learning scenario, in addition to seeing how to open a case, We will also see what should we do if the given solution is not working   
         
         
      ]]>
@@ -14,6 +10,11 @@
 
 <Trace>
 <vertex id="opencase" bpmn_activityid="opencase" bpmn_activitylabel=""></vertex>
+<vertex id="analyzecase" bpmn_activityid="analyzecase" bpmn_activitylabel=""></vertex>
+<vertex id="caseresolution" bpmn_activityid="caseresolution" bpmn_activitylabel=""></vertex>
+<vertex id="notifyuser" bpmn_activityid="notifyuser" bpmn_activitylabel=""></vertex>
+<vertex id="checkresolution" bpmn_activityid="checkresolution" bpmn_activitylabel=""></vertex>
+<vertex id="provideadditionalinfo" bpmn_activityid="provideadditionalinfo" bpmn_activitylabel="provideadditionalinfo"></vertex>
 <vertex id="analyzecase" bpmn_activityid="analyzecase" bpmn_activitylabel=""></vertex>
 <vertex id="caseresolution" bpmn_activityid="caseresolution" bpmn_activitylabel=""></vertex>
 <vertex id="notifyuser" bpmn_activityid="notifyuser" bpmn_activitylabel=""></vertex>
@@ -26,7 +27,9 @@
 <![CDATA[
         
         <br/>
-        How do you close? By simply checking the option yes in the task form that will be provided below.
+        Imagine we got a problem with our computer: The internet is not working.
+        What would you do? First, You open a ticket to the general support providing them with the information about your problem. 
+		This is the task window to open the case. Fill the details in the below taskform as asked.
         
         
      ]]>
@@ -37,7 +40,10 @@
 <![CDATA[
         
         <br/>
-        You said Internet is not working. And the General Support helped you with it. Now, your internet is working again, and the General Support has asked you the feedback to close the case. How do you provide? By simply checking the option yes in the task form that will be provided below.
+        You described your problem, and the General Support gave you a solution. (Both are visible in the below form). Now you found out
+        that the solution is working (Imagine it is working ;)). Now the next step for you is to either close the case if the solution is working
+        or say it is not working after which you will be asked to provide additional information. In our imaginary scenario the solution
+        is working, so choose the option accordingly.
        
         
      ]]>
@@ -52,28 +58,74 @@
 
 <ValuationOracle>
 <ValuationFunction id="opencase" bpmn_activityid="opencase" bpmn_activitylabel="opencase">
-<DataObject id="" bpmn_camundaid="FormField_caseresolution" bpmn_dolabel="FormField_caseresolution">
+<DataObject id="FormField_casepriority" bpmn_camundaid="FormField_casepriority" bpmn_dolabel="FormField_casepriority">
+<ExpectedValue id="">medium</ExpectedValue>
 <DoHint id=""><![CDATA[
-        <div >
-        Imagine internet is not working in your system, Give a description that will describe your problem. It is free text and you are allowed to describe in your own words. 
-        </div>
-        
+        Priority for this Case. Should be Medium since it is not a High Priority problem
+     ]]></DoHint>
+
+</DataObject>
+<DataObject id="FormField_casedescription" bpmn_camundaid="FormField_casedescription" bpmn_dolabel="FormField_casedescription">
+<DoHint id=""><![CDATA[
+        Describe your problem in a short Description here. Make it relevant to the context of this scenario.
+        Remember the problem is: Your Internet is not working
+     ]]></DoHint>
+
+</DataObject>
+<DataObject id="FormField_nameoftheuser" bpmn_camundaid="FormField_nameoftheuser" bpmn_dolabel="FormField_nameoftheuser">
+<DoHint id=""><![CDATA[
+        Your Name for reference. 
      ]]></DoHint>
 
 </DataObject>
 </ValuationFunction>
+
 <ValuationFunction id="checkresolution" bpmn_activityid="checkresolution" bpmn_activitylabel="">
-<DataObject id="" bpmn_camundaid="FormField_issolutionworking" bpmn_dolabel="FormField_issolutionworking">
+<DataObject id="FormField_casedescription" bpmn_camundaid="FormField_casedescription" bpmn_dolabel="FormField_casedescription">
+<DoHint id=""><![CDATA[
+        Recall? This is the decription you typed in the previous task.
+     ]]></DoHint>
+
+</DataObject>
+<DataObject id="FormField_caseresolution" bpmn_camundaid="FormField_caseresolution" bpmn_dolabel="FormField_caseresolution">
+<DoHint id=""><![CDATA[
+        Notice this? This is not provided by you. This is the Solution provided by the General Support. In any tickets you open,
+        you can find the solution provided by them here in this field. Also notice it is read only, only they can edit it
+     ]]></DoHint>
+
+</DataObject>
+<DataObject id="FormField_issolutionworking" bpmn_camundaid="FormField_issolutionworking" bpmn_dolabel="FormField_issolutionworking">
+<ExpectedValue id="">false</ExpectedValue>
+<DoHint id=""><![CDATA[
+        Since according to the scenario, the solution is working you are supposed to Tick for the field, is Solution working
+        
+     ]]></DoHint>
+</DataObject>
+
+</ValuationFunction>
+
+<ValuationFunction id="checkresolution" bpmn_activityid="checkresolution" bpmn_activitylabel="">
+<DataObject id="FormField_casedescription" bpmn_camundaid="FormField_casedescription" bpmn_dolabel="FormField_casedescription">
+<DoHint id=""><![CDATA[
+        Recall? This is the decription you typed in the previous task.
+     ]]></DoHint>
+
+</DataObject>
+<DataObject id="FormField_caseresolution" bpmn_camundaid="FormField_caseresolution" bpmn_dolabel="FormField_caseresolution">
+<DoHint id=""><![CDATA[
+        Notice this? This is not provided by you. This is the Solution provided by the General Support. In any tickets you open,
+        you can find the solution provided by them here in this field. Also notice it is read only, only they can edit it
+     ]]></DoHint>
+
+</DataObject>
+<DataObject id="FormField_issolutionworking" bpmn_camundaid="FormField_issolutionworking" bpmn_dolabel="FormField_issolutionworking">
 <ExpectedValue id="">true</ExpectedValue>
 <DoHint id=""><![CDATA[
-        <div >
-        Just check the box to make complete the task with mentioning that the solution work (for this mock scenario)
-        </div>
+        Since according to the scenario, the solution is working you are supposed to Tick for the field, is Solution working
         
      ]]></DoHint>
 </DataObject>
 
 </ValuationFunction>
-
 </ValuationOracle>
 </LearningScenario>

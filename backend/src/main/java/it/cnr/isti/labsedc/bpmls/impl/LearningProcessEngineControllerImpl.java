@@ -19,8 +19,11 @@ import javax.transaction.Transactional;
 
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.TaskService;
+import org.camunda.bpm.engine.form.FormField;
+import org.camunda.bpm.engine.form.FormFieldValidationConstraint;
 import org.camunda.bpm.engine.impl.form.engine.HtmlDocumentBuilder;
 import org.camunda.bpm.engine.impl.form.engine.HtmlElementWriter;
+import org.camunda.bpm.engine.impl.form.type.BooleanFormType;
 import org.camunda.bpm.engine.task.Task;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -445,7 +448,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 				// now before congradulating, make that learning path status to
 				// completed
 				logger.info("Chaning status of a running LP from running to completed with LPID: " + lpInst.getLpId()
-						+ " and LPInstID: " + lpInst.getLpInstId()+" for User: "+username);
+						+ " and LPInstID: " + lpInst.getLpInstId() + " for User: " + username);
 				lpEngine.getLearningEngineRuntimeService().completeaLearningPath(lpInst);
 
 				ContainerTag resMsg = div()
@@ -522,7 +525,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 							.endElement()
 							.startElement(new HtmlElementWriter("h1").textContent("Task Name:" + task.getName()))
 							.endElement().startElement(new HtmlElementWriter("br", true));
-					
+
 					htmlRet.append(documentBuilder.getHtmlString());
 				}
 
@@ -533,7 +536,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 					HtmlElementWriter pElement = new HtmlElementWriter("br", true);
 
 					HtmlDocumentBuilder documentBuilder = new HtmlDocumentBuilder(pElement);
-								
+
 					htmlRet.append(documentBuilder.startElement(new HtmlElementWriter("br", true))
 							.startElement(new HtmlElementWriter("h1").textContent("Task Form")).endElement()
 							.getHtmlString());
@@ -685,25 +688,48 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 		retJson = new JSONObject();
 
 		// change of plan get the task variables and send them
-		Map<String, Object> mapT = taskService.getVariables(task.getId());
+		// not working task variables get the oracl
+
+		Map<String, Object> mapT = lpEngine.getOracleService().getOracleValues(lsInst);
 
 		if (mapT != null) {
-			for (Map.Entry<String, Object> entry : mapT.entrySet()) {
-				// System.out.println(entry.getKey() + "/" + entry.getValue());
-				/*// if date different
-				DateFormat df = new SimpleDateFormat("YYYY-MM-DD");
+			
+				// if present in task form
+				for (FormField formField : formService.getTaskFormData(task.getId()).getFormFields()) {
+					if (mapT.get(formField.getId()) != null) {
+						// if readonly
+						boolean isReadonly=false;
+						List<FormFieldValidationConstraint> validationConstraints = formField
+								.getValidationConstraints();
+						if (validationConstraints != null) {
+							for (FormFieldValidationConstraint validationConstraint : validationConstraints) {
+								if ("readonly".equals(validationConstraint.getName())) {
+									isReadonly= true;
+								}
+							}
+						}
+						
+						if(isReadonly){
+							retJson.put(formField.getId(), mapT.get(formField.getId()));
+						}else{
+							if(BooleanFormType.TYPE_NAME.equals(formField.getTypeName())){
+								if((Boolean)mapT.get(formField.getId())){
+									retJson.put(formField.getId(),"false");
+								}else{
+									retJson.put(formField.getId(),"true");
+								}
+								
+							}else{
+								retJson.put(formField.getId(),"");
+								}
+							
+						}
+						
+					}
+				}
+				
 
-				try {
-					retJson.put(entry.getKey(), df.format(entry.getValue()));
-					continue;
-
-				} catch (IllegalArgumentException e) {
-					// e.printStackTrace();
-					// ignore
-				}*/
-				retJson.put(entry.getKey(), entry.getValue());
-
-			}
+			
 			JSONObject newretJson = new JSONObject();
 			newretJson.put("status", "success").put("formmodel", (new JSONObject().put("learningform", retJson)));
 			return newretJson.toString();
@@ -885,7 +911,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 		try {
 			lpEngine.getLearningEngineRuntimeService().startaLearningPathById(lpid, user);
 
-			logger.info("Starting a Learning path with LP ID: " + lpid+" for User: "+username);
+			logger.info("Starting a Learning path with LP ID: " + lpid + " for User: " + username);
 			JSONObject retJson = new JSONObject();
 			retJson.put("status", "success").put("lpid", lpid);
 			return retJson.toString();
@@ -1006,7 +1032,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 		try {
 			lpEngine.getLearningEngineTaskService().completeCurrentLearningTask(lsInst, formMap);
 			// if all is well return
-			
+
 		} catch (LearningTaskException e) {
 			JSONArray errArr = new JSONArray();
 			for (TaskIncompleteErrorMessage errTask : e.userInputErrorMsgs) {

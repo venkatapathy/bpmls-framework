@@ -99,7 +99,7 @@ public interface LearningProcessEngine {
 				return;
 			}
 			try {
-				List<DataObject> curOracleDOs= lpRepoService.getCurrentOracleValuesFromRepo(lsInst.getLsId(), delegateTask.getTaskDefinitionKey());
+				List<DataObject> curOracleDOs= lpRepoService.getCurrentOracleValuesFromRepo(lsInst.getProcessInstanceId(), lsInst.getLsId(), delegateTask.getTaskDefinitionKey());
 				if(curOracleDOs!=null){
 					logger.info("Updating oracle values for the Learning Scenario: "+lsInst.getLsId()+" with InstId: "+lsInst.getLsInstId()+". For the task: "+delegateTask.getTaskDefinitionKey()	);
 					oracleService.updateOracleValues(lsInst, curOracleDOs);

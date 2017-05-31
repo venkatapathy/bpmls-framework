@@ -4,9 +4,11 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
+import org.camunda.bpm.engine.HistoryService;
 import org.camunda.bpm.spring.boot.starter.event.ProcessApplicationStartedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -22,6 +24,9 @@ import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOrac
 @Component
 public class LearningEngineRepositoryServiceImpl implements LearningEngineRepositoryService {
 
+	@Autowired
+	HistoryService historyService;
+
 	private final Logger logger = LoggerFactory.getLogger(LearningProcessEngineImpl.class);
 
 	private List<LearningScenario> deployedLearningScenarios;
@@ -31,9 +36,10 @@ public class LearningEngineRepositoryServiceImpl implements LearningEngineReposi
 	LearningEngineRepositoryServiceImpl() {
 		logger.info("Empty Constructor of LearningEngineRepositoryService");
 	}
-	
-	public void deployLearningPath(File bpmnFile, File learningPathFile, File[] learningScenariosFiles) throws LearningPathException{
-		//TODO Empty deployment method
+
+	public void deployLearningPath(File bpmnFile, File learningPathFile, File[] learningScenariosFiles)
+			throws LearningPathException {
+		// TODO Empty deployment method
 	}
 
 	/**
@@ -80,18 +86,21 @@ public class LearningEngineRepositoryServiceImpl implements LearningEngineReposi
 	}
 
 	/**
-	 * Returns a {@link List} of {@link LearningPath} or null if none is deployed (hope not null for this will break hell 
-	 * with the current application. you need atleast one learning path else what good is a process-driven learning engine? 
+	 * Returns a {@link List} of {@link LearningPath} or null if none is
+	 * deployed (hope not null for this will break hell with the current
+	 * application. you need atleast one learning path else what good is a
+	 * process-driven learning engine?
 	 */
 	public List<LearningPath> getDeployedLearningPaths() {
 		return deployedLearningPaths;
 	}
 
 	/**
-	 * Returns a {@link LearningPath}, given the lpid.
-	 * Throws {@link LearningPathException} if not found with LearningPathExceptionErrorCodes.LP_NOT_FOUND
+	 * Returns a {@link LearningPath}, given the lpid. Throws
+	 * {@link LearningPathException} if not found with
+	 * LearningPathExceptionErrorCodes.LP_NOT_FOUND
 	 */
-	
+
 	public LearningPath getDeployedLearningPath(String lpId) throws LearningPathException {
 		Iterator<LearningPath> lpIt = deployedLearningPaths.iterator();
 
@@ -102,12 +111,14 @@ public class LearningEngineRepositoryServiceImpl implements LearningEngineReposi
 			}
 		}
 
-		throw new LearningPathException("Learning path with id, "+ lpId+" not found",LearningPathExceptionErrorCodes.LP_NOT_FOUND);
+		throw new LearningPathException("Learning path with id, " + lpId + " not found",
+				LearningPathExceptionErrorCodes.LP_NOT_FOUND);
 	}
 
 	/**
-	 * Returns {@link LearningScenario}, given the lpid.
-	 * Throws {@link LearningPathException} if not found with LearningPathExceptionErrorCodes.LP_LEARNING_SCENARIO_NOT_FOUND
+	 * Returns {@link LearningScenario}, given the lpid. Throws
+	 * {@link LearningPathException} if not found with
+	 * LearningPathExceptionErrorCodes.LP_LEARNING_SCENARIO_NOT_FOUND
 	 */
 	public LearningScenario getDeployedLearningScenario(String lsId) throws LearningPathException {
 		Iterator<LearningScenario> lpIt = deployedLearningScenarios.iterator();
@@ -119,29 +130,46 @@ public class LearningEngineRepositoryServiceImpl implements LearningEngineReposi
 			}
 		}
 
-		throw new LearningPathException("Learning scenario id, "+ lsId+" not found",LearningPathExceptionErrorCodes.LP_LEARNING_SCENARIO_NOT_FOUND);
+		throw new LearningPathException("Learning scenario id, " + lsId + " not found",
+				LearningPathExceptionErrorCodes.LP_LEARNING_SCENARIO_NOT_FOUND);
 
 	}
-	
-	public List<DataObject> getCurrentOracleValuesFromRepo(String lsId,String cur_bpmn_activityid) throws LearningPathException{
-		//get the LS
-		LearningScenario curLS=getDeployedLearningScenario(lsId);
-		
-		//get the valuation functions
-		if(curLS.getValuationOracle()==null){
+
+	public List<DataObject> getCurrentOracleValuesFromRepo(String processInstance, String lsId,
+			String cur_bpmn_activityid) throws LearningPathException {
+
+		// find out how many same tasks executed for the given process instance
+		long prevOcc = historyService.createHistoricTaskInstanceQuery().processInstanceId(processInstance)
+				.taskDefinitionKey(cur_bpmn_activityid).count();
+		long curOcc = 0;
+		System.out.println("Prev Occ");
+		System.out.println(prevOcc);
+		// get the LS
+		LearningScenario curLS = getDeployedLearningScenario(lsId);
+
+		// get the valuation functions
+		if (curLS.getValuationOracle() == null) {
 			return null;
 		}
-		List<ValuationFunction> vFuncs= curLS.getValuationOracle().getValuationFunction();
-		if(vFuncs==null){
+		List<ValuationFunction> vFuncs = curLS.getValuationOracle().getValuationFunction();
+		if (vFuncs == null) {
 			return null;
 		}
-		//get the valueation function for the current activity
-		for(ValuationFunction vFunc:vFuncs){
-			if(vFunc.getBpmnActivityid().equals(cur_bpmn_activityid)){
-				return vFunc.getDataObject();
+		// get the valueation function for the current activity
+		for (ValuationFunction vFunc : vFuncs) {
+			// ignore prev dataobjects based on historic prev occ
+
+			if (vFunc.getBpmnActivityid().equals(cur_bpmn_activityid)) {
+				if (curOcc == prevOcc) {
+					return vFunc.getDataObject();
+				} else {
+					curOcc += 1;
+				}
+
 			}
+
 		}
-		
+
 		return null;
 	}
 }
