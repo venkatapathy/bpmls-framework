@@ -107,7 +107,6 @@
               <camunda:constraint name="readonly" config="readonly" />
             </camunda:validation>
           </camunda:formField>
-          <camunda:formField id="FormField_issolutionworking" label="Is Solution Working?" type="boolean" />
           <camunda:formField id="FormField_caseadddetails" label="Additional Details, If provided" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>

@@ -104,7 +104,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 
 				if (entry.getValue().equals("true") || entry.getValue().equals("false")) {
 					entry.setValue(Boolean.parseBoolean((String) entry.getValue()));
-					return;
+					
 				}
 
 				/*
@@ -118,6 +118,9 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 			}
 		}
 
+		//also update in oracle table in case if there are extra userinputs not accounted for in the learnign scenario
+		//oracleService.updateOracleValues(lsInst, taskInputs);
+		
 		taskServiceCamunda.complete(taskId, taskInputs);
 		updateNextLearningTaskinLearningScenarioInstance(lsInst);
 
@@ -170,7 +173,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 			}
 		}
 
-		List<TaskIncompleteErrorMessage> errMsgList = oracleService.checkOracleValues(lsInst, taskInputs); // call
+		List<TaskIncompleteErrorMessage> errMsgList = oracleService.checkOracleValues(lsInst, taskInputs,task); // call
 																											// the
 																											// oracle
 
@@ -195,13 +198,14 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 			try {
 				simulateNonLearningTasks(lsInst);
 			} catch (LearningPathException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Unexpected error in completing Learning task: " + task.getTaskDefinitionKey() + " for learning instance: "
+					+ lsInst.getLsId() + " with Inst ID: " + lsInst.getLsInstId()+". Error is: "+e.getMessage());
 			}
 		}
 
 	}
 
+	@Transactional
 	private void updateNextLearningTaskinLearningScenarioInstance(LearningScenarioInstance lsInst) {
 		boolean changed = false;
 
@@ -273,7 +277,11 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 				}
 			}
 			taskServiceCamunda.complete(task.getId(), map);
-			task = getCurrentLearningTask(Integer.toString(lsInst.getLpInstance().getLpInstId()));
+			updateNextLearningTaskinLearningScenarioInstance(lsInst);
+			nextLT = lsInst.getNextLearningTask();
+			
+			task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
+					.singleResult();
 		}
 
 		// when no learning tasks are there, just complete remaining tasks

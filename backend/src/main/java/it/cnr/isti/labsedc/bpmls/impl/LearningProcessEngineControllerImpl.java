@@ -24,6 +24,8 @@ import org.camunda.bpm.engine.form.FormFieldValidationConstraint;
 import org.camunda.bpm.engine.impl.form.engine.HtmlDocumentBuilder;
 import org.camunda.bpm.engine.impl.form.engine.HtmlElementWriter;
 import org.camunda.bpm.engine.impl.form.type.BooleanFormType;
+import org.camunda.bpm.engine.impl.form.type.EnumFormType;
+import org.camunda.bpm.engine.impl.form.type.LongFormType;
 import org.camunda.bpm.engine.task.Task;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -51,6 +53,7 @@ import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningPath;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.TargetVertexes.Vertex;
 import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction;
+import it.cnr.isti.labsedc.bpmls.learningpathspec.LearningScenario.ValuationOracle.ValuationFunction.DataObject;
 import it.cnr.isti.labsedc.bpmls.persistance.LearnerDetails;
 import it.cnr.isti.labsedc.bpmls.persistance.LearnerDetailsJpaRepository;
 import it.cnr.isti.labsedc.bpmls.persistance.LearningPathInstance;
@@ -544,16 +547,10 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 			}
 
-			// get the valuation function
-			ValuationFunction tVfuc = null;
-			if (ls.getValuationOracle() != null) {
-				for (ValuationFunction vF : ls.getValuationOracle().getValuationFunction()) {
-					if (vF.getBpmnActivityid().equals(task.getTaskDefinitionKey())) {
-						tVfuc = vF;
-						break;
-					}
-				}
-			}
+			// get the oracle values
+			
+			
+			List<DataObject> tVfuc=lpEngine.getLearningEngineRepositoryService().getCurrentOracleValuesFromRepo(lsInst.getProcessInstanceId(), lsInst.getLsId(), task.getTaskDefinitionKey());
 
 			retJson.put("htmlform",
 					htmlRet.append(
@@ -693,43 +690,77 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 		Map<String, Object> mapT = lpEngine.getOracleService().getOracleValues(lsInst);
 
 		if (mapT != null) {
-			
-				// if present in task form
-				for (FormField formField : formService.getTaskFormData(task.getId()).getFormFields()) {
-					if (mapT.get(formField.getId()) != null) {
+
+			// if present in task form
+			for (FormField formField : formService.getTaskFormData(task.getId()).getFormFields()) {
+				Object curVal = formField.getValue().getValue();
+				if (curVal != null) {
+					if (mapT != null && mapT.get(formField.getId()) != null) {
 						// if readonly
-						boolean isReadonly=false;
+						boolean isReadonly = false;
 						List<FormFieldValidationConstraint> validationConstraints = formField
 								.getValidationConstraints();
 						if (validationConstraints != null) {
 							for (FormFieldValidationConstraint validationConstraint : validationConstraints) {
 								if ("readonly".equals(validationConstraint.getName())) {
-									isReadonly= true;
+									isReadonly = true;
 								}
 							}
 						}
-						
-						if(isReadonly){
+
+						if (isReadonly) {
 							retJson.put(formField.getId(), mapT.get(formField.getId()));
-						}else{
-							if(BooleanFormType.TYPE_NAME.equals(formField.getTypeName())){
-								if((Boolean)mapT.get(formField.getId())){
-									retJson.put(formField.getId(),"false");
-								}else{
-									retJson.put(formField.getId(),"true");
+						} else {
+							if (BooleanFormType.TYPE_NAME.equals(formField.getTypeName())) {
+								if ((Boolean) mapT.get(formField.getId())) {
+									retJson.put(formField.getId(), "true");
+								} else {
+									retJson.put(formField.getId(), "true");
 								}
-								
-							}else{
-								retJson.put(formField.getId(),"");
-								}
-							
+
+							} else if (LongFormType.TYPE_NAME.equals(formField.getTypeName())) {
+								retJson.put(formField.getId(), 0);
+							} else if (EnumFormType.TYPE_NAME.equals(formField.getTypeName())) {
+								EnumFormType enumtype = (EnumFormType) formField.getType();
+								retJson.put(formField.getId(), enumtype.getValues().values().iterator().next());
+							} else {
+								retJson.put(formField.getId(), "");
+							}
+
 						}
-						
+
+					} else {
+						if (BooleanFormType.TYPE_NAME.equals(formField.getTypeName())) {
+							if ((Boolean) mapT.get(formField.getId())) {
+								retJson.put(formField.getId(), "true");
+							} else if (EnumFormType.TYPE_NAME.equals(formField.getTypeName())) {
+								EnumFormType enumtype = (EnumFormType) formField.getType();
+								retJson.put(formField.getId(), enumtype.getValues().values().iterator().next());
+							} else {
+								retJson.put(formField.getId(), "true");
+							}
+
+						} else {
+
+							retJson.put(formField.getId(), curVal);
+						}
+					}
+				} else {
+					if (BooleanFormType.TYPE_NAME.equals(formField.getTypeName())) {
+
+						retJson.put(formField.getId(), "true");
+
+					} else if (LongFormType.TYPE_NAME.equals(formField.getTypeName())) {
+						retJson.put(formField.getId(), 0);
+					} else if (EnumFormType.TYPE_NAME.equals(formField.getTypeName())) {
+						EnumFormType enumFormType = (EnumFormType) formField.getType();
+						retJson.put(formField.getId(), enumFormType.getValues().keySet().iterator().next());
+					} else {
+						retJson.put(formField.getId(), "");
 					}
 				}
-				
+			}
 
-			
 			JSONObject newretJson = new JSONObject();
 			newretJson.put("status", "success").put("formmodel", (new JSONObject().put("learningform", retJson)));
 			return newretJson.toString();

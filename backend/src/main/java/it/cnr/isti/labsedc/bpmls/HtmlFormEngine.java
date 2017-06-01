@@ -164,8 +164,8 @@ public class HtmlFormEngine {
 		return renderFormData(startForm, null);
 	}
 
-	public Object renderTaskForm(TaskFormData taskForm, ValuationFunction ls) {
-		return renderFormData(taskForm, ls);
+	public Object renderTaskForm(TaskFormData taskForm, List<DataObject> doLs) {
+		return renderFormData(taskForm, doLs);
 	}
 
 	public String getFormModel(FormData formData) {
@@ -205,14 +205,14 @@ public class HtmlFormEngine {
 		return retMsg.toString();
 	}
 
-	private void getFormFieldHint(HtmlDocumentBuilder documentBuilder, ValuationFunction ls, FormField formField) {
-		if (ls == null) {
+	private void getFormFieldHint(HtmlDocumentBuilder documentBuilder, List<DataObject> doLs, FormField formField) {
+		if (doLs == null) {
 			return;
 		}
 
 		String defaultValue = null;
 		String hint = null;
-		for (DataObject dov : ls.getDataObject()) {
+		for (DataObject dov : doLs) {
 			if (dov.getBpmnCamundaid().equals(formField.getId())) {
 				
 				if(dov.getExpectedValue()!=null){
@@ -228,16 +228,16 @@ public class HtmlFormEngine {
 		if (defaultValue != null && !isReadOnly(formField)) {
 			HtmlElementWriter hintSpan = new HtmlElementWriter(SPAN_ELEMENT)
 					.attribute("class", "help-block regular-text")
-					.attribute("style", "color:white; background-color: rgba(0,0,0,0.75) ; opacity: 0.9;").attribute("[hidden]", "helpHidden");
+					.attribute("style", "color:white; font-size:120%;").attribute("[hidden]", "helpHidden");
 			hintSpan.textContent("Expected Value: &nbsp; &nbsp;" + defaultValue);
 			documentBuilder.startElement(hintSpan).endElement();
 
 		}
 
-		if (hint != null && !isReadOnly(formField)) {
+		if (hint != null) {
 			HtmlElementWriter hintSpan = new HtmlElementWriter(DIV_ELEMENT)
 					.attribute("class", "help-block regular-text")
-					.attribute("style", "color:white; background-color: rgba(0,0,0,0.75) ; opacity: 0.9;").attribute("[hidden]", "helpHidden");
+					.attribute("style", "color:white; font-size:120%;").attribute("[hidden]", "helpHidden");
 			hintSpan.textContent("Hint: &nbsp; &nbsp;" + hint);
 			documentBuilder.startElement(new HtmlElementWriter("br", true)).startElement(hintSpan).endElement()
 					.startElement(new HtmlElementWriter("br", true));
@@ -245,7 +245,7 @@ public class HtmlFormEngine {
 		}
 	}
 
-	public String renderFormData(FormData formData, ValuationFunction ls) {
+	public String renderFormData(FormData formData, List<DataObject> doLs) {
 
 		if (formData == null || (formData.getFormFields() == null || formData.getFormFields().isEmpty())
 				&& (formData.getFormProperties() == null || formData.getFormProperties().isEmpty())) {
@@ -269,7 +269,7 @@ public class HtmlFormEngine {
 
 			// render fields
 			for (FormField formField : formData.getFormFields()) {
-				renderFormField(formField, documentBuilder, ls);
+				renderFormField(formField, documentBuilder, doLs);
 			}
 
 			// render deprecated form properties
@@ -291,7 +291,7 @@ public class HtmlFormEngine {
 		}
 	}
 
-	protected void renderFormField(FormField formField, HtmlDocumentBuilder documentBuilder, ValuationFunction ls) {
+	protected void renderFormField(FormField formField, HtmlDocumentBuilder documentBuilder, List<DataObject> doLs) {
 		// start group
 		HtmlElementWriter divElement = new HtmlElementWriter(DIV_ELEMENT).attribute(CLASS_ATTRIBUTE, FORM_GROUP_CLASS);
 
@@ -307,12 +307,12 @@ public class HtmlFormEngine {
 			// if check box different label
 			if (isBoolean(formField)) {
 				labelElement = new HtmlElementWriter(LABEL_ELEMENT).attribute("class",
-						"checkbox-inline custom-checkbox nowrap");
+						"checkbox-inline custom-checkbox nowrap").attribute("style", "color:#285eb8");
 				documentBuilder.startElement(labelElement);
 				renderInputField(formField, documentBuilder);
 				HtmlElementWriter spanElement = new HtmlElementWriter(SPAN_ELEMENT).textContent(formFieldLabel);
 				documentBuilder.startElement(spanElement).endElement().endElement().endElement();
-				getFormFieldHint(documentBuilder, ls, formField);
+				getFormFieldHint(documentBuilder, doLs, formField);
 
 				return;
 			} else if (isDate(formField)) {
@@ -326,13 +326,20 @@ public class HtmlFormEngine {
 				}
 				documentBuilder.startElement(new HtmlElementWriter("br", true)).startElement(dateElement).endElement()
 						.startElement(new HtmlElementWriter("br", true));
-				getFormFieldHint(documentBuilder, ls, formField);
+				getFormFieldHint(documentBuilder, doLs, formField);
 				documentBuilder.endElement();
 				return;
 
 			} else {
-				labelElement = new HtmlElementWriter(LABEL_ELEMENT).attribute(FOR_ATTRIBUTE, formFieldId)
-						.textContent(formFieldLabel);
+				
+				if(formField.getTypeName().equals("long")){
+					//System.out.println("numers only");
+					labelElement = new HtmlElementWriter(LABEL_ELEMENT).attribute(FOR_ATTRIBUTE, formFieldId).attribute("style", "color:#285eb8")
+							.textContent(formFieldLabel+"(Numbers Only)");
+				}else{
+					labelElement = new HtmlElementWriter(LABEL_ELEMENT).attribute(FOR_ATTRIBUTE, formFieldId).attribute("style", "color:#285eb8")
+							.textContent(formFieldLabel);
+				}
 			}
 
 			// <label for="...">...</label>
@@ -354,7 +361,7 @@ public class HtmlFormEngine {
 		// format: <span class="help-block regular-text"
 		// style="color:#dfb81c">Expected Value:
 		// Xys</span><br/>
-		getFormFieldHint(documentBuilder, ls, formField);
+		getFormFieldHint(documentBuilder, doLs, formField);
 
 		// renderInvalidMessageElement(formField, documentBuilder);
 
@@ -487,6 +494,10 @@ public class HtmlFormEngine {
 			inputField.attribute("readonly", "readonly");
 		}
 		// <input ... />
+		
+		if(formField.getTypeName().equals("long")){
+			inputField.attribute("pattern", "[0-9]");
+		}
 
 		documentBuilder.startElement(inputField).endElement();
 	}
@@ -496,6 +507,10 @@ public class HtmlFormEngine {
 
 		addCommonFormFieldAttributes(formField, selectBox);
 
+		if (isReadOnly(formField)) {
+			selectBox.attribute("[disabled]", "true");
+		}
+		
 		// <select ...>
 		documentBuilder.startElement(selectBox);
 

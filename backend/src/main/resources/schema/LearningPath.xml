@@ -37,5 +37,13 @@
 			<KPIs>
 			</KPIs>
 		</LearningGoal>
+		<LearningGoal id="">
+			<LearningScenarios>
+				<LearningScenario lsid="learningscenario2" />
+
+			</LearningScenarios>
+			<KPIs>
+			</KPIs>
+		</LearningGoal>
 	</LearningGoals>
 </LearningPath>

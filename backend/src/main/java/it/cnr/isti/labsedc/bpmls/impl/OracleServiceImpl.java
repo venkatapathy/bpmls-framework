@@ -7,6 +7,11 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
+import org.camunda.bpm.engine.FormService;
+import org.camunda.bpm.engine.form.FormData;
+import org.camunda.bpm.engine.form.FormField;
+import org.camunda.bpm.engine.impl.form.type.LongFormType;
+import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +27,9 @@ public class OracleServiceImpl implements OracleService {
 	@Autowired
 	OracleValuesJpaRepository oracleRepo;
 
+	@Autowired
+	FormService camundaFormService;
+	
 	private void saveOracleValue(OracleValue oVa) {
 		// System.out.println("saving oracle values for " + oVa.getBpmnCamId());
 		oracleRepo.save(oVa);
@@ -63,6 +71,31 @@ public class OracleServiceImpl implements OracleService {
 	}
 
 	@Transactional
+	public void updateOracleValues(LearningScenarioInstance lsInst, Map<String, Object> inputs){
+		if(inputs!=null){
+			for(String formkey:inputs.keySet()){
+				//insert only when it is not already there
+				//because if it already there it is inserted before the beginning of the task
+				//however there might b some dataobjects not in oracle specifications but in user tasks
+				OracleValue oV = oracleRepo.findBylsInstanceAndBpmnCamId(lsInst, formkey);
+				// if not present create a new one
+				if (oV == null) {
+					// if no expected value provided, ignore
+					if (inputs.get(formkey) != null
+							&& !inputs.get(formkey).equals("")) {
+						if(inputs.get(formkey) instanceof String){
+							oV = new OracleValue(lsInst, formkey,(String) inputs.get(formkey));
+						}else if(inputs.get(formkey) instanceof Boolean){
+							oV = new OracleValue(lsInst, formkey,Boolean.toString((Boolean) inputs.get(formkey)));
+						}
+						saveOracleValue(oV);
+					}
+				}
+			}
+		}
+	}
+	
+	@Transactional
 	public void updateOracleValuesinit(LearningScenarioInstance lsInst, List<DataObject> dos) {
 		for (DataObject sinDo : dos) {
 			// check if it already exists
@@ -85,11 +118,38 @@ public class OracleServiceImpl implements OracleService {
 	}
 
 	public List<TaskIncompleteErrorMessage> checkOracleValues(LearningScenarioInstance lsInst,
-			Map<String, Object> formMap) {
+			Map<String, Object> formMap, Task task) {
 		// for each form value check if there is oracle value and if it is the
 		// same
 		boolean errExists = false;
 		List<TaskIncompleteErrorMessage> errMsgs = new ArrayList<TaskIncompleteErrorMessage>();
+		
+		//first check that for long they havent given non-long values, if so that is also error:
+		FormData formData= camundaFormService.getTaskFormData(task.getId());
+		
+		if(formData!=null && formData.getFormFields()!=null){
+			for(FormField formField:formData.getFormFields()){
+				Object formVal=formMap.get(formField.getId());
+				if(formVal!=null){
+					if(LongFormType.TYPE_NAME.equals(formField.getTypeName())){
+						try{
+							if(formVal instanceof String){
+								Long.parseLong((String)formVal);
+							}
+							
+						}catch(NumberFormatException e){
+							TaskIncompleteErrorMessage erMsg = new TaskIncompleteErrorMessage(formField.getId(),
+									formField.getId(), "0", "0");
+							errMsgs.add(erMsg);
+							return errMsgs;
+						}
+						
+					}
+					//try to convert it to long and if exception return the errorMsg
+					
+				}
+			}
+		}
 		
 		//first check if all the expected input is
 		for (String formkey : formMap.keySet()) {

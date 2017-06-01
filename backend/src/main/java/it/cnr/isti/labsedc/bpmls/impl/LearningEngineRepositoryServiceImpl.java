@@ -139,11 +139,13 @@ public class LearningEngineRepositoryServiceImpl implements LearningEngineReposi
 			String cur_bpmn_activityid) throws LearningPathException {
 
 		// find out how many same tasks executed for the given process instance
+		// remember running is also historic instance
 		long prevOcc = historyService.createHistoricTaskInstanceQuery().processInstanceId(processInstance)
-				.taskDefinitionKey(cur_bpmn_activityid).count();
+				.taskDefinitionKey(cur_bpmn_activityid).finished().count();
+
 		long curOcc = 0;
-		System.out.println("Prev Occ");
-		System.out.println(prevOcc);
+		// System.out.println("Prev Occ");
+		// System.out.println(prevOcc);
 		// get the LS
 		LearningScenario curLS = getDeployedLearningScenario(lsId);
 
@@ -158,14 +160,14 @@ public class LearningEngineRepositoryServiceImpl implements LearningEngineReposi
 		// get the valueation function for the current activity
 		for (ValuationFunction vFunc : vFuncs) {
 			// ignore prev dataobjects based on historic prev occ
+			if (curOcc == prevOcc) {
+				if (vFunc.getBpmnActivityid().equals(cur_bpmn_activityid)) {
 
-			if (vFunc.getBpmnActivityid().equals(cur_bpmn_activityid)) {
-				if (curOcc == prevOcc) {
 					return vFunc.getDataObject();
-				} else {
-					curOcc += 1;
 				}
 
+			} else {
+				curOcc += 1;
 			}
 
 		}

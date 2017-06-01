@@ -1,7 +1,7 @@
 <div class="col-md-6">
   <ng-container *ngIf="availableLPS && availableLPS.alps">
   <ba-card title="{{alp.lpname}}" *ngFor="let alp of availableLPS.alps;" >
-    <div class="typography-widget" style="color:white; background-color: rgba(0,0,0,0.75) ; opacity: 0.9;" [innerHtml]="alp.lphint"></div>
+    <div class="typography-widget" style="color:white; font-size:120%;" [innerHtml]="alp.lphint"></div>
     <br/>
 
     <button type="button" class="btn btn-success" (click)="startaLearningPath(alp.lpid)">Start Learning</button>
