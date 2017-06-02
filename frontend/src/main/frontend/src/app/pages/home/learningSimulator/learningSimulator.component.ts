@@ -37,7 +37,7 @@ export class LearningSimulator implements AfterViewInit {
   @ViewChild('taskFormContainer', { read: ViewContainerRef }) formContainer: ViewContainerRef;
   @ViewChild('bpmnDiagramContainer', { read: ViewContainerRef }) bpmnDiagramContainer: ViewContainerRef;
   @ViewChild('pathFlowDiagram', { read: ViewContainerRef }) pathFlowContainer: ViewContainerRef;
-
+  private showLegend:boolean=false;
 
 
   helpHidden: boolean = false;
@@ -171,8 +171,10 @@ private static ReviveDateTime(key: any, value: any): any {
 
                 this.dynamicComponentService.createProcessDiagramComponent(this.bpmnDiagramContainer,
                   pfresponse.xmldata, pfresponse.available, pfresponse.running, pfresponse.completed, pfresponse.trace);
+                  this.showLegend=true;
               }else{
                 this.bpmnDiagramContainer.clear();
+                this.showLegend=false;
               }
             });
 

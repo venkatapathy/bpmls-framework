@@ -12,7 +12,8 @@ export class DynamicComponentService {
     private getFlowDiagramComponent(flowdata: string) {
 
         @Component({
-            template: '<div id="diagram" style="height: 100px;"></div>'
+            template: `<div id="diagram" style="height: 100px;"></div>
+                        `
         })
         class InsertedComponent implements AfterViewInit {
 
