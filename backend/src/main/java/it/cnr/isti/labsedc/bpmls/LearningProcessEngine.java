@@ -58,6 +58,9 @@ public interface LearningProcessEngine {
 	
 	public OracleService getOracleService();
 	
+	
+	public XapiStatementService getxAPIStatementService();
+	
 //	/**
 //	 * This will get the current learning task of the current learning scenario
 //	 * 

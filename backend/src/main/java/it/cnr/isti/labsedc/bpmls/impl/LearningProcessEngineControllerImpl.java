@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gov.adlnet.xapi.model.Verbs;
 import it.cnr.isti.labsedc.bpmls.HtmlFormEngine;
 import it.cnr.isti.labsedc.bpmls.LearningProcessEngine;
 import it.cnr.isti.labsedc.bpmls.LearningProcessEngineController;
@@ -945,6 +946,13 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 			logger.info("Starting a Learning path with LP ID: " + lpid + " for User: " + username);
 			JSONObject retJson = new JSONObject();
 			retJson.put("status", "success").put("lpid", lpid);
+			
+			//before returning try ans spwan xapi statement, will not affect the flow
+			try{
+			lpEngine.getxAPIStatementService().spawnAndTryPublishLPStatements(username, Verbs.launched(), lpid);
+			}catch(Exception e){
+				//no error should affect the flow so if exception ignore and keep moving ahead
+			}
 			return retJson.toString();
 		} catch (LearningPathException e) {
 			/*
