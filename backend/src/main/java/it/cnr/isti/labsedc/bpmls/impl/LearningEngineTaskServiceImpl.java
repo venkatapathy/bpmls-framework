@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import gov.adlnet.xapi.model.Verbs;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRepositoryService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRuntimeService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineTaskService;
@@ -52,6 +53,9 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 
 	@Autowired
 	OracleService oracleService;
+
+	@Autowired
+	private XapiStatementServiceImpl xApiService;
 
 	/**
 	 * Gets the current Learning task given the learning path instance id. TODO:
@@ -104,7 +108,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 
 				if (entry.getValue().equals("true") || entry.getValue().equals("false")) {
 					entry.setValue(Boolean.parseBoolean((String) entry.getValue()));
-					
+
 				}
 
 				/*
@@ -118,9 +122,10 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 			}
 		}
 
-		//also update in oracle table in case if there are extra userinputs not accounted for in the learnign scenario
-		//oracleService.updateOracleValues(lsInst, taskInputs);
-		
+		// also update in oracle table in case if there are extra userinputs not
+		// accounted for in the learnign scenario
+		// oracleService.updateOracleValues(lsInst, taskInputs);
+
 		taskServiceCamunda.complete(taskId, taskInputs);
 		updateNextLearningTaskinLearningScenarioInstance(lsInst);
 
@@ -153,12 +158,14 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 		// be made full
 		Task task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
 				.singleResult();
-		List<DataObject> orValues=null;
+		List<DataObject> orValues = null;
 		try {
-			orValues = lpRepositoryService.getCurrentOracleValuesFromRepo(lsInst.getProcessInstanceId(),lsInst.getLsId(), task.getTaskDefinitionKey());
+			orValues = lpRepositoryService.getCurrentOracleValuesFromRepo(lsInst.getProcessInstanceId(),
+					lsInst.getLsId(), task.getTaskDefinitionKey());
 		} catch (LearningPathException e1) {
-			logger.error("Unexpected Error when trying to get current Oracle values while completing task: "+task.getName()+"for learning"
-					+ "path: "+lsInst.getLsId()+"and Learning Inst id: "+lsInst.getLsInstId()+". Error is:"+e1.getMessage());
+			logger.error("Unexpected Error when trying to get current Oracle values while completing task: "
+					+ task.getName() + "for learning" + "path: " + lsInst.getLsId() + "and Learning Inst id: "
+					+ lsInst.getLsInstId() + ". Error is:" + e1.getMessage());
 		}
 
 		// for all oracle values
@@ -173,12 +180,29 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 			}
 		}
 
-		List<TaskIncompleteErrorMessage> errMsgList = oracleService.checkOracleValues(lsInst, taskInputs,task); // call
-																											// the
-																											// oracle
+		List<TaskIncompleteErrorMessage> errMsgList = oracleService.checkOracleValues(lsInst, taskInputs, task); // call
+		// the
+		// oracle
 
 		// if there is error messages
 		if (errMsgList != null) {
+			// xAPI Event
+			// learningtask start
+			// before returning try ans spwan xapi statement, will not affect
+			// the flow
+			try {
+				xApiService.spawnAndTryPublishTaskStatements(lsInst.getLpInstance().getLdInstance().getUsername(),
+						Verbs.failed(), task, lsInst);
+
+			} catch (Exception e) {
+				// no error should affect the flow so if exception ignore and
+				// keep moving ahead
+				logger.warn("Cannot emit xAPI events for Learning Path start event! Exception happend with message: "
+						+ e.getMessage());
+			}
+
+			// xAPI Event- End
+
 			throw new LearningTaskException("Error in User inputs with respect to expected values",
 					LearningTaskExceptionErrorCodes.LT_INPUT_ERROR, errMsgList);
 		}
@@ -198,9 +222,27 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 			try {
 				simulateNonLearningTasks(lsInst);
 			} catch (LearningPathException e) {
-				logger.error("Unexpected error in completing Learning task: " + task.getTaskDefinitionKey() + " for learning instance: "
-					+ lsInst.getLsId() + " with Inst ID: " + lsInst.getLsInstId()+". Error is: "+e.getMessage());
+				logger.error("Unexpected error in completing Learning task: " + task.getTaskDefinitionKey()
+						+ " for learning instance: " + lsInst.getLsId() + " with Inst ID: " + lsInst.getLsInstId()
+						+ ". Error is: " + e.getMessage());
 			}
+
+			// xAPI Event
+			// learningtask start
+			// before returning try ans spwan xapi statement, will not affect
+			// the flow
+			try {
+				xApiService.spawnAndTryPublishTaskStatements(lsInst.getLpInstance().getLdInstance().getUsername(),
+						Verbs.completed(), task, lsInst);
+
+			} catch (Exception e) {
+				// no error should affect the flow so if exception ignore and
+				// keep moving ahead
+				logger.warn("Cannot emit xAPI events for Learning Path start event! Exception happend with message: "
+						+ e.getMessage());
+			}
+
+			// xAPI Event- End
 		}
 
 	}
@@ -279,9 +321,8 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 			taskServiceCamunda.complete(task.getId(), map);
 			updateNextLearningTaskinLearningScenarioInstance(lsInst);
 			nextLT = lsInst.getNextLearningTask();
-			
-			task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId())
-					.singleResult();
+
+			task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId()).singleResult();
 		}
 
 		// when no learning tasks are there, just complete remaining tasks

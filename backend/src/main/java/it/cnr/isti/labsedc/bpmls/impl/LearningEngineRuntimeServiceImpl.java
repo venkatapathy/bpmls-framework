@@ -1,6 +1,5 @@
 package it.cnr.isti.labsedc.bpmls.impl;
 
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,9 +13,12 @@ import java.util.Map;
 import javax.transaction.Transactional;
 
 import org.camunda.bpm.engine.RuntimeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import gov.adlnet.xapi.model.Verbs;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRepositoryService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineRuntimeService;
 import it.cnr.isti.labsedc.bpmls.LearningEngineTaskService;
@@ -47,8 +49,8 @@ import it.cnr.isti.labsedc.bpmls.persistance.LearningScenarioJpaRepository;
 @Component
 public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeService {
 
+	private final Logger logger = LoggerFactory.getLogger(LearningProcessEngineImpl.class);
 	
-
 	@Autowired
 	LearningPathJpaRepository lpRepository;
 
@@ -66,9 +68,12 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 
 	@Autowired
 	private LearningEngineTaskService lpTaskService;
+	
+	@Autowired
+	private XapiStatementServiceImpl xApiService;
 
 	LearningEngineRuntimeServiceImpl() {
-		
+
 	}
 
 	/**
@@ -129,18 +134,22 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	}
 
 	/**
-	 * This will start a learning path for a given user. Note Assumption is the user is validated already and called here without null.
+	 * This will start a learning path for a given user. Note Assumption is the
+	 * user is validated already and called here without null.
+	 * 
 	 * @param learningPath
 	 * @param user
 	 * @return
 	 * @throws LearningPathException
 	 */
 	@Transactional
-	private LearningPathInstance startaLearningPath(LearningPath learningPath, LearnerDetails user) throws LearningPathException {
+	private LearningPathInstance startaLearningPath(LearningPath learningPath, LearnerDetails user)
+			throws LearningPathException {
 		// when you start a learning path
 
 		// 1. make sure that the learning path is not already started
-		LearningPathInstance runnintlpInstance = lpRepository.findOneByLpIdAndLdInstanceAndStatus(learningPath.getId(),user,LearningPathEvents.LP_STATUS_RUNNING);
+		LearningPathInstance runnintlpInstance = lpRepository.findOneByLpIdAndLdInstanceAndStatus(learningPath.getId(),
+				user, LearningPathEvents.LP_STATUS_RUNNING);
 
 		if (runnintlpInstance != null)
 			throw new LearningPathException(
@@ -148,7 +157,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 					LearningPathExceptionErrorCodes.LP_ALREADY_RUNNING);
 
 		// 2. save to LPInstance
-		LearningPathInstance lpInst = createaLPInst(learningPath,user);
+		LearningPathInstance lpInst = createaLPInst(learningPath, user);
 
 		lpInst = lpRepository.save(lpInst);
 
@@ -176,16 +185,17 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	 *             Learning path 3. If one instance of Learning path is already
 	 *             running
 	 */
-	public LearningPathInstance startaLearningPathById(String learningPathId,LearnerDetails user) throws LearningPathException {
-		return startaLearningPath(lpRepositoryService.getDeployedLearningPath(learningPathId),user);
+	public LearningPathInstance startaLearningPathById(String learningPathId, LearnerDetails user)
+			throws LearningPathException {
+		return startaLearningPath(lpRepositoryService.getDeployedLearningPath(learningPathId), user);
 	}
 
-	public void completeaLearningPath(LearningPathInstance lpInstance){
+	public void completeaLearningPath(LearningPathInstance lpInstance) {
 		lpInstance.setStatus(LearningPathEvents.LP_STATUS_COMPLETED);
 		lpRepository.saveAndFlush(lpInstance);
-		
+
 	}
-	
+
 	/**
 	 * Get the current running Learning Paths. (Only one per deployed
 	 * LearningPaths(later per user)). TODO: find it per user
@@ -194,10 +204,8 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	 *         present
 	 */
 	public List<LearningPathInstance> getRunningLearningPaths(LearnerDetails owner) {
-		return lpRepository.findByldInstanceAndStatus(owner,LearningPathEvents.LP_STATUS_RUNNING);
+		return lpRepository.findByldInstanceAndStatus(owner, LearningPathEvents.LP_STATUS_RUNNING);
 	}
-	
-	
 
 	/**
 	 * Get the current running Learning Path. (Only one per deployed
@@ -209,22 +217,24 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	 * @return {@link LearningPathInstance}. Null if none is present
 	 */
 	public LearningPathInstance getRunningLearningPathBylpId(String lpId, LearnerDetails user) {
-		return lpRepository.findOneByLpIdAndLdInstanceAndStatus(lpId,user,LearningPathEvents.LP_STATUS_RUNNING);
+		return lpRepository.findOneByLpIdAndLdInstanceAndStatus(lpId, user, LearningPathEvents.LP_STATUS_RUNNING);
 	}
 
 	public LearningPathInstance getCompletedLearningPathBylpId(String lpId, LearnerDetails user) {
-		List<LearningPathInstance> temp=lpRepository.findByLpIdAndLdInstanceAndStatus(lpId,user,LearningPathEvents.LP_STATUS_COMPLETED);
-		
-		if(temp==null){
+		List<LearningPathInstance> temp = lpRepository.findByLpIdAndLdInstanceAndStatus(lpId, user,
+				LearningPathEvents.LP_STATUS_COMPLETED);
+
+		if (temp == null) {
 			return null;
 		}
-		
-		return lpRepository.findByLpIdAndLdInstanceAndStatus(lpId,user,LearningPathEvents.LP_STATUS_COMPLETED).get(0);
+
+		return lpRepository.findByLpIdAndLdInstanceAndStatus(lpId, user, LearningPathEvents.LP_STATUS_COMPLETED).get(0);
 	}
-	
-	private LearningPathInstance getRunningLearningPathBylpInstId(String lpInstId){
+
+	private LearningPathInstance getRunningLearningPathBylpInstId(String lpInstId) {
 		return lpRepository.findByLpInstId(Integer.parseInt(lpInstId));
 	}
+
 	/**
 	 * Gets the next learning scenario that we need to run given by the lpInstId
 	 * TODO: find it per user
@@ -240,7 +250,7 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	 */
 
 	public LearningScenarioInstance getNextLearningScenarioByLpInstId(String lpInstId) throws LearningPathException {
-		
+
 		LearningPathInstance lpInst = lpRepository.findByLpInstId(Integer.parseInt(lpInstId));
 		if (lpInst == null) {
 			throw new LearningPathException("Running Learning Path with instance id: " + lpInstId + " not found",
@@ -285,7 +295,6 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 			return null;
 	}
 
-	
 	@Transactional
 	private void startNextLearningScenario1(String lpInstId) throws LearningPathException {
 		LearningScenarioInstance lsInst = getRunningLearningScenarioByIpInstId(lpInstId);
@@ -312,44 +321,38 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 		// 1. start the corresponding BPMN Process
 		LearningScenario corLS = lpRepositoryService.getDeployedLearningScenario(lsInst.getLsId());
 		String processId = corLS.getBpmnProcessid();
-		
+
 		// conver init oracle values into map
 		List<DataObject> dos = corLS.getInitialValuation().getDataObject();
 		Map<String, Object> map = new HashMap<String, Object>();
 		for (DataObject sinDo : dos) {
 			map.put(sinDo.getBpmnCamundaid(), sinDo.getValue());
 		}
-		
-		//loop through map to typecase boolean values from string
-		for(Map.Entry<String, Object> entry:map.entrySet()){
-			
-			//ifstring
-			if(entry.getValue() instanceof String){
-				
-			
-			if(entry.getValue().equals("true") || entry.getValue().equals("false")){
-				entry.setValue(Boolean.parseBoolean((String)entry.getValue()));
-				return;
-			}
-			
-			/*// try parsing it to date
-			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-			Date startDate;
-			try {
-				startDate = df.parse((String) entry.getValue());
-				entry.setValue(startDate);
-				if (entry.getValue() instanceof String) {
-					System.out.println("some problem");
+
+		// loop through map to typecase boolean values from string
+		for (Map.Entry<String, Object> entry : map.entrySet()) {
+
+			// ifstring
+			if (entry.getValue() instanceof String) {
+
+				if (entry.getValue().equals("true") || entry.getValue().equals("false")) {
+					entry.setValue(Boolean.parseBoolean((String) entry.getValue()));
+					return;
 				}
-			} catch (ParseException e) {
-				// e.printStackTrace();
-				// ignore
-			}*/
+
+				/*
+				 * // try parsing it to date DateFormat df = new
+				 * SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); Date startDate;
+				 * try { startDate = df.parse((String) entry.getValue());
+				 * entry.setValue(startDate); if (entry.getValue() instanceof
+				 * String) { System.out.println("some problem"); } } catch
+				 * (ParseException e) { // e.printStackTrace(); // ignore }
+				 */
 			}
 		}
-		
+
 		String processInstId = camundaRuntimeService.startProcessInstanceByKey(processId, map).getProcessInstanceId();
-		
+
 		// 2. change the status in LSI
 		lsInst.setStatus("running");
 		// 3. set the processinstanceid in LSI
@@ -362,25 +365,42 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 
 		// set the initial values to the oracle
 		oracleService.updateOracleValuesinit(lsInst, corLS.getInitialValuation().getDataObject());
-		
-		//do it also for the first task because task event called along with start event and wont give time to update oracle values
-		if(corLS.getValuationOracle()!=null && corLS.getValuationOracle().getValuationFunction()!=null && 
-				!corLS.getValuationOracle().getValuationFunction().isEmpty()){
-			oracleService.updateOracleValues(lsInst, corLS.getValuationOracle().getValuationFunction().get(0).getDataObject());
+
+		// do it also for the first task because task event called along with
+		// start event and wont give time to update oracle values
+		if (corLS.getValuationOracle() != null && corLS.getValuationOracle().getValuationFunction() != null
+				&& !corLS.getValuationOracle().getValuationFunction().isEmpty()) {
+			oracleService.updateOracleValues(lsInst,
+					corLS.getValuationOracle().getValuationFunction().get(0).getDataObject());
 		}
-		
+
 		lsRepository.save(lsInst);
 
 		// save everythin
 
-		//simulate non-learning user tasks
+		// simulate non-learning user tasks
 		lpTaskService.simulateNonLearningTasks(lsInst);
+
+		// xAPI Event
+		// learningscenario start
+		// before returning try ans spwan xapi statement, will not affect
+		// the flow
+		try {
+			xApiService.spawnAndTryPublishLSStatements(lsInst.getLpInstance().getLdInstance().getUsername(), Verbs.launched(),lsInst);
+						
+			
+
+		} catch (Exception e) {
+			// no error should affect the flow so if exception ignore and
+			// keep moving ahead
+			logger.warn("Cannot emit xAPI events for Learning Path start event! Exception happend with message: "
+					+ e.getMessage());
+		}
 		
-		
-		
+		// xAPI Event- End
 
 	}
-	
+
 	/**
 	 * Starts the next LearningScenario in the line given a LpInstID. TODO: per
 	 * user
@@ -388,15 +408,16 @@ public class LearningEngineRuntimeServiceImpl implements LearningEngineRuntimeSe
 	 * @param The
 	 *            LearningScenarioInstanceID
 	 * @throws LearningPathException
-	 *             1. LearningPathExceptionErrorCodes.LP_RUNNING_NOT_FOUND When running learningpath with the ID is not found
-	 *             2. LearningPathExceptionErrorCodes.LP_LEARNING_SCENARIO_ALREADY_RUNNING when a Learning Scenario already running
-	 *             3. LearningPathExceptionErrorCodes.LP_NO_NEXT_LEARNING_SCENARIO when no next learning scenario is found
+	 *             1. LearningPathExceptionErrorCodes.LP_RUNNING_NOT_FOUND When
+	 *             running learningpath with the ID is not found 2.
+	 *             LearningPathExceptionErrorCodes.LP_LEARNING_SCENARIO_ALREADY_RUNNING
+	 *             when a Learning Scenario already running 3.
+	 *             LearningPathExceptionErrorCodes.LP_NO_NEXT_LEARNING_SCENARIO
+	 *             when no next learning scenario is found
 	 */
 	public void startNextLearningScenario(String lpInstId) throws LearningPathException {
-		//first create the process and everything
+		// first create the process and everything
 		startNextLearningScenario1(lpInstId);
-		
-		
-		
+
 	}
 }

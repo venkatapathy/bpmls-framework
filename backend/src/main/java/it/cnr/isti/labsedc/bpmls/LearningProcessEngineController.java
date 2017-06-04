@@ -32,7 +32,7 @@ public interface LearningProcessEngineController {
 	
 	public String startalearningpath( String lpid, String responseJSON);
 	
-	public String startalearningscenario(String lpid,String responseJSON);
+	public String startalearningscenario(String lpid,String lpinst, String responseJSON);
 	
 	public String completeCurrentLearningTask(String lpid, String responseJSON)throws Exception;
 	

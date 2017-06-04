@@ -65,6 +65,7 @@ import j2html.tags.ContainerTag;
 @RestController
 public class LearningProcessEngineControllerImpl implements LearningProcessEngineController {
 	private final Logger logger = LoggerFactory.getLogger(LearningProcessEngineImpl.class);
+
 	@Autowired
 	LearningProcessEngine lpEngine;
 
@@ -462,6 +463,27 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 				retJson.put("errortype", "nomorels");
 				retJson.put("htmlform", resMsg.toString());
 
+				// xAPI Event
+				// learningpath start
+				// before returning try ans spwan xapi statement, will not
+				// affect
+				// the flow
+				try {
+					// getlpinstance
+
+					lpEngine.getxAPIStatementService().spawnAndTryPublishLPStatements(username, Verbs.completed(),
+							lpInst);
+
+				} catch (Exception e) {
+					// no error should affect the flow so if exception ignore
+					// and
+					// keep moving ahead
+					logger.warn(
+							"Cannot emit xAPI events for Learning Path start event! Exception happend with message: "
+									+ e.getMessage());
+				}
+				// xAPI Event- End
+
 				return retJson.toString();
 
 			}
@@ -549,9 +571,9 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 			}
 
 			// get the oracle values
-			
-			
-			List<DataObject> tVfuc=lpEngine.getLearningEngineRepositoryService().getCurrentOracleValuesFromRepo(lsInst.getProcessInstanceId(), lsInst.getLsId(), task.getTaskDefinitionKey());
+
+			List<DataObject> tVfuc = lpEngine.getLearningEngineRepositoryService().getCurrentOracleValuesFromRepo(
+					lsInst.getProcessInstanceId(), lsInst.getLsId(), task.getTaskDefinitionKey());
 
 			retJson.put("htmlform",
 					htmlRet.append(
@@ -941,18 +963,37 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 		// start the learning path
 
 		try {
+			
 			lpEngine.getLearningEngineRuntimeService().startaLearningPathById(lpid, user);
 
 			logger.info("Starting a Learning path with LP ID: " + lpid + " for User: " + username);
 			JSONObject retJson = new JSONObject();
 			retJson.put("status", "success").put("lpid", lpid);
-			
-			//before returning try ans spwan xapi statement, will not affect the flow
-			try{
-			lpEngine.getxAPIStatementService().spawnAndTryPublishLPStatements(username, Verbs.launched(), lpid);
-			}catch(Exception e){
-				//no error should affect the flow so if exception ignore and keep moving ahead
+
+			// xAPI Event
+			// learningpath start
+			// before returning try ans spwan xapi statement, will not affect
+			// the flow
+			try {
+				// getlpinstance
+				LearningPathInstance learningPathInstance = lpEngine.getLearningEngineRuntimeService()
+						.getRunningLearningPathBylpId(lpid, user);
+
+				if (learningPathInstance != null) {
+					lpEngine.getxAPIStatementService().spawnAndTryPublishLPStatements(username, Verbs.launched(),
+							learningPathInstance);
+				} else {
+					logger.warn("Cannot emit xAPI events for Learning Path start event! Lpinstance is null");
+				}
+
+			} catch (Exception e) {
+				// no error should affect the flow so if exception ignore and
+				// keep moving ahead
+				logger.warn("Cannot emit xAPI events for Learning Path start event! Exception happend with message: "
+						+ e.getMessage());
 			}
+			// xAPI Event- End
+
 			return retJson.toString();
 		} catch (LearningPathException e) {
 			/*
@@ -968,7 +1009,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 			JSONObject retJson = new JSONObject();
 			retJson.put("status", "error");
 			return retJson.put("errMsg", e.getMessage()).toString();
-
+			// xAPI Event
 			//
 
 		}
@@ -977,11 +1018,42 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/startalearningscenario/{lpid}/{lpinstid}", method = RequestMethod.POST)
-	public String startalearningscenario(@PathVariable("lpid") String lpid, @PathVariable("lpinstid") String lpinstid) {
+	public String startalearningscenario(@PathVariable("lpid") String lpid, @PathVariable("lpinstid") String lpinstid,
+			@RequestBody String responseJSON) {
 
+		// userauthentication
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = null;
+		String username = null;
+		LearnerDetails user = null;
+
+		try {
+			map = mapper.readValue(responseJSON, Map.class);
+			username = (String) map.get("username");
+			user = authenticateUserInternally(username);
+
+			if (user == null) {
+				throw new UserAuthenticationException("User Authetication failed! Please login again!!");
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			logger.error("IOException while reading responseJSON to startalearningpath for user: " + username
+					+ " for with LP ID: " + lpid + ". Exception is: " + e1.getMessage());
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "unexpectederror");
+			return retJson.put("errMsg", new JSONObject().put("message", e1.getMessage())).toString();
+		} catch (UserAuthenticationException e) {
+			logger.error("User Authentication Failed for user: " + username + " for with LP ID: " + lpid);
+			JSONObject retJson = new JSONObject();
+			retJson.put("status", "error");
+			return retJson.put("errMsg", e.getMessage()).toString();
+		}
+
+		
 		try {
 			lpEngine.getLearningEngineRuntimeService().startNextLearningScenario(lpinstid);
 			logger.info("Starting next Learning Scenario with lpid:" + lpid + " and lpinstid: " + lpinstid);
+
 			return new JSONObject().put("status", "success").put("lpid", lpid).toString();
 		} catch (LearningPathException e) {
 			// TODO Auto-generated catch block
