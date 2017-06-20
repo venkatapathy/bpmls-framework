@@ -32,8 +32,12 @@ Enter into the backend part of the project and run with maven:
  * ``cd ./bpmls-framework/backend``
  * ``mvn spring-boot:run``
 
-Now with a browser access to: ``http://localhost:8080``
+Now with a browser access to: ``http://localhost:24098``
 
 # Logging
 
 > THIS WILL COME SOON
+
+
+# License
+Apache License 2 (``http://www.apache.org/licenses/``)
