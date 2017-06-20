@@ -11,8 +11,7 @@ app.service('lrsData', ['$rootScope','$http','$interval', function($rootScope,$h
 	var self = this;
 	$rootScope.lrsData = [];
 
-	var interval = 30;
-	var intervalPromise = $interval(freshenData, interval * 1000);
+	
 	
 	self.lastUpdate = new Date();
 	self.lastUpdate = new Date(self.lastUpdate.getFullYear(), self.lastUpdate.getMonth(), self.lastUpdate.getDate() - 30);

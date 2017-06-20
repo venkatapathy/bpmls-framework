@@ -24,7 +24,7 @@ export const routes: Routes = [
     component: Pages,
     canActivate: [AuthGuard],
     children: [
-      { path: '', redirectTo: 'home', pathMatch: 'full',canActivate: [AuthGuard] },
+      { path: '', redirectTo: 'home/demohome', pathMatch: 'full',canActivate: [AuthGuard] },
       { path: 'home', loadChildren: './home/home.module#HomeModule',canActivate: [AuthGuard] },
       
     ]

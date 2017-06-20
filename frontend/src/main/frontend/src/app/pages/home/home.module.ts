@@ -11,6 +11,7 @@ import { routing } from './home.routing';
 import { Tab } from './tabPanel/tab.component';
 import { Tabs } from './tabPanel/tabs.component';
 import { AvailableLearningPathsComponent } from './availablelearningpaths/availablelearningpaths.component';
+import { DemoHome } from './demohome/demohome.component';
 import { RunningLearningPathsComponent } from './runninglearningpaths/runninglearningpaths.component';
 import { LearningSimulator } from './learningSimulator/learningSimulator.component';
 import { LsCompletionChart } from './learningSimulator/lsCompletionChart';
@@ -37,6 +38,7 @@ import { DatepickerModule } from 'angular2-material-datepicker';
     Home,
     AvailableLearningPathsComponent,
     RunningLearningPathsComponent,
+    DemoHome,
     LearningSimulator,
     LsCompletionChart,
     Tabs,

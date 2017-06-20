@@ -30,11 +30,11 @@ public class BpmlsApp{
 	@PostConstruct
     public void init(){
 		System.out.println("Entering the Application");
-		LearnerDetails newuser = new LearnerDetails("venkat.s.iyer@gmail.com", "demo");
+		//LearnerDetails newuser = new LearnerDetails("venkat.s.iyer@gmail.com", "demo");
 
-		lRepo.save(newuser);
+		//lRepo.save(newuser);
 
-		System.out.println("Registered new user: venkat.s.iyer@gmail.com");
+		//System.out.println("Registered new user: venkat.s.iyer@gmail.com");
 		
 
 	}

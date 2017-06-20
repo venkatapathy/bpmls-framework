@@ -17,6 +17,14 @@ export const PAGES_MENU = [
         },
         children: [
           {
+            path: 'demohome',
+            data: {
+              menu: {
+                title: 'Demo Video',
+              },
+            },
+          },
+          {
             path: 'availablelearningpaths',
             data: {
               menu: {
