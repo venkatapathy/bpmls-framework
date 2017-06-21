@@ -34,7 +34,9 @@ import it.cnr.isti.labsedc.bpmls.persistance.LearningStatementRef;
 public class XapiStatementServiceImpl implements XapiStatementService {
 
 	private final Logger logger = LoggerFactory.getLogger(LearningProcessEngineImpl.class);
-
+	private final String xAPIADDRESS="http://localhost:8090/v1/xAPI/";
+	private final String uname="openlrs";
+	private final String pwd="openlrs";
 	@Autowired
 	private LearningStatementJpaRepository learningStatementRepo;
 
@@ -45,7 +47,7 @@ public class XapiStatementServiceImpl implements XapiStatementService {
 	@Async
 	public void spawnAndTryPublishLPStatements(String umailbox, Verb verb, String lpId) {
 		try {
-			StatementClient client = new StatementClient("http://localhost:8090/v1/xAPI/", "openlrs", "openlrs");
+			StatementClient client = new StatementClient(xAPIADDRESS, uname, pwd);
 
 			Activity activity = new Activity(lpId);
 			ActivityDefinition acDef = new ActivityDefinition();
@@ -79,8 +81,8 @@ public class XapiStatementServiceImpl implements XapiStatementService {
 	public void spawnAndTryPublishLPStatements(String umailbox, Verb verb, LearningPathInstance lpId) {
 		try {
 			StatementClient client=new
-			 StatementClient("http://localhost:8090/xAPI/", "openlrs",
-			 "openlrs");
+			 StatementClient(xAPIADDRESS, uname,
+					 pwd);
 			 Activity activity = new Activity(lpId.getLpId());
 			 Agent agent = new Agent(null, "mailto:" + umailbox);
 			
@@ -128,7 +130,7 @@ public class XapiStatementServiceImpl implements XapiStatementService {
 	@Async
 	public void spawnAndTryPublishLSStatements(String umailbox, Verb verb, LearningScenarioInstance lsInstance) {
 		try {
-			StatementClient client = new StatementClient("http://localhost:8090/v1/xAPI/", "openlrs", "openlrs");
+			StatementClient client = new StatementClient(xAPIADDRESS, uname, pwd);
 
 			Activity activity = new Activity(lsInstance.getLsId());
 			ActivityDefinition acDef = new ActivityDefinition();
@@ -187,7 +189,7 @@ public class XapiStatementServiceImpl implements XapiStatementService {
 	public void spawnAndTryPublishTaskStatements(String umailbox, Verb verb, DelegateTask task,
 			LearningScenarioInstance lsInstance) {
 		try {
-			StatementClient client = new StatementClient("http://localhost:8090/v1/xAPI/", "openlrs", "openlrs");
+			StatementClient client = new StatementClient(xAPIADDRESS, uname, pwd);
 
 			Activity activity = new Activity(task.getTaskDefinitionKey());
 			ActivityDefinition acDef = new ActivityDefinition();
@@ -240,7 +242,7 @@ public class XapiStatementServiceImpl implements XapiStatementService {
 	public void spawnAndTryPublishTaskStatements(String umailbox, Verb verb, Task task,
 			LearningScenarioInstance lsInstance) {
 		try {
-			StatementClient client = new StatementClient("http://localhost:8090/v1/xAPI/", "openlrs", "openlrs");
+			StatementClient client = new StatementClient(xAPIADDRESS, uname, pwd);
 
 			Activity activity = new Activity(task.getTaskDefinitionKey());
 			ActivityDefinition acDef = new ActivityDefinition();
