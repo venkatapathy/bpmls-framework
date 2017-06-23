@@ -1,96 +1,353 @@
-<LearningScenario id="bank_loan_general_demo_scenario" name="Loan Process Complete Demo" bpmn_processlabel="bankloan" bpmn_processid="bankloan" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
-<scenariocontexthint>
+<LearningScenario id="bank_loan_general_demo_scenario"
+	name="Loan Process Complete Demo" bpmn_processlabel="bankloan"
+	bpmn_processid="bankloan" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+	<scenariocontexthint>
 <![CDATA[
         This Learning Scenario gives a general introduction on what are the steps involved in Bank Loan Process. Who are the stake holders involved in the process? What activities are involved in each step of the process? And What constitues the completion of this Loan Process that will end in granting of the loan to the user?
         
         
      ]]>
-</scenariocontexthint>
+	</scenariocontexthint>
 
-<Trace>
-<vertex id="loan_request_application" bpmn_activityid="loan_request_application" bpmn_activitylabel="loan_request_application"></vertex>
-<vertex id="checkformcompleteness" bpmn_activityid="checkformcompleteness" bpmn_activitylabel="checkformcompleteness"></vertex>
-<vertex id="check_credit_history" bpmn_activityid="check_credit_history" bpmn_activitylabel="check_credit_history"></vertex>
-<vertex id="assess_loan_risk" bpmn_activityid="assess_loan_risk" bpmn_activitylabel="assess_loan_risk"></vertex>
-<vertex id="appraise_property" bpmn_activityid="appraise_property" bpmn_activitylabel="appraise_property"></vertex>
-<vertex id="assess_eligibility" bpmn_activityid="assess_eligibility" bpmn_activitylabel=""></vertex>
-<vertex id="prepare_pack" bpmn_activityid="prepare_pack" bpmn_activitylabel="prepare_pack"></vertex>
-<vertex id="verify_and_take_decision" bpmn_activityid="verify_and_take_decision" bpmn_activitylabel="verify_and_take_decision"></vertex>
-<vertex id="view_loan_agreement" bpmn_activityid="view_loan_agreement" bpmn_activitylabel="view_loan_agreement"></vertex>
-</Trace>
+	<Trace>
+		<vertex id="loan_request_application" bpmn_activityid="loan_request_application"
+			bpmn_activitylabel="loan_request_application"></vertex>
+		<vertex id="checkformcompleteness" bpmn_activityid="checkformcompleteness"
+			bpmn_activitylabel="checkformcompleteness"></vertex>
+		<vertex id="check_credit_history" bpmn_activityid="check_credit_history"
+			bpmn_activitylabel="check_credit_history"></vertex>
+		<vertex id="assess_loan_risk" bpmn_activityid="assess_loan_risk"
+			bpmn_activitylabel="assess_loan_risk"></vertex>
+		<vertex id="appraise_property" bpmn_activityid="appraise_property"
+			bpmn_activitylabel="appraise_property"></vertex>
+		<vertex id="assess_eligibility" bpmn_activityid="assess_eligibility"
+			bpmn_activitylabel=""></vertex>
+		<vertex id="prepare_pack" bpmn_activityid="prepare_pack"
+			bpmn_activitylabel="prepare_pack"></vertex>
+		<vertex id="verify_and_take_decision" bpmn_activityid="verify_and_take_decision"
+			bpmn_activitylabel="verify_and_take_decision"></vertex>
+		<vertex id="view_loan_agreement" bpmn_activityid="view_loan_agreement"
+			bpmn_activitylabel="view_loan_agreement"></vertex>
+	</Trace>
 
-<TargetVertexes>
+	<TargetVertexes>
 
 
-<vertex id="loan_request_application" bpmn_activityid="loan_request_application" bpmn_activitylabel="loan_request_application">
-<activitycontexthint>
+		<vertex id="loan_request_application" bpmn_activityid="loan_request_application"
+			bpmn_activitylabel="loan_request_application">
+			<activitycontexthint>
 <![CDATA[
-        This is the first step in the Loan Application process wherein the Customer will apply for the loan by filling the given application. The application will contain various information that the user needs to provide which will help you, the Loan Officer and other stake holders to decide if the Customer is eligble for the loan. Go on check out what are the information that are required from the Customer for the loan Application. Once the Customer fills the form and submit it, we will do some automated check for some Application validation (such as if the user has given the proper information such as a valid email, correct Account no) and the application will reach the you Officers only when the information is correct!
+        !This is the first step in the Loan Application process wherein the Customer will apply for the loan by filling the given application. The application will contain various information that the user needs to provide which will help you, the Loan Officer and other stake holders to decide if the Customer is eligble for the loan. Go on check out what are the information that are required from the Customer for the loan Application. Once the Customer fills the form and submit it, we will do some automated check for some Application validation (such as if the user has given the proper information such as a valid email, correct Account no) and the application will reach the you Officers only when the information is correct!
         
      ]]>
-</activitycontexthint>
-</vertex>
-<vertex id="check_credit_history" bpmn_activityid="check_credit_history" bpmn_activitylabel="check_credit_history">
-<activitycontexthint>
+			</activitycontexthint>
+		</vertex>
+		<vertex id="check_credit_history" bpmn_activityid="check_credit_history"
+			bpmn_activitylabel="check_credit_history">
+			<activitycontexthint>
 <![CDATA[
         Once the Customer completes his application, and the application is auto-checked for completeness, the application will be delegated to a 'Finance Officer' to check Credit History. It involves, checking the Customers previous Loan details (if any) from our as well as other banks. It also involves doing a bacground check on the customer to see if there are any Legal issues that the loan applicant might be involved in. After doing all the background check the Finance Officer will assign a Credit assessment and various other details as mentioned above, and will complete his task. After the Finance Officer gives a credit assessment score for the loan application and the customer, an automated task will assess a Risk weight- between (0-100) which will say how risky is to give Loan to the corresponding Loan Applicant. Go on, check various outcomes that will come out of this Task- Check Credit History.
         
      ]]>
-</activitycontexthint>
-</vertex>
+			</activitycontexthint>
+		</vertex>
 
-<vertex id="appraise_property" bpmn_activityid="appraise_property" bpmn_activitylabel="appraise_property">
-<activitycontexthint>
+		<vertex id="appraise_property" bpmn_activityid="appraise_property"
+			bpmn_activitylabel="appraise_property">
+			<activitycontexthint>
 <![CDATA[
         Next task is appraisal of Property that are pledged against the Loan, by the Customer. This is done by the 'Property Appraiser'. Usually the Property Appraiser visit the property that are pledged against the loan and will make the assessment. The outcome (along with various documents supporting the assessment) will be submitted by the officer at the end of this task. Check out what are the outcome from this task.
         
      ]]>
-</activitycontexthint>
-</vertex>
+			</activitycontexthint>
+		</vertex>
 
 
 
-<vertex id="assess_eligibility" bpmn_activityid="assess_eligibility" bpmn_activitylabel="assess_eligibility">
-<activitycontexthint>
+		<vertex id="assess_eligibility" bpmn_activityid="assess_eligibility"
+			bpmn_activitylabel="assess_eligibility">
+			<activitycontexthint>
 <![CDATA[
        After the previous steps, the form will be forwards to you- 'The Loan Officer'. You must decide on the eligibility of the loan based on the outcome from the previous steps. (Later we will see few scenarios where you will be asked to assess eligibility for some sceanrios). The outcome from this task decides the fate of the loan application, and the reason for the decision. A very important step. For this demo let us imagine that the Loan Application is marked as eligible for the Loan.
         
      ]]>
-</activitycontexthint>
-</vertex>
+			</activitycontexthint>
+		</vertex>
 
-<vertex id="prepare_pack" bpmn_activityid="prepare_pack" bpmn_activitylabel="prepare_pack">
-<activitycontexthint>
+		<vertex id="prepare_pack" bpmn_activityid="prepare_pack"
+			bpmn_activitylabel="prepare_pack">
+			<activitycontexthint>
 <![CDATA[
        In this step, you will prepare an agreement for the Loan which includes details such as the Loan interest, Loan terms and conditions. Usually this will be based on the rule book. You fill in the suitable values and complete this task.
         
      ]]>
-</activitycontexthint>
-</vertex>
+			</activitycontexthint>
+		</vertex>
 
-<vertex id="verify_and_take_decision" bpmn_activityid="verify_and_take_decision" bpmn_activitylabel="verify_and_take_decision">
-<activitycontexthint>
+		<vertex id="verify_and_take_decision" bpmn_activityid="verify_and_take_decision"
+			bpmn_activitylabel="verify_and_take_decision">
+			<activitycontexthint>
 <![CDATA[
        Finally you review every details, and confirm everything is in order with the Loan Application and the Loan Agreement clause. With that your involvement ends for the loan application process. 
         
      ]]>
-</activitycontexthint>
-</vertex>
+			</activitycontexthint>
+		</vertex>
 
-<vertex id="view_loan_agreement" bpmn_activityid="view_loan_agreement" bpmn_activitylabel="view_loan_agreement">
-<activitycontexthint>
+		<vertex id="view_loan_agreement" bpmn_activityid="view_loan_agreement"
+			bpmn_activitylabel="view_loan_agreement">
+			<activitycontexthint>
 <![CDATA[
        After you approve and prepare the loan agreement- the customer can view the application. he can download them and bring it to the bank to get his loan and officially begin the agreement.
         
      ]]>
-</activitycontexthint>
-</vertex>
-</TargetVertexes>
+			</activitycontexthint>
+		</vertex>
+	</TargetVertexes>
 
-<InitialValuation>
-<DataObject id="credit_assessment" bpmn_camundaid="credit_assessment" bpmn_dolabel="credit_assessment">B</DataObject>
-<DataObject id="application_status" bpmn_camundaid="application_status" bpmn_dolabel="application_status">complete</DataObject>
-<DataObject id="eligibility_status" bpmn_camundaid="eligibility_status" bpmn_dolabel="eligibility_status">eligible</DataObject>
-</InitialValuation>
+	<InitialValuation>
+		<DataObject id="credit_assessment" bpmn_camundaid="credit_assessment"
+			bpmn_dolabel="credit_assessment">B</DataObject>
+		<DataObject id="application_status" bpmn_camundaid="application_status"
+			bpmn_dolabel="application_status">complete</DataObject>
+		<DataObject id="eligibility_status" bpmn_camundaid="eligibility_status"
+			bpmn_dolabel="eligibility_status">eligible</DataObject>
+	</InitialValuation>
 
+	<ValuationOracle>
+		<ValuationFunction id="loan_request_application"
+			bpmn_activityid="loan_request_application" bpmn_activitylabel="loan_request_application">
+			<DataObject id="applicant_name" bpmn_camundaid="applicant_name"
+				bpmn_dolabel="applicant_name">
+				<DoHint id=""><![CDATA[
+        Name of the applicant. This is filled by the customer. Similarly the other fields that don't have hints will be filled by the customer with his personal details
+        
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="account_number" bpmn_camundaid="account_number"
+				bpmn_dolabel="account_number">
+				<DoHint id=""><![CDATA[
+        Will be filled automatically by the banking system
+        
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="account_balance" bpmn_camundaid="account_balance"
+				bpmn_dolabel="account_balance">
+				<DoHint id=""><![CDATA[
+        Will be filled automatically by the banking system
+        
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="property_type" bpmn_camundaid="property_type"
+				bpmn_dolabel="property_type">
+				<DoHint id=""><![CDATA[
+        A short description of the property type against which the customer is asking for loan . Eg types: Fixed assest, Movable asset, etc.,
+ 
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="property_address" bpmn_camundaid="property_address"
+				bpmn_dolabel="property_address">
+				<DoHint id=""><![CDATA[
+       Address of the property, which will then be visited by the property appriser for the apprisal.        
+        
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="loan_amount" bpmn_camundaid="loan_amount"
+				bpmn_dolabel="loan_amount">
+				<DoHint id=""><![CDATA[
+       Approximate Loan the Customer is expecting.
+     ]]></DoHint>
+			</DataObject>
+			<DataObject id="loan_duration" bpmn_camundaid="loan_duration"
+				bpmn_dolabel="loan_duration">
+				<DoHint id=""><![CDATA[
+       Approximate time for which the Customer needs the loan.        
+     ]]></DoHint>
+			</DataObject>
+		</ValuationFunction>
+		<ValuationFunction id="check_credit_history"
+			bpmn_activityid="check_credit_history" bpmn_activitylabel="check_credit_history">
+			<DataObject id="finance_officer_identifer" bpmn_camundaid="finance_officer_identifer"
+				bpmn_dolabel="finance_officer_identifer">
+				<DoHint id=""><![CDATA[
+        Name of the Finance officer, who needs to do Check this application Credit History.
+        
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="comment_on_status" bpmn_camundaid="comment_on_status"
+				bpmn_dolabel="comment_on_status">
+				<DoHint id=""><![CDATA[
+        The finance officer will give his comment here, if he has any.
+        
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="bankruptcy_information" bpmn_camundaid="bankruptcy_information"
+				bpmn_dolabel="bankruptcy_information">
+				<DoHint id=""><![CDATA[
+        Any bankruptcy information available on the property against which the loan is sought for!
+        
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="credit_assessment" bpmn_camundaid="credit_assessment"
+				bpmn_dolabel="credit_assessment">
+				<DoHint id=""><![CDATA[
+        Assessment based on the Customer's bank past bank statement and the value of the property
+        <table >
+  <tr>
+    <th>Credit Name|</th>
+    <th>Meaning</th> 
+    
+  </tr>
+  <tr>
+    <td>AAA</td>
+    <td>High Rating- Zero Risk</td> 
+    
+  </tr>
+  <tr>
+    <td>AA</td>
+    <td>Low Risk</td> 
+    
+  </tr>
+  <tr>
+    <td>A</td>
+    <td>Medium Risk</td> 
+    
+  </tr>
+  <tr>
+    <td>BBB</td>
+    <td>Medium Risk- Proceed with caution</td> 
+    
+  </tr>
+  <tr>
+    <td>BB</td>
+    <td>High Risk- Proceed with Caution</td> 
+    
+  </tr>
+  <tr>
+    <td>B</td>
+    <td>High Risk- Do not Proceed with Loan</td> 
+    
+  </tr>
+</table>
+        
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="loan_application_history_amount" bpmn_camundaid="loan_application_history_amount"
+				bpmn_dolabel="loan_application_history_amount">
+				<DoHint id=""><![CDATA[
+        Cumlative previous Loan Amount of the Customer
+        
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="loan_application_history_overdue" bpmn_camundaid="loan_application_history_overdue"
+				bpmn_dolabel="loan_application_history_overdue">
+				<DoHint id=""><![CDATA[
+        Outstanding Loan amount of the Customer from his previous Loan Applications.
+        
+     ]]></DoHint>
+
+			</DataObject>
+		</ValuationFunction>
+<ValuationFunction id="appraise_property"
+			bpmn_activityid="appraise_property" bpmn_activitylabel="appraise_property">
+			<DataObject id="application_identifier" bpmn_camundaid="application_identifier"
+				bpmn_dolabel="application_identifier">
+				<DoHint id=""><![CDATA[
+        The Identification Number of the Application.       
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="surrounding_properties_1_name" bpmn_camundaid="surrounding_properties_1_name"
+				bpmn_dolabel="surrounding_properties_1_name">
+				<DoHint id=""><![CDATA[
+        Name of the Property     
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="surrounding_properties_1_value" bpmn_camundaid="surrounding_properties_1_value"
+				bpmn_dolabel="surrounding_properties_1_value">
+				<DoHint id=""><![CDATA[
+        Assessed value for the property
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="surrounding_properties_2_name" bpmn_camundaid="surrounding_properties_2_name"
+				bpmn_dolabel="surrounding_properties_2_name">
+				<DoHint id=""><![CDATA[
+        Name of the second Property that is pledged, if any     
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="surrounding_properties_2_value" bpmn_camundaid="surrounding_properties_1_value"
+				bpmn_dolabel="surrounding_properties_2_value">
+				<DoHint id=""><![CDATA[
+        Assessed value for the second property
+     ]]></DoHint>
+
+			</DataObject>
+			</ValuationFunction>
+			<ValuationFunction id="assess_eligibility"
+			bpmn_activityid="assess_eligibility" bpmn_activitylabel="assess_eligibility">
+			<DataObject id="eligibility_status" bpmn_camundaid="eligibility_status"
+				bpmn_dolabel="eligibility_status">
+				<DoHint id=""><![CDATA[
+        Based on the Application given by the customer, Credit History Report Given by the Finance Officer and the Property Appraisal report
+        given by the Property Appraiser, the Loan Officer either grants the loan application or dismiss it       
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="comment_on_eligibility" bpmn_camundaid="comment_on_eligibility"
+				bpmn_dolabel="comment_on_eligibility">
+				<DoHint id=""><![CDATA[
+        Any additional comments or notes on the eligibility of the loan application     
+     ]]></DoHint>
+
+			</DataObject>
+			</ValuationFunction>
+			<ValuationFunction id="prepare_pack"
+			bpmn_activityid="prepare_pack" bpmn_activitylabel="prepare_pack">
+			<DataObject id="additional_cost_on_loan" bpmn_camundaid="additional_cost_on_loan"
+				bpmn_dolabel="additional_cost_on_loan">
+				<DoHint id=""><![CDATA[
+        Any additional cost incurred during the loan application process can be mentioned here    
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="loan_terms_and_conditions" bpmn_camundaid="loan_terms_and_conditions"
+				bpmn_dolabel="loan_terms_and_conditions">
+				<DoHint id=""><![CDATA[
+        The loan Terms and Conditions clause will be given here. Usually the content will be preloaded by the system.
+        The load officer might have to change or add some clause to the generated text.    
+     ]]></DoHint>
+
+			</DataObject>
+			</ValuationFunction>
+			<ValuationFunction id="verify_and_take_decision"
+			bpmn_activityid="verify_and_take_decision" bpmn_activitylabel="verify_and_take_decision">
+			<DataObject id="conditions_agreed" bpmn_camundaid="conditions_agreed"
+				bpmn_dolabel="conditions_agreed">
+				<DoHint id=""><![CDATA[
+        Verify one last time that the terms and conditions are agreed by the bank, before sending it to the customer   
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="repayment_agreed" bpmn_camundaid="repayment_agreed"
+				bpmn_dolabel="repayment_agreed">
+				<DoHint id=""><![CDATA[
+        Also verify that the repayment agreeements, if any   
+     ]]></DoHint>
+
+			</DataObject>
+			</ValuationFunction>
+	</ValuationOracle>
 </LearningScenario>

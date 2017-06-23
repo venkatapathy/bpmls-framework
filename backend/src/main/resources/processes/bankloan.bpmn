@@ -118,16 +118,8 @@
           <camunda:formField id="account_balance" label="Account Balance" type="long" />
           <camunda:formField id="property_type" label="Property Type" type="string" />
           <camunda:formField id="property_address" label="Property Address" type="string" />
-          <camunda:formField id="purchasing_price" label="Purchasing Price" type="long" />
-          <camunda:formField id="loan_type" label="Loan Type" type="string" />
-          <camunda:formField id="loan_provider" label="Loan Provider" type="string" />
           <camunda:formField id="loan_amount" label="Loan Amount" type="long" />
           <camunda:formField id="loan_duration" label="Loan Duration" type="string" />
-          <camunda:formField id="interest_type" label="Interest Type" type="enum">
-            <camunda:value id="variable" name="Variable" />
-            <camunda:value id="fixed" name="Fixed" />
-          </camunda:formField>
-          <camunda:formField id="interest_rate" label="Interest Rate" type="long" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1u2vify</bpmn:incoming>
@@ -246,14 +238,17 @@
           </camunda:formField>
           <camunda:formField id="comment_on_status" label="Comment on Status" type="string" />
           <camunda:formField id="finance_officer_identifer" label="Finance Officer Identifier" type="string" />
-          <camunda:formField id="court_judgement_information" type="string" />
+          <camunda:formField id="court_judgement_information" label="Court Issues on the property, if any" type="string" />
           <camunda:formField id="bankruptcy_information" label="Bankruptcy Information" type="string" />
           <camunda:formField id="credit_assessment" label="Credit Assessment" type="enum">
             <camunda:value id="B" name="B" />
             <camunda:value id="A" name="A" />
+            <camunda:value id="AAA" name="AAA" />
+            <camunda:value id="BBB" name="BBB" />
+            <camunda:value id="AA" name="AA" />
+            <camunda:value id="BB" name="BB" />
           </camunda:formField>
           <camunda:formField id="loan_application_history_amount" label="Previous Loan Amount" type="long" />
-          <camunda:formField id="loan_application_history_duration" label="Previous Credit Durato" type="string" />
           <camunda:formField id="loan_application_history_overdue" label="Previous Loan Overdue" type="long" />
         </camunda:formData>
       </bpmn:extensionElements>
@@ -267,15 +262,15 @@
       <bpmn:incoming>SequenceFlow_1rp5sx0</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1iilpl2</bpmn:outgoing>
       <bpmn:script><![CDATA[
-if(credit_assessment=='B'){
+if(credit_assessment=='AAA'){
 	execution.setVariable ("risk_weight",0);
-} else if(credit_assessment=='B'){
+} else if(credit_assessment=='AA'){
 	execution.setVariable ("risk_weight",20);
-}else if(credit_assessment=='B'){
+}else if(credit_assessment=='A'){
 	execution.setVariable ("risk_weight",40);
-}else if(credit_assessment=='B'){
+}else if(credit_assessment=='BBB'){
 	execution.setVariable ("risk_weight",60);
-}else if(credit_assessment=='B'){
+}else if(credit_assessment=='BB'){
 	execution.setVariable ("risk_weight",80);
 }else if(credit_assessment=='B'){
 	execution.setVariable ("risk_weight",100);
@@ -382,11 +377,6 @@ if(credit_assessment=='B'){
               <camunda:constraint name="readonly" config="readonly" />
             </camunda:validation>
           </camunda:formField>
-          <camunda:formField id="loan_provider" label="Loan Provider" type="string">
-            <camunda:validation>
-              <camunda:constraint name="readonly" config="readonly" />
-            </camunda:validation>
-          </camunda:formField>
           <camunda:formField id="loan_amount" label="Loan Amount" type="long">
             <camunda:validation>
               <camunda:constraint name="readonly" config="readonly" />
@@ -429,7 +419,11 @@ if(credit_assessment=='B'){
               <camunda:constraint name="readonly" config="readonly" />
             </camunda:validation>
           </camunda:formField>
-          <camunda:formField id="finance_officer_identifer" label="Finance Officer Identifier" type="string" />
+          <camunda:formField id="finance_officer_identifer" label="Finance Officer Identifier" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
           <camunda:formField id="court_judgement_information" type="string">
             <camunda:validation>
               <camunda:constraint name="readonly" config="readonly" />
@@ -444,8 +438,12 @@ if(credit_assessment=='B'){
             <camunda:validation>
               <camunda:constraint name="readonly" config="readonly" />
             </camunda:validation>
-            <camunda:value id="A" name="A" />
             <camunda:value id="B" name="B" />
+            <camunda:value id="A" name="A" />
+            <camunda:value id="AAA" name="AAA" />
+            <camunda:value id="BBB" name="BBB" />
+            <camunda:value id="AA" name="AA" />
+            <camunda:value id="BB" name="BB" />
           </camunda:formField>
           <camunda:formField id="loan_application_history_amount" label="Previous Loan Amount" type="long">
             <camunda:validation>
@@ -462,12 +460,12 @@ if(credit_assessment=='B'){
               <camunda:constraint name="readonly" config="readonly" />
             </camunda:validation>
           </camunda:formField>
-          <camunda:formField id="surrounding_properties_1_name" label="Surrounding Properties 1: Name" type="string">
+          <camunda:formField id="surrounding_properties_1_name" label="Properties 1: Name" type="string">
             <camunda:validation>
               <camunda:constraint name="readonly" config="readonly" />
             </camunda:validation>
           </camunda:formField>
-          <camunda:formField id="surrounding_properties_1_value" label="Surrounding Properties 1: Value" type="long">
+          <camunda:formField id="surrounding_properties_1_value" label="Properties 1: Value" type="long">
             <camunda:validation>
               <camunda:constraint name="readonly" config="readonly" />
             </camunda:validation>
@@ -650,6 +648,11 @@ if(credit_assessment=='B'){
               <camunda:constraint name="readonly" config="readonly" />
             </camunda:validation>
             <camunda:value id="B" name="B" />
+            <camunda:value id="A" name="A" />
+            <camunda:value id="AAA" name="AAA" />
+            <camunda:value id="BBB" name="BBB" />
+            <camunda:value id="AA" name="AA" />
+            <camunda:value id="BB" name="BB" />
           </camunda:formField>
           <camunda:formField id="loan_application_history_amount" label="Previous Loan Amount" type="long">
             <camunda:validation>
@@ -823,7 +826,11 @@ if(credit_assessment=='B'){
               <camunda:constraint name="readonly" config="readonly" />
             </camunda:validation>
           </camunda:formField>
-          <camunda:formField id="finance_officer_identifer" label="Finance Officer Identifier" type="string" />
+          <camunda:formField id="finance_officer_identifer" label="Finance Officer Identifier" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
           <camunda:formField id="court_judgement_information" type="string">
             <camunda:validation>
               <camunda:constraint name="readonly" config="readonly" />
@@ -838,8 +845,12 @@ if(credit_assessment=='B'){
             <camunda:validation>
               <camunda:constraint name="readonly" config="readonly" />
             </camunda:validation>
-            <camunda:value id="A" name="A" />
             <camunda:value id="B" name="B" />
+            <camunda:value id="A" name="A" />
+            <camunda:value id="AAA" name="AAA" />
+            <camunda:value id="BBB" name="BBB" />
+            <camunda:value id="AA" name="AA" />
+            <camunda:value id="BB" name="BB" />
           </camunda:formField>
           <camunda:formField id="loan_application_history_amount" label="Previous Loan Amount" type="long">
             <camunda:validation>
@@ -893,8 +904,16 @@ if(credit_assessment=='B'){
               <camunda:constraint name="readonly" config="readonly" />
             </camunda:validation>
           </camunda:formField>
-          <camunda:formField id="additional_cost_on_loan" label="Additional Cost On Loan" type="long" />
-          <camunda:formField id="loan_terms_and_conditions" label="Loan Terms and Conditions" type="string" />
+          <camunda:formField id="additional_cost_on_loan" label="Additional Cost On Loan" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="loan_terms_and_conditions" label="Loan Terms and Conditions" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1entk7m</bpmn:incoming>
@@ -1025,11 +1044,12 @@ if(credit_assessment=='B'){
             </camunda:validation>
           </camunda:formField>
           <camunda:formField id="credit_assessment" label="Credit Assessment" type="enum">
-            <camunda:validation>
-              <camunda:constraint name="readonly" config="readonly" />
-            </camunda:validation>
             <camunda:value id="B" name="B" />
             <camunda:value id="A" name="A" />
+            <camunda:value id="AAA" name="AAA" />
+            <camunda:value id="BBB" name="BBB" />
+            <camunda:value id="AA" name="AA" />
+            <camunda:value id="BB" name="BB" />
           </camunda:formField>
           <camunda:formField id="loan_application_history_amount" label="Previous Loan Amount" type="long">
             <camunda:validation>
@@ -1230,8 +1250,12 @@ if(credit_assessment=='B'){
             <camunda:validation>
               <camunda:constraint name="readonly" config="readonly" />
             </camunda:validation>
-            <camunda:value id="A" name="A" />
             <camunda:value id="B" name="B" />
+            <camunda:value id="A" name="A" />
+            <camunda:value id="AAA" name="AAA" />
+            <camunda:value id="BBB" name="BBB" />
+            <camunda:value id="AA" name="AA" />
+            <camunda:value id="BB" name="BB" />
           </camunda:formField>
           <camunda:formField id="loan_application_history_amount" label="Previous Loan Amount" type="long">
             <camunda:validation>

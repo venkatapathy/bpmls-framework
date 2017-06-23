@@ -1,0 +1,93 @@
+<LearningScenario id="bank_loan_noteligible_loan_scenario" name="A non-Eligibile Loan Application" bpmn_processlabel="bankloan" bpmn_processid="bankloan" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<scenariocontexthint>
+<![CDATA[
+        In this Learning Scenario, you will see what is constitute as an application that is not eligble for loan! Given an application(which is considered complete),
+        Its credit History Assessment done by Finance Officer, and Property Appraisal done by Property Appraiser, you as a Loan Officer
+        need to decide if the given application is eligible for the Loan! 
+        
+        
+     ]]>
+</scenariocontexthint>
+
+<Trace>
+<vertex id="loan_request_application" bpmn_activityid="loan_request_application" bpmn_activitylabel="loan_request_application"></vertex>
+<vertex id="checkformcompleteness" bpmn_activityid="checkformcompleteness" bpmn_activitylabel="checkformcompleteness"></vertex>
+<vertex id="check_credit_history" bpmn_activityid="check_credit_history" bpmn_activitylabel="check_credit_history"></vertex>
+<vertex id="assess_loan_risk" bpmn_activityid="assess_loan_risk" bpmn_activitylabel="assess_loan_risk"></vertex>
+<vertex id="appraise_property" bpmn_activityid="appraise_property" bpmn_activitylabel="appraise_property"></vertex>
+<vertex id="assess_eligibility" bpmn_activityid="assess_eligibility" bpmn_activitylabel=""></vertex>
+<vertex id="prepare_pack" bpmn_activityid="prepare_pack" bpmn_activitylabel="prepare_pack"></vertex>
+<vertex id="verify_and_take_decision" bpmn_activityid="verify_and_take_decision" bpmn_activitylabel="verify_and_take_decision"></vertex>
+<vertex id="view_loan_agreement" bpmn_activityid="view_loan_agreement" bpmn_activitylabel="view_loan_agreement"></vertex>
+</Trace>
+
+<TargetVertexes>
+<vertex id="assess_eligibility" bpmn_activityid="assess_eligibility" bpmn_activitylabel="assess_eligibility">
+<activitycontexthint>
+<![CDATA[
+       After the previous steps, the form will be forwards to you- 'The Loan Officer'. You must decide on the eligibility of the loan based on the outcome from the previous steps. 
+        The outcome from this task decides the fate of the loan application, and the reason for the decision. A very important step. 
+        
+        
+     ]]>
+</activitycontexthint>
+</vertex>
+</TargetVertexes>
+
+<InitialValuation>
+<DataObject id="applicant_name" bpmn_camundaid="applicant_name" bpmn_dolabel="applicant_name">Bob</DataObject>
+<DataObject id="applicant_surname" bpmn_camundaid="applicant_surname" bpmn_dolabel="applicant_surname">Inwonderland</DataObject>
+<DataObject id="applicant_email" bpmn_camundaid="applicant_email" bpmn_dolabel="applicant_email">applicant2@email.example.com</DataObject>
+<DataObject id="current_employer" bpmn_camundaid="current_employer" bpmn_dolabel="current_employer">ISTI CNR, Italy</DataObject>
+<DataObject id="monthly_net_revenue" bpmn_camundaid="monthly_net_revenue" bpmn_dolabel="monthly_net_revenue">30000</DataObject>
+<DataObject id="account_type" bpmn_camundaid="account_type" bpmn_dolabel="account_type">Savings</DataObject>
+<DataObject id="account_number" bpmn_camundaid="account_number" bpmn_dolabel="account_number">2008</DataObject>
+<DataObject id="account_balance" bpmn_camundaid="account_balance" bpmn_dolabel="account_balance">911</DataObject>
+<DataObject id="property_type" bpmn_camundaid="property_type" bpmn_dolabel="property_type">Villa</DataObject>
+<DataObject id="property_address" bpmn_camundaid="property_address" bpmn_dolabel="property_address">Kod Estate, India</DataObject>
+<DataObject id="purchasing_price" bpmn_camundaid="purchasing_price" bpmn_dolabel="purchasing_price">50000000</DataObject>
+<DataObject id="loan_type" bpmn_camundaid="loan_type" bpmn_dolabel="loan_type">EMI</DataObject>
+<DataObject id="loan_amount" bpmn_camundaid="loan_amount" bpmn_dolabel="loan_amount">10000000</DataObject>
+<DataObject id="loan_duration" bpmn_camundaid="loan_duration" bpmn_dolabel="loan_duration">3 Years</DataObject>
+<DataObject id="interest_type" bpmn_camundaid="interest_type" bpmn_dolabel="interest_type">fixed</DataObject>
+<DataObject id="interest_rate" bpmn_camundaid="interest_rate" bpmn_dolabel="interest_rate">16</DataObject>
+<DataObject id="application_identifier" bpmn_camundaid="application_identifier" bpmn_dolabel="application_identifier">JAYA1</DataObject>
+<DataObject id="application_status" bpmn_camundaid="application_status" bpmn_dolabel="application_status">complete</DataObject>
+<DataObject id="comment_on_status" bpmn_camundaid="comment_on_status" bpmn_dolabel="comment_on_status">N/A</DataObject>
+<DataObject id="finance_officer_identifer" bpmn_camundaid="finance_officer_identifer" bpmn_dolabel="finance_officer_identifer">OPS</DataObject>
+<DataObject id="court_judgement_information" bpmn_camundaid="court_judgement_information" bpmn_dolabel="court_judgement_information">N/A</DataObject>
+<DataObject id="bankruptcy_information" bpmn_camundaid="bankruptcy_information" bpmn_dolabel="bankruptcy_information">N/A</DataObject>
+<DataObject id="credit_assessment" bpmn_camundaid="credit_assessment" bpmn_dolabel="credit_assessment">B</DataObject>
+<DataObject id="loan_application_history_amount" bpmn_camundaid="loan_application_history_amount" bpmn_dolabel="loan_application_history_amount">20000000</DataObject>
+<DataObject id="loan_application_history_overdue" bpmn_camundaid="loan_application_history_overdue" bpmn_dolabel="loan_application_history_overdue">13000000</DataObject>
+<DataObject id="surrounding_properties_1_name" bpmn_camundaid="surrounding_properties_1_name" bpmn_dolabel="surrounding_properties_1_name">Villa: Reg No:12345789</DataObject>
+<DataObject id="surrounding_properties_1_value" bpmn_camundaid="surrounding_properties_1_value" bpmn_dolabel="surrounding_properties_1_value">40000000</DataObject>
+<DataObject id="surrounding_properties_2_name" bpmn_camundaid="surrounding_properties_2_name" bpmn_dolabel="surrounding_properties_2_name">N/A</DataObject>
+<DataObject id="surrounding_properties_2_value" bpmn_camundaid="surrounding_properties_2_value" bpmn_dolabel="surrounding_properties_2_value">0</DataObject>
+<DataObject id="application_status" bpmn_camundaid="application_status" bpmn_dolabel="application_status">complete</DataObject>
+
+</InitialValuation>
+
+<ValuationOracle>
+		<ValuationFunction id="assess_eligibility"
+			bpmn_activityid="assess_eligibility" bpmn_activitylabel="assess_eligibility">
+			
+			<DataObject id="eligibility_status" bpmn_camundaid="eligibility_status"
+				bpmn_dolabel="eligibility_status">
+				<ExpectedValue id="">ineligible</ExpectedValue>
+				<DoHint id=""><![CDATA[
+        The finance office by giving the Credit assessment to 'B', has informed his decision to not accept the loan. So this application is not eligible for new loan!
+               
+     ]]></DoHint>
+
+			</DataObject>
+			<DataObject id="comment_on_eligibility" bpmn_camundaid="comment_on_eligibility"
+				bpmn_dolabel="comment_on_eligibility">
+				<DoHint id=""><![CDATA[
+        Any additional comments or notes on the eligibility of the loan application     
+     ]]></DoHint>
+
+			</DataObject>
+			</ValuationFunction>
+			</ValuationOracle>
+</LearningScenario>

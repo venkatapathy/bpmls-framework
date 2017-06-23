@@ -293,7 +293,7 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 		String nextLT = lsInst.getNextLearningTask();
 		while (nextLT != null && task != null && !nextLT.equals(task.getTaskDefinitionKey())) {
 			//
-			// completeCurrentLearningTask
+			// completeCurrentNonLearningTask
 			logger.info("Simulating: " + task.getTaskDefinitionKey() + " for the LearningScenario with id: "
 					+ lsInst.getLsId() + " and Instid: " + lsInst.getLsInstId());
 			Map<String, Object> map = oracleService.getOracleValues(lsInst);
@@ -319,8 +319,8 @@ public class LearningEngineTaskServiceImpl implements LearningEngineTaskService 
 				}
 			}
 			taskServiceCamunda.complete(task.getId(), map);
-			updateNextLearningTaskinLearningScenarioInstance(lsInst);
-			nextLT = lsInst.getNextLearningTask();
+			//updateNextLearningTaskinLearningScenarioInstance(lsInst);
+			//nextLT = lsInst.getNextLearningTask();
 
 			task = taskServiceCamunda.createTaskQuery().processInstanceId(lsInst.getProcessInstanceId()).singleResult();
 		}

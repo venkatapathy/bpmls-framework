@@ -1,4 +1,4 @@
-<LearningPath competencyid="" id="bankloan" name="A Learning Path for a Loan Officer involved in Bank Loan Process" processid="bankloan" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
+<LearningPath competencyid="" id="bankloan" name="A learning path explaining a Bank Loan Process" processid="bankloan" xmlns="http://www.isti.cnr.it/research/unit.php?unit=SEDC">
 <learningcontexthint>
 <![CDATA[<html>
        
@@ -29,6 +29,9 @@
 <LearningGoal id="">
 <LearningScenarios>
 <LearningScenario lsid="bank_loan_general_demo_scenario"/>
+<LearningScenario lsid="bank_loan_eligible_loan_scenario"/>
+<LearningScenario lsid="bank_loan_noteligible_loan_scenario"/>
+<LearningScenario lsid="bank_loan_exceptioneligible_loan_scenario"/>
 
 </LearningScenarios>
 <KPIs>
