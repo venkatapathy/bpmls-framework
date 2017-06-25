@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,OnDestroy} from '@angular/core';
 
 
 declare var ADL: any;
@@ -8,10 +8,35 @@ declare var ADL: any;
   templateUrl: './demohome.html',
 })
 
-export class DemoHome {
+export class DemoHome implements OnDestroy{
   player: YT.Player;
   private id: string = 'UAj4QGNpRhU';
 
+    ngOnDestroy(){
+    var conf = {
+      "endpoint": "http://atlantis.isti.cnr.it:8090/v1/xAPI/",
+      "user": "openlrs",
+      "password": "openlrs",
+    };
+    ADL.XAPIWrapper.changeConfig(conf);
+    try{
+    var stmt;
+    
+      //ended 
+      stmt = new ADL.XAPIStatement(
+        'mailto:' + localStorage.getItem("currentUser"),
+        'http://adlnet.gov/expapi/verbs/changed',
+        'https://www.youtube.com/watch?v=UAj4QGNpRhU'
+      );
+      ADL.XAPIWrapper.sendStatement(stmt, function (resp, obj) {
+        ADL.XAPIWrapper.log("[" + obj.id + "]: " + resp.status + " - " + resp.statusText);
+      });
+    
+    
+    }catch(e){
+      console.log("Exception in sending statement. E is:"+e);
+    }
+  }
   savePlayer(player) {
     this.player = player;
     console.log('player instance', player);
