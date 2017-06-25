@@ -106,7 +106,7 @@ private static ReviveDateTime(key: any, value: any): any {
 
 
     // try to get the model
-    this.busy = this.learningEngineService.getcurrenttaskmodel(this.lpid).subscribe(response => {
+    this.learningEngineService.getcurrenttaskmodel(this.lpid).subscribe(response => {
       //disable load
 
       if (response.status == 'success') {
@@ -254,7 +254,7 @@ private static ReviveDateTime(key: any, value: any): any {
   completeLearning(learningForm: string) {
 
     // submit the form
-    this.learningEngineService.completeLearningTask(this.lpid, "1", learningForm).subscribe(response => {
+    this.busy = this.learningEngineService.completeLearningTask(this.lpid, "1", learningForm).subscribe(response => {
       // get the response after submitting the task
       // console.log(response.status);
 
