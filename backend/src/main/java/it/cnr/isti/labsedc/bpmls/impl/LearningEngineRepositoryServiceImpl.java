@@ -167,7 +167,12 @@ public class LearningEngineRepositoryServiceImpl implements LearningEngineReposi
 				}
 
 			} else {
-				curOcc += 1;
+				if (vFunc.getBpmnActivityid().equals(cur_bpmn_activityid)) {
+
+					curOcc += 1;
+				}
+
+				
 			}
 
 		}

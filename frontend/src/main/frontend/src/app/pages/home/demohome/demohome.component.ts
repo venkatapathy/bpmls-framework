@@ -23,7 +23,7 @@ export class DemoHome {
 
 
     var conf = {
-      "endpoint": "http://localhost:8090/v1/xAPI/",
+      "endpoint": "http://atlantis.isti.cnr.it:8090/v1/xAPI/",
       "user": "openlrs",
       "password": "openlrs",
     };
