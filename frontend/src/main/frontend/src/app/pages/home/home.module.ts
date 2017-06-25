@@ -24,7 +24,7 @@ import { DynamicComponentService } from './dynamiccomponent.service';
 import { CondensedTable } from './learningSimulator/condensedTable/condensedTable.component';
 import { DatepickerModule } from 'angular2-material-datepicker';
 import { YoutubePlayerModule } from 'ng2-youtube-player';
-
+import {BusyModule} from 'angular2-busy';
 @NgModule({
   imports: [
     CommonModule,
@@ -35,6 +35,7 @@ import { YoutubePlayerModule } from 'ng2-youtube-player';
     NgbModalModule,
     DatepickerModule,
     YoutubePlayerModule,
+    BusyModule
   ],
   declarations: [
     Home,

@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { WindowRefService } from '../window.ref.service';
 import { Http } from '@angular/http';
 import { DynamicComponentService } from '../dynamiccomponent.service';
-
+import {Subscription} from 'rxjs';
 
 //for demo tour
 import { DemoStages } from './demofiles/demostages';
@@ -23,6 +23,7 @@ declare var introJs: any;
   templateUrl: './learningSimulator.html',
 })
 export class LearningSimulator implements AfterViewInit {
+  busy: Subscription;
 
   private lpid: string;
   public lpname: string;
@@ -105,7 +106,9 @@ private static ReviveDateTime(key: any, value: any): any {
 
 
     // try to get the model
-    this.learningEngineService.getcurrenttaskmodel(this.lpid).subscribe(response => {
+    this.busy = this.learningEngineService.getcurrenttaskmodel(this.lpid).subscribe(response => {
+      //disable load
+
       if (response.status == 'success') {
         // alert(JSON.stringify(response.formmodel).length);
         // if not empty
