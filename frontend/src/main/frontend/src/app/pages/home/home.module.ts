@@ -23,6 +23,7 @@ import { WindowRefService } from './window.ref.service';
 import { DynamicComponentService } from './dynamiccomponent.service';
 import { CondensedTable } from './learningSimulator/condensedTable/condensedTable.component';
 import { DatepickerModule } from 'angular2-material-datepicker';
+import { YoutubePlayerModule } from 'ng2-youtube-player';
 
 @NgModule({
   imports: [
@@ -33,6 +34,7 @@ import { DatepickerModule } from 'angular2-material-datepicker';
     routing,
     NgbModalModule,
     DatepickerModule,
+    YoutubePlayerModule,
   ],
   declarations: [
     Home,
