@@ -1,6 +1,8 @@
 <ba-card title="New to this Site? Check out the Demo video">
       <youtube-player
       [videoId]="id"
+      [height]="600"
+      [width]="800"
       (ready)="savePlayer($event)"
       (change)="onStateChange($event)"
     ></youtube-player>
