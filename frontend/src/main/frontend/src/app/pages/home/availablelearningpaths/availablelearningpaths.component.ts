@@ -52,11 +52,9 @@ export class AvailableLearningPathsComponent implements AfterViewInit {
             activeModal.componentInstance.modalHeader = 'Error';
             activeModal.componentInstance.modalContent = response.errMsg;
             activeModal.result.then((result) => {
-              // do nothing so return function
-              return;
+               this.router.navigate(['/login']);
             }, (reason) => {
-              // do nothing
-              return;
+               this.router.navigate(['/login']);
             });
           
         }
