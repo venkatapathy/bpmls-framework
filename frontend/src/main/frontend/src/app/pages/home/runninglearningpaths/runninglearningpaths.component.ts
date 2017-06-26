@@ -30,8 +30,8 @@ export class RunningLearningPathsComponent implements AfterViewInit {
             size: 'sm',
             backdrop: 'static',
           });
-          activeModal.componentInstance.modalHeader = 'Static modal';
-          activeModal.componentInstance.modalContent = response.status.error.errMsg;
+          activeModal.componentInstance.modalHeader = 'Error';
+          activeModal.componentInstance.modalContent = "User not authenticated";
           activeModal.result.then((result) => {
             // do nothing so return function
             return;

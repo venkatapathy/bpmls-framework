@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgaModule } from '../../theme/nga.module';
 import { TreeModule } from 'ng2-tree';
-
+import {AuthGuard} from '../../_guards/auth.guard'
 import { routing } from './home.routing';
 
 import { Tab } from './tabPanel/tab.component';
@@ -60,7 +60,8 @@ import {BusyModule} from 'angular2-busy';
     AdHocComponentFactoryCreator,
     LearningEngineService,
     WindowRefService,
-    DynamicComponentService
+    DynamicComponentService,
+    AuthGuard,
   ]
 })
 export class HomeModule { }

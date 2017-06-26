@@ -49,7 +49,7 @@ export class AvailableLearningPathsComponent implements AfterViewInit {
               size: 'sm',
               backdrop: 'static',
             });
-            activeModal.componentInstance.modalHeader = 'Static modal';
+            activeModal.componentInstance.modalHeader = 'Error';
             activeModal.componentInstance.modalContent = response.errMsg;
             activeModal.result.then((result) => {
               // do nothing so return function
