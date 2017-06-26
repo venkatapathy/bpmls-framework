@@ -20,15 +20,16 @@ export const PAGES_MENU = [
             path: 'demohome',
             data: {
               menu: {
-                title: 'Demo Video',
+                title: '1. Demo Video',
               },
             },
           },
+          
           {
             path: 'availablelearningpaths',
             data: {
               menu: {
-                title: 'general.menu.learning_availablelps',
+                title: '2.1 Available Learning Paths',
               },
             },
           },
@@ -36,7 +37,15 @@ export const PAGES_MENU = [
             path: 'runninglearningpaths',
             data: {
               menu: {
-                title: 'general.menu.learning_runninglps',
+                title: '2.2 Running Learning Paths',
+              },
+            },
+          },
+           {
+            path: 'surveyhome',
+            data: {
+              menu: {
+                title: '3. Survey Home',
               },
             },
           },

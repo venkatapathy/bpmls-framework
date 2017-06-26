@@ -12,6 +12,7 @@ import { Tab } from './tabPanel/tab.component';
 import { Tabs } from './tabPanel/tabs.component';
 import { AvailableLearningPathsComponent } from './availablelearningpaths/availablelearningpaths.component';
 import { DemoHome } from './demohome/demohome.component';
+import { SurveyHome } from './surveyhome/surveyhome.component';
 import { RunningLearningPathsComponent } from './runninglearningpaths/runninglearningpaths.component';
 import { LearningSimulator } from './learningSimulator/learningSimulator.component';
 import { LsCompletionChart } from './learningSimulator/lsCompletionChart';
@@ -25,6 +26,7 @@ import { CondensedTable } from './learningSimulator/condensedTable/condensedTabl
 import { DatepickerModule } from 'angular2-material-datepicker';
 import { YoutubePlayerModule } from 'ng2-youtube-player';
 import {BusyModule} from 'angular2-busy';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -42,6 +44,7 @@ import {BusyModule} from 'angular2-busy';
     AvailableLearningPathsComponent,
     RunningLearningPathsComponent,
     DemoHome,
+    SurveyHome,
     LearningSimulator,
     LsCompletionChart,
     Tabs,
