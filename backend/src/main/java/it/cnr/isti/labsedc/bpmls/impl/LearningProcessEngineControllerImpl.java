@@ -18,6 +18,7 @@ import javax.security.sasl.AuthenticationException;
 import javax.transaction.Transactional;
 
 import org.camunda.bpm.engine.FormService;
+import org.camunda.bpm.engine.HistoryService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.form.FormField;
 import org.camunda.bpm.engine.form.FormFieldValidationConstraint;
@@ -75,6 +76,9 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 	@Autowired
 	TaskService taskService;
 
+	@Autowired
+	HistoryService historyService;
+	
 	@Autowired
 	LearnerDetailsJpaRepository userJpaDBRepo;
 
@@ -555,7 +559,7 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 					htmlRet.append(documentBuilder.getHtmlString());
 				}
 
-				hint = getTaskHint(ls, task.getTaskDefinitionKey());
+				hint = getTaskHint(ls, task.getTaskDefinitionKey(),lsInst.getProcessInstanceId());
 				if (hint != null) {
 					retJson.put("ltname", task.getName());
 					retJson.put("lthint", hint);
@@ -596,10 +600,21 @@ public class LearningProcessEngineControllerImpl implements LearningProcessEngin
 
 	}
 
-	private String getTaskHint(LearningScenario ls, String taskId) {
+	private String getTaskHint(LearningScenario ls, String taskId,String processInstanceId) {
+		long prevOcc = historyService.createHistoricTaskInstanceQuery().processInstanceId(processInstanceId)
+				.taskDefinitionKey(taskId).finished().count();
+
+		long curOcc = 0;
+		
 		for (Vertex v : ls.getTargetVertexes().getVertex()) {
+			if (curOcc == prevOcc) {
 			if (v.getBpmnActivityid().equals(taskId)) {
 				return v.getActivitycontexthint();
+			}
+			}else{
+				if (v.getBpmnActivityid().equals(taskId)) {
+					curOcc += 1;
+				}
 			}
 		}
 		return null;
