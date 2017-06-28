@@ -141,7 +141,7 @@ public class OracleServiceImpl implements OracleService {
 							TaskIncompleteErrorMessage erMsg = new TaskIncompleteErrorMessage(formField.getId(),
 									formField.getId(), "0", "0");
 							errMsgs.add(erMsg);
-							return errMsgs;
+							errExists = true;
 						}
 						
 					}
@@ -161,6 +161,7 @@ public class OracleServiceImpl implements OracleService {
 					TaskIncompleteErrorMessage erMsg = new TaskIncompleteErrorMessage(oV.getBpmnCamId(),
 							oV.getBpmnCamId(), oV.getCurrentExpectedValue(), formMap.get(formkey));
 					errMsgs.add(erMsg);
+					
 					continue;
 				}
 				if (formMap.get(formkey) instanceof String) {
@@ -169,6 +170,7 @@ public class OracleServiceImpl implements OracleService {
 						TaskIncompleteErrorMessage erMsg = new TaskIncompleteErrorMessage(oV.getBpmnCamId(),
 								oV.getBpmnCamId(), oV.getCurrentExpectedValue(), formMap.get(formkey));
 						errMsgs.add(erMsg);
+						
 					}
 				} else if (formMap.get(formkey) instanceof Boolean) {
 					if (!(oV.getCurrentExpectedValue()).equals(Boolean.toString((Boolean) formMap.get(formkey)))) {

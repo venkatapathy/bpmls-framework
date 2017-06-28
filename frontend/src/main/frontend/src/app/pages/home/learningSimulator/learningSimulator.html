@@ -36,6 +36,21 @@
                     </div>
                 </ba-card>
 
+                <ba-card title="Expected and Provided Values List: " *ngIf="showExErrMsg">
+                    <div style="font-size:120%;" class="red-text" id="inerrmsg">
+                      <div *ngFor="let alp of errList;">  
+                        <hr>
+                        For the field,
+                         <b>{{alp.Id}}</b> is: <br/><br/>
+                         Expected Value is: <br/>
+                        <b style="color:#870c0c; font-size:120%;">{{alp.expected}}</b><br/><br/>
+                        Provided Value is: <br/>
+                        <b style="color:#870c0c; font-size:120%;">{{alp.provided}}</b><br/><br/><br/>
+                        <hr>
+                        
+                      </div>
+                    </div>
+                </ba-card>
                 <tabs>
                     <tab [tabTitle]="'Learning Simulator'">
 

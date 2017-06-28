@@ -25,6 +25,8 @@ declare var introJs: any;
 export class LearningSimulator implements AfterViewInit {
   busy: Subscription;
 
+  private showExErrMsg:boolean=false;
+  private errList:any;
   private lpid: string;
   public lpname: string;
   private lsname: string;
@@ -260,23 +262,28 @@ private static ReviveDateTime(key: any, value: any): any {
 
       if (response.status == 'success') {
         // console.log("'Setting alter mesage'");
-
+        this.showExErrMsg=false;
         this.loadForm();
 
       } else if (response.status == 'error') {
         /*Modal*/
-
+        this.showExErrMsg=true;
+        this.errList=response.errMsg;
+        //alert(this.errList);
         const activeModal = this.modalService.open(DefaultModal, {
           size: 'lg',
 
         });
         activeModal.componentInstance.modalHeader = 'Incorrect Responses';
-        activeModal.componentInstance.modalContent = 'Make sure you input what is expected! Checkout Expected value for the correct required Input';
+        activeModal.componentInstance.modalContent = 'Make sure you input what is expected! Checkout the error Lists(displayed in red color)';
         activeModal.result.then((result) => {
           // redirect to back hom
+          jQuery('html, body').animate({scrollTop:$('#inerrmsg').position().top}, {duration:1000});
+          
 
         }, (reason) => {
           // do nothing
+          jQuery('html, body').animate({scrollTop:100}, {duration:1000});
         });
         /*Modal*/
       }

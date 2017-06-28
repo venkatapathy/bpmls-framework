@@ -198,6 +198,7 @@
 			</DataObject>
 			<DataObject id="credit_assessment" bpmn_camundaid="credit_assessment"
 				bpmn_dolabel="credit_assessment">
+				<ExpectedValue id="">B</ExpectedValue>
 				<DoHint id=""><![CDATA[
         Assessment based on the Customer's bank past bank statement and the value of the property
         <table >
@@ -237,7 +238,8 @@
     
   </tr>
 </table>
-        
+        <br>
+        <i>Warning: Currently, to proceed you have select  the Option B to proceed, though it has no meaning in the current context!</i>
      ]]></DoHint>
 
 			</DataObject>
@@ -300,6 +302,7 @@
 			bpmn_activityid="assess_eligibility" bpmn_activitylabel="assess_eligibility">
 			<DataObject id="eligibility_status" bpmn_camundaid="eligibility_status"
 				bpmn_dolabel="eligibility_status">
+				<ExpectedValue id="">eligible</ExpectedValue>
 				<DoHint id=""><![CDATA[
         Based on the Application given by the customer, Credit History Report Given by the Finance Officer and the Property Appraisal report
         given by the Property Appraiser, the Loan Officer either grants the loan application or dismiss it       
